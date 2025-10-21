@@ -63,28 +63,10 @@
             border: 3px solid white;
         }
         
-        .logo-placeholder {
+        .logo-container img {
             width: 100%;
             height: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, #8e44ad, #9b59b6);
-            color: white;
-            font-weight: bold;
-            text-align: center;
-            padding: 10px;
-        }
-        
-        .logo-placeholder i {
-            font-size: 2rem;
-            margin-bottom: 8px;
-        }
-        
-        .logo-placeholder span {
-            font-size: 0.8rem;
-            line-height: 1.2;
+            object-fit: cover;
         }
         
         .header-content {
@@ -348,29 +330,6 @@
             max-height: 200px;
         }
         
-        .logo-upload {
-            margin-top: 10px;
-            text-align: center;
-        }
-        
-        .logo-upload input {
-            display: none;
-        }
-        
-        .logo-upload label {
-            display: inline-block;
-            padding: 8px 15px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 0.8rem;
-            transition: background 0.3s;
-        }
-        
-        .logo-upload label:hover {
-            background: rgba(255, 255, 255, 0.3);
-        }
-        
         @media (max-width: 768px) {
             .dashboard {
                 grid-template-columns: repeat(2, 1fr);
@@ -414,9 +373,7 @@
     <div class="container">
         <header>
             <div class="logo-container">
-                <div class="logo-placeholder" id="logo-display">
-                    <img src="foto/logo-klub.jpg" alt="logo-fotografi">
-                </div>
+                <img src="foto/logo-klub.jpg" alt="Logo Ekskul Fotografi" id="logo-image">
             </div>
             <div class="header-content">
                 <h1><i class="fas fa-clipboard-list"></i> Sistem Absensi Ekskul Fotografi</h1>
@@ -718,25 +675,6 @@
             return tanggal.toLocaleDateString('id-ID', options);
         }
 
-        // Fungsi untuk menangani upload logo
-        function handleLogoUpload(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const logoDisplay = document.getElementById('logo-display');
-                    logoDisplay.innerHTML = '';
-                    logoDisplay.style.backgroundImage = `url(${e.target.result})`;
-                    logoDisplay.style.backgroundSize = 'cover';
-                    logoDisplay.style.backgroundPosition = 'center';
-                    
-                    // Simpan ke localStorage
-                    localStorage.setItem('ekskulFotografiLogo', e.target.result);
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-
         // Inisialisasi saat halaman dimuat
         document.addEventListener('DOMContentLoaded', function() {
             // Set tanggal default ke hari ini
@@ -776,19 +714,6 @@
                 tampilkanAbsensi();
             });
             
-            // Event listener untuk upload logo
-            document.getElementById('logo-upload-input').addEventListener('change', handleLogoUpload);
-            
-            // Cek apakah ada logo yang disimpan di localStorage
-            const savedLogo = localStorage.getItem('ekskulFotografiLogo');
-            if (savedLogo) {
-                const logoDisplay = document.getElementById('logo-display');
-                logoDisplay.innerHTML = '';
-                logoDisplay.style.backgroundImage = `url(${savedLogo})`;
-                logoDisplay.style.backgroundSize = 'cover';
-                logoDisplay.style.backgroundPosition = 'center';
-            }
-            
             // Mendengarkan perubahan data di Firebase
             absensiRef.on('value', (snapshot) => {
                 const data = snapshot.val();
@@ -816,4 +741,3 @@
     </script>
 </body>
 </html>
-
