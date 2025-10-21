@@ -3,17 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Absensi Kelas - Realtime</title>
+    <title>Absensi Ekskul Fotografi</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
     <style>
-        /* CSS styles tetap sama seperti sebelumnya */
         :root {
             --primary: #3498db;
-            --success: #2ecc71;
             --warning: #f39c12;
-            --danger: #e74c3c;
             --light: #f8f9fa;
             --dark: #343a40;
         }
@@ -38,7 +35,7 @@
         }
         
         header {
-            background: linear-gradient(135deg, var(--primary), #2980b9);
+            background: linear-gradient(135deg, #8e44ad, #9b59b6);
             color: white;
             padding: 25px 0;
             border-radius: 10px;
@@ -46,6 +43,53 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             text-align: center;
             position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .logo-container {
+            width: 120px;
+            height: 120px;
+            border-radius: 15px;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            overflow: hidden;
+            border: 3px solid white;
+        }
+        
+        .logo-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #8e44ad, #9b59b6);
+            color: white;
+            font-weight: bold;
+            text-align: center;
+            padding: 10px;
+        }
+        
+        .logo-placeholder i {
+            font-size: 2rem;
+            margin-bottom: 8px;
+        }
+        
+        .logo-placeholder span {
+            font-size: 0.8rem;
+            line-height: 1.2;
+        }
+        
+        .header-content {
+            flex: 1;
+            min-width: 300px;
         }
         
         .connection-status {
@@ -61,11 +105,11 @@
         }
         
         .connection-status.connected {
-            color: var(--success);
+            color: #2ecc71;
         }
         
         .connection-status.disconnected {
-            color: var(--danger);
+            color: #e74c3c;
         }
         
         header h1 {
@@ -117,6 +161,11 @@
             box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
         }
         
+        textarea.form-control {
+            min-height: 80px;
+            resize: vertical;
+        }
+        
         .btn {
             padding: 12px 20px;
             border: none;
@@ -144,13 +193,13 @@
             transform: translateY(-2px);
         }
         
-        .btn-success {
-            background-color: var(--success);
+        .btn-warning {
+            background-color: var(--warning);
             color: white;
         }
         
         .btn-danger {
-            background-color: var(--danger);
+            background-color: #e74c3c;
             color: white;
         }
         
@@ -174,10 +223,8 @@
             transform: translateY(-5px);
         }
         
-        .stat-card.hadir { background: linear-gradient(135deg, var(--success), #27ae60); }
         .stat-card.izin { background: linear-gradient(135deg, var(--warning), #e67e22); }
         .stat-card.sakit { background: linear-gradient(135deg, var(--primary), #2980b9); }
-        .stat-card.alpha { background: linear-gradient(135deg, var(--danger), #c0392b); }
         
         .stat-card h3 {
             font-size: 2.5rem;
@@ -223,7 +270,7 @@
         }
         
         th {
-            background-color: var(--primary);
+            background-color: #8e44ad;
             color: white;
             font-weight: 600;
         }
@@ -244,10 +291,8 @@
             display: inline-block;
         }
         
-        .status-hadir { background-color: rgba(46, 204, 113, 0.2); color: var(--success); }
         .status-izin { background-color: rgba(243, 156, 18, 0.2); color: var(--warning); }
         .status-sakit { background-color: rgba(52, 152, 219, 0.2); color: var(--primary); }
-        .status-alpha { background-color: rgba(231, 76, 60, 0.2); color: var(--danger); }
         
         .action-btn {
             padding: 8px 12px;
@@ -259,10 +304,9 @@
             margin: 2px;
         }
         
-        .btn-hadir { background-color: var(--success); color: white; }
         .btn-izin { background-color: var(--warning); color: white; }
         .btn-sakit { background-color: var(--primary); color: white; }
-        .btn-alpha { background-color: var(--danger); color: white; }
+        .btn-danger { background-color: #e74c3c; color: white; }
         
         .action-btn:hover {
             opacity: 0.9;
@@ -287,6 +331,46 @@
             color: #bdc3c7;
         }
         
+        .keterangan {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 5px;
+            font-style: italic;
+        }
+        
+        .keterangan-container {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+        
+        .keterangan-container.show {
+            max-height: 200px;
+        }
+        
+        .logo-upload {
+            margin-top: 10px;
+            text-align: center;
+        }
+        
+        .logo-upload input {
+            display: none;
+        }
+        
+        .logo-upload label {
+            display: inline-block;
+            padding: 8px 15px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: background 0.3s;
+        }
+        
+        .logo-upload label:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
         @media (max-width: 768px) {
             .dashboard {
                 grid-template-columns: repeat(2, 1fr);
@@ -298,6 +382,16 @@
             
             .btn-group {
                 flex-direction: column;
+            }
+            
+            header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .logo-container {
+                width: 100px;
+                height: 100px;
             }
         }
         
@@ -319,19 +413,26 @@
 <body>
     <div class="container">
         <header>
+            <div class="logo-container">
+                <div class="logo-placeholder" id="logo-display">
+                    <img src="foto-kreasi/WhatsApp Image 2025-10-20 at 17.47.37_e0f1e320.jpg" alt="Foto Kelas X-DKV">
+                </div>
+            </div>
+            <div class="header-content">
+                <h1><i class="fas fa-clipboard-list"></i> Sistem Absensi Ekskul Fotografi</h1>
+                <p>Kelola kehadiran anggota ekskul fotografi - Data tersinkronisasi di semua perangkat</p>
+            </div>
             <div id="connection-status" class="connection-status">
                 <i class="fas fa-circle"></i> <span>Menyambungkan...</span>
             </div>
-            <h1><i class="fas fa-clipboard-list"></i> Sistem Absensi Kelas - Realtime</h1>
-            <p>Kelola kehadiran siswa dengan mudah - Data tersinkronisasi di semua perangkat</p>
         </header>
         
         <div class="card">
-            <h2 style="margin-bottom: 20px; color: var(--primary);"><i class="fas fa-plus-circle"></i> Tambah Data Absensi</h2>
+            <h2 style="margin-bottom: 20px; color: #8e44ad;"><i class="fas fa-plus-circle"></i> Tambah Data Absensi</h2>
             <form id="form-absensi">
                 <div class="form-group">
-                    <label for="nama-siswa"><i class="fas fa-user"></i> Nama Siswa</label>
-                    <input type="text" id="nama-siswa" class="form-control" placeholder="Masukkan nama siswa" required>
+                    <label for="nama-siswa"><i class="fas fa-user"></i> Nama Anggota</label>
+                    <input type="text" id="nama-siswa" class="form-control" placeholder="Masukkan nama anggota ekskul" required>
                 </div>
                 
                 <div class="form-group">
@@ -343,13 +444,7 @@
                     <label><i class="fas fa-clipboard-check"></i> Status Kehadiran</label>
                     <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                         <div style="flex: 1; min-width: 120px;">
-                            <input type="radio" id="status-hadir" name="status" value="hadir" checked>
-                            <label for="status-hadir" class="status-badge status-hadir" style="cursor: pointer; display: block; text-align: center;">
-                                <i class="fas fa-check-circle"></i> Hadir
-                            </label>
-                        </div>
-                        <div style="flex: 1; min-width: 120px;">
-                            <input type="radio" id="status-izin" name="status" value="izin">
+                            <input type="radio" id="status-izin" name="status" value="izin" checked>
                             <label for="status-izin" class="status-badge status-izin" style="cursor: pointer; display: block; text-align: center;">
                                 <i class="fas fa-envelope"></i> Izin
                             </label>
@@ -360,12 +455,13 @@
                                 <i class="fas fa-procedures"></i> Sakit
                             </label>
                         </div>
-                        <div style="flex: 1; min-width: 120px;">
-                            <input type="radio" id="status-alpha" name="status" value="alpha">
-                            <label for="status-alpha" class="status-badge status-alpha" style="cursor: pointer; display: block; text-align: center;">
-                                <i class="fas fa-times-circle"></i> Alpha
-                            </label>
-                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <div id="keterangan-container" class="keterangan-container show">
+                        <label for="keterangan"><i class="fas fa-sticky-note"></i> Keterangan</label>
+                        <textarea id="keterangan" class="form-control" placeholder="Masukkan alasan izin atau sakit..." required></textarea>
                     </div>
                 </div>
                 
@@ -376,10 +472,6 @@
         </div>
         
         <div class="dashboard">
-            <div class="stat-card hadir">
-                <h3 id="hadir-count">0</h3>
-                <p><i class="fas fa-check-circle"></i> Hadir</p>
-            </div>
             <div class="stat-card izin">
                 <h3 id="izin-count">0</h3>
                 <p><i class="fas fa-envelope"></i> Izin</p>
@@ -388,14 +480,10 @@
                 <h3 id="sakit-count">0</h3>
                 <p><i class="fas fa-procedures"></i> Sakit</p>
             </div>
-            <div class="stat-card alpha">
-                <h3 id="alpha-count">0</h3>
-                <p><i class="fas fa-times-circle"></i> Alpha</p>
-            </div>
         </div>
         
         <div class="card">
-            <h2 style="margin-bottom: 20px; color: var(--primary);"><i class="fas fa-list-alt"></i> Data Absensi</h2>
+            <h2 style="margin-bottom: 20px; color: #8e44ad;"><i class="fas fa-list-alt"></i> Data Absensi</h2>
             
             <div class="filters">
                 <div class="filter-group">
@@ -406,10 +494,8 @@
                     <label for="status-filter"><i class="fas fa-filter"></i> Filter Status</label>
                     <select id="status-filter" class="form-control">
                         <option value="semua">Semua Status</option>
-                        <option value="hadir">Hadir</option>
                         <option value="izin">Izin</option>
                         <option value="sakit">Sakit</option>
-                        <option value="alpha">Alpha</option>
                     </select>
                 </div>
                 <div class="filter-group">
@@ -424,9 +510,10 @@
                 <thead>
                     <tr>
                         <th>No</th>
-                        <th>Nama Siswa</th>
+                        <th>Nama Anggota</th>
                         <th>Status</th>
                         <th>Tanggal</th>
+                        <th>Keterangan</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
@@ -448,12 +535,6 @@
         // 🔥 AREA KONFIGURASI FIREBASE - EDIT BAGIAN INI 🔥
         // ==================================================
         
-        // Langkah: 
-        // 1. Buka https://console.firebase.google.com
-        // 2. Buat project baru atau pilih existing
-        // 3. Klik "Add app" → Pilih ikon web </>
-        // 4. Salin konfigurasi dari Firebase dan tempel di bawah
-        
         const firebaseConfig = {
             apiKey: "AIzaSyDqMFyHRhsJdHjHdoBu463ar7k70fmwabY",
             authDomain: "databsaekelas.firebaseapp.com",
@@ -474,7 +555,7 @@
         const database = firebase.database();
         
         // Referensi database untuk absensi
-        const absensiRef = database.ref('absensi');
+        const absensiRef = database.ref('absensi-fotografi');
         
         // Array untuk menyimpan data absensi
         let absensi = [];
@@ -531,19 +612,14 @@
                         <td>${item.nama}</td>
                         <td><span class="status-badge status-${item.status}">${item.status.toUpperCase()}</span></td>
                         <td>${formatTanggal(item.tanggal)}</td>
+                        <td>${item.keterangan || '-'}</td>
                         <td>
                             <div class="btn-group">
-                                <button class="action-btn btn-hadir" onclick="ubahStatus('${item.id}', 'hadir')">
-                                    <i class="fas fa-check-circle"></i> Hadir
-                                </button>
                                 <button class="action-btn btn-izin" onclick="ubahStatus('${item.id}', 'izin')">
                                     <i class="fas fa-envelope"></i> Izin
                                 </button>
                                 <button class="action-btn btn-sakit" onclick="ubahStatus('${item.id}', 'sakit')">
                                     <i class="fas fa-procedures"></i> Sakit
-                                </button>
-                                <button class="action-btn btn-alpha" onclick="ubahStatus('${item.id}', 'alpha')">
-                                    <i class="fas fa-times-circle"></i> Alpha
                                 </button>
                                 <button class="action-btn btn-danger" onclick="hapusAbsensi('${item.id}')">
                                     <i class="fas fa-trash"></i> Hapus
@@ -561,13 +637,14 @@
         }
 
         // Fungsi untuk menambah data absensi ke Firebase
-        function tambahAbsensi(nama, tanggal, status) {
+        function tambahAbsensi(nama, tanggal, status, keterangan) {
             const id = Date.now().toString(); // ID unik berdasarkan timestamp
             const dataBaru = {
                 id: id,
                 nama: nama,
                 tanggal: tanggal,
-                status: status
+                status: status,
+                keterangan: keterangan || ''
             };
             
             // Simpan ke Firebase
@@ -583,14 +660,20 @@
 
         // Fungsi untuk mengubah status kehadiran di Firebase
         function ubahStatus(id, statusBaru) {
-            absensiRef.child(id).update({ status: statusBaru })
-                .then(() => {
-                    console.log('Status berhasil diubah');
-                })
-                .catch((error) => {
-                    console.error('Error mengubah status:', error);
-                    alert('Terjadi kesalahan saat mengubah status. Silakan coba lagi.');
-                });
+            const keterangan = prompt(`Masukkan keterangan untuk status ${statusBaru}:`);
+            if (keterangan === null) return; // User membatalkan
+            
+            absensiRef.child(id).update({ 
+                status: statusBaru,
+                keterangan: keterangan
+            })
+            .then(() => {
+                console.log('Status berhasil diubah');
+            })
+            .catch((error) => {
+                console.error('Error mengubah status:', error);
+                alert('Terjadi kesalahan saat mengubah status. Silakan coba lagi.');
+            });
         }
 
         // Fungsi untuk menghapus data absensi dari Firebase
@@ -618,16 +701,12 @@
             }
             
             // Hitung jumlah berdasarkan status
-            const hadirCount = dataHitung.filter(item => item.status === 'hadir').length;
             const izinCount = dataHitung.filter(item => item.status === 'izin').length;
             const sakitCount = dataHitung.filter(item => item.status === 'sakit').length;
-            const alphaCount = dataHitung.filter(item => item.status === 'alpha').length;
             
             // Update tampilan
-            document.getElementById('hadir-count').textContent = hadirCount;
             document.getElementById('izin-count').textContent = izinCount;
             document.getElementById('sakit-count').textContent = sakitCount;
-            document.getElementById('alpha-count').textContent = alphaCount;
         }
 
         // Fungsi untuk memformat tanggal
@@ -637,6 +716,25 @@
             const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
             const tanggal = new Date(tanggalString);
             return tanggal.toLocaleDateString('id-ID', options);
+        }
+
+        // Fungsi untuk menangani upload logo
+        function handleLogoUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const logoDisplay = document.getElementById('logo-display');
+                    logoDisplay.innerHTML = '';
+                    logoDisplay.style.backgroundImage = `url(${e.target.result})`;
+                    logoDisplay.style.backgroundSize = 'cover';
+                    logoDisplay.style.backgroundPosition = 'center';
+                    
+                    // Simpan ke localStorage
+                    localStorage.setItem('ekskulFotografiLogo', e.target.result);
+                };
+                reader.readAsDataURL(file);
+            }
         }
 
         // Inisialisasi saat halaman dimuat
@@ -653,16 +751,17 @@
                 const nama = document.getElementById('nama-siswa').value.trim();
                 const tanggal = document.getElementById('tanggal-absensi').value;
                 const status = document.querySelector('input[name="status"]:checked').value;
+                const keterangan = document.getElementById('keterangan').value.trim();
                 
-                if (nama) {
-                    tambahAbsensi(nama, tanggal, status);
+                if (nama && keterangan) {
+                    tambahAbsensi(nama, tanggal, status, keterangan);
                     
                     // Reset form
                     document.getElementById('form-absensi').reset();
                     document.getElementById('tanggal-absensi').value = today;
-                    document.getElementById('status-hadir').checked = true;
+                    document.getElementById('status-izin').checked = true;
                 } else {
-                    alert('Nama siswa harus diisi!');
+                    alert('Nama anggota dan keterangan harus diisi!');
                 }
             });
             
@@ -676,6 +775,19 @@
                 document.getElementById('status-filter').value = 'semua';
                 tampilkanAbsensi();
             });
+            
+            // Event listener untuk upload logo
+            document.getElementById('logo-upload-input').addEventListener('change', handleLogoUpload);
+            
+            // Cek apakah ada logo yang disimpan di localStorage
+            const savedLogo = localStorage.getItem('ekskulFotografiLogo');
+            if (savedLogo) {
+                const logoDisplay = document.getElementById('logo-display');
+                logoDisplay.innerHTML = '';
+                logoDisplay.style.backgroundImage = `url(${savedLogo})`;
+                logoDisplay.style.backgroundSize = 'cover';
+                logoDisplay.style.backgroundPosition = 'center';
+            }
             
             // Mendengarkan perubahan data di Firebase
             absensiRef.on('value', (snapshot) => {
