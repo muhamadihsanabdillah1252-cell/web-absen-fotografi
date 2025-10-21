@@ -8,6 +8,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
     <style>
+        /* CSS styles tetap sama */
         :root {
             --primary: #3498db;
             --warning: #f39c12;
@@ -373,7 +374,7 @@
     <div class="container">
         <header>
             <div class="logo-container">
-                <img src="foto/logo-klub.jpg" alt="Logo Ekskul Fotografi" id="logo-image">
+                <img src="foto/logo-klub.jpg" alt="Logo Ekskul Fotografi" id="logo-image" onerror="this.style.display='none'">
             </div>
             <div class="header-content">
                 <h1><i class="fas fa-clipboard-list"></i> Sistem Absensi Ekskul Fotografi</h1>
@@ -495,19 +496,29 @@
         const firebaseConfig = {
             apiKey: "AIzaSyBjQCxB7aDD5rj2B_aR19s9RFhNgzsxxSA",
             authDomain: "database-af06f.firebaseapp.com",
-            databaseURL: "https://database-af06f-default-rtdb.asian-southeast1.firebasedatabase.app",
+            databaseURL: "https://database-af06f-default-rtdb.asia-southeast1.firebasedatabase.app",
             projectId: "database-af06f",
-            storageBucket: "database-af06f.firebasestorage.app",
+            storageBucket: "database-af06f.appspot.com",
             messagingSenderId: "762892084073",
-            appId: "1:762892084073:web:2f07f09ce0e561235653f8",
+            appId: "1:762892084073:web:2f07f09ce0e561235653f8"
         };
+
+        // Debug info
+        console.log("Menginisialisasi Firebase dengan config:", firebaseConfig);
 
         // ==================================================
         // 🚀 AKHIR AREA KONFIGURASI - JANGAN EDIT DI BAWAH 🚀
         // ==================================================
 
         // Inisialisasi Firebase
-        firebase.initializeApp(firebaseConfig);
+        try {
+            firebase.initializeApp(firebaseConfig);
+            console.log("Firebase berhasil diinisialisasi");
+        } catch (error) {
+            console.error("Error inisialisasi Firebase:", error);
+            alert("Error inisialisasi Firebase: " + error.message);
+        }
+        
         const database = firebase.database();
         
         // Referensi database untuk absensi
@@ -603,10 +614,13 @@
                 keterangan: keterangan || ''
             };
             
+            console.log("Menyimpan data:", dataBaru);
+            
             // Simpan ke Firebase
             absensiRef.child(id).set(dataBaru)
                 .then(() => {
                     console.log('Data berhasil disimpan ke Firebase');
+                    alert('Data absensi berhasil disimpan!');
                 })
                 .catch((error) => {
                     console.error('Error menyimpan data:', error);
@@ -625,6 +639,7 @@
             })
             .then(() => {
                 console.log('Status berhasil diubah');
+                alert('Status berhasil diubah!');
             })
             .catch((error) => {
                 console.error('Error mengubah status:', error);
@@ -638,6 +653,7 @@
                 absensiRef.child(id).remove()
                     .then(() => {
                         console.log('Data berhasil dihapus');
+                        alert('Data berhasil dihapus!');
                     })
                     .catch((error) => {
                         console.error('Error menghapus data:', error);
@@ -728,17 +744,24 @@
                     absensi.sort((a, b) => b.id - a.id);
                 }
                 
+                console.log("Data diterima dari Firebase:", absensi);
+                
                 // Tampilkan data
                 tampilkanAbsensi();
+            }, (error) => {
+                console.error("Error membaca data dari Firebase:", error);
+                alert("Error membaca data dari Firebase: " + error.message);
             });
             
             // Monitor status koneksi Firebase
             database.ref('.info/connected').on('value', (snapshot) => {
-                updateConnectionStatus(snapshot.val());
+                const isConnected = snapshot.val();
+                console.log("Status koneksi Firebase:", isConnected);
+                updateConnectionStatus(isConnected);
             });
+            
+            console.log("Aplikasi absensi siap digunakan");
         });
     </script>
 </body>
 </html>
-
-
