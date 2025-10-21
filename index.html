@@ -11,6 +11,7 @@
         /* CSS styles tetap sama */
         :root {
             --primary: #3498db;
+            --success: #2ecc71;
             --warning: #f39c12;
             --light: #f8f9fa;
             --dark: #343a40;
@@ -176,6 +177,11 @@
             transform: translateY(-2px);
         }
         
+        .btn-success {
+            background-color: var(--success);
+            color: white;
+        }
+        
         .btn-warning {
             background-color: var(--warning);
             color: white;
@@ -206,6 +212,7 @@
             transform: translateY(-5px);
         }
         
+        .stat-card.hadir { background: linear-gradient(135deg, var(--success), #27ae60); }
         .stat-card.izin { background: linear-gradient(135deg, var(--warning), #e67e22); }
         .stat-card.sakit { background: linear-gradient(135deg, var(--primary), #2980b9); }
         
@@ -274,6 +281,7 @@
             display: inline-block;
         }
         
+        .status-hadir { background-color: rgba(46, 204, 113, 0.2); color: var(--success); }
         .status-izin { background-color: rgba(243, 156, 18, 0.2); color: var(--warning); }
         .status-sakit { background-color: rgba(52, 152, 219, 0.2); color: var(--primary); }
         
@@ -287,6 +295,7 @@
             margin: 2px;
         }
         
+        .btn-hadir { background-color: var(--success); color: white; }
         .btn-izin { background-color: var(--warning); color: white; }
         .btn-sakit { background-color: var(--primary); color: white; }
         .btn-danger { background-color: #e74c3c; color: white; }
@@ -329,6 +338,11 @@
         
         .keterangan-container.show {
             max-height: 200px;
+        }
+        
+        .optional {
+            color: #7f8c8d;
+            font-weight: normal;
         }
         
         @media (max-width: 768px) {
@@ -402,7 +416,13 @@
                     <label><i class="fas fa-clipboard-check"></i> Status Kehadiran</label>
                     <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                         <div style="flex: 1; min-width: 120px;">
-                            <input type="radio" id="status-izin" name="status" value="izin" checked>
+                            <input type="radio" id="status-hadir" name="status" value="hadir" checked>
+                            <label for="status-hadir" class="status-badge status-hadir" style="cursor: pointer; display: block; text-align: center;">
+                                <i class="fas fa-check-circle"></i> Hadir
+                            </label>
+                        </div>
+                        <div style="flex: 1; min-width: 120px;">
+                            <input type="radio" id="status-izin" name="status" value="izin">
                             <label for="status-izin" class="status-badge status-izin" style="cursor: pointer; display: block; text-align: center;">
                                 <i class="fas fa-envelope"></i> Izin
                             </label>
@@ -417,9 +437,9 @@
                 </div>
                 
                 <div class="form-group">
-                    <div id="keterangan-container" class="keterangan-container show">
-                        <label for="keterangan"><i class="fas fa-sticky-note"></i> Keterangan</label>
-                        <textarea id="keterangan" class="form-control" placeholder="Masukkan alasan izin atau sakit..." required></textarea>
+                    <div id="keterangan-container" class="keterangan-container">
+                        <label for="keterangan"><i class="fas fa-sticky-note"></i> Keterangan <span class="optional">(wajib untuk Izin/Sakit)</span></label>
+                        <textarea id="keterangan" class="form-control" placeholder="Masukkan alasan izin atau sakit..."></textarea>
                     </div>
                 </div>
                 
@@ -430,6 +450,10 @@
         </div>
         
         <div class="dashboard">
+            <div class="stat-card hadir">
+                <h3 id="hadir-count">0</h3>
+                <p><i class="fas fa-check-circle"></i> Hadir</p>
+            </div>
             <div class="stat-card izin">
                 <h3 id="izin-count">0</h3>
                 <p><i class="fas fa-envelope"></i> Izin</p>
@@ -452,6 +476,7 @@
                     <label for="status-filter"><i class="fas fa-filter"></i> Filter Status</label>
                     <select id="status-filter" class="form-control">
                         <option value="semua">Semua Status</option>
+                        <option value="hadir">Hadir</option>
                         <option value="izin">Izin</option>
                         <option value="sakit">Sakit</option>
                     </select>
@@ -541,6 +566,23 @@
             }
         }
 
+        // Fungsi untuk menampilkan/menyembunyikan keterangan berdasarkan status
+        function toggleKeterangan() {
+            const status = document.querySelector('input[name="status"]:checked').value;
+            const keteranganContainer = document.getElementById('keterangan-container');
+            const keteranganInput = document.getElementById('keterangan');
+            
+            if (status === 'hadir') {
+                keteranganContainer.style.maxHeight = '0';
+                keteranganInput.required = false;
+                keteranganInput.placeholder = "Opsional: catatan tambahan...";
+            } else {
+                keteranganContainer.style.maxHeight = '200px';
+                keteranganInput.required = true;
+                keteranganInput.placeholder = "Masukkan alasan izin atau sakit...";
+            }
+        }
+
         // Fungsi untuk menampilkan data absensi
         function tampilkanAbsensi() {
             const tabelBody = document.getElementById('tabel-body');
@@ -582,6 +624,9 @@
                         <td>${item.keterangan || '-'}</td>
                         <td>
                             <div class="btn-group">
+                                <button class="action-btn btn-hadir" onclick="ubahStatus('${item.id}', 'hadir')">
+                                    <i class="fas fa-check-circle"></i> Hadir
+                                </button>
                                 <button class="action-btn btn-izin" onclick="ubahStatus('${item.id}', 'izin')">
                                     <i class="fas fa-envelope"></i> Izin
                                 </button>
@@ -611,7 +656,7 @@
                 nama: nama,
                 tanggal: tanggal,
                 status: status,
-                keterangan: keterangan || ''
+                keterangan: status === 'hadir' ? (keterangan || '') : keterangan
             };
             
             console.log("Menyimpan data:", dataBaru);
@@ -630,13 +675,22 @@
 
         // Fungsi untuk mengubah status kehadiran di Firebase
         function ubahStatus(id, statusBaru) {
-            const keterangan = prompt(`Masukkan keterangan untuk status ${statusBaru}:`);
-            if (keterangan === null) return; // User membatalkan
+            let keterangan = '';
             
-            absensiRef.child(id).update({ 
-                status: statusBaru,
-                keterangan: keterangan
-            })
+            if (statusBaru !== 'hadir') {
+                keterangan = prompt(`Masukkan keterangan untuk status ${statusBaru}:`);
+                if (keterangan === null) return; // User membatalkan
+            }
+            
+            const updateData = { 
+                status: statusBaru
+            };
+            
+            if (keterangan) {
+                updateData.keterangan = keterangan;
+            }
+            
+            absensiRef.child(id).update(updateData)
             .then(() => {
                 console.log('Status berhasil diubah');
                 alert('Status berhasil diubah!');
@@ -673,10 +727,12 @@
             }
             
             // Hitung jumlah berdasarkan status
+            const hadirCount = dataHitung.filter(item => item.status === 'hadir').length;
             const izinCount = dataHitung.filter(item => item.status === 'izin').length;
             const sakitCount = dataHitung.filter(item => item.status === 'sakit').length;
             
             // Update tampilan
+            document.getElementById('hadir-count').textContent = hadirCount;
             document.getElementById('izin-count').textContent = izinCount;
             document.getElementById('sakit-count').textContent = sakitCount;
         }
@@ -697,6 +753,11 @@
             document.getElementById('tanggal-absensi').value = today;
             document.getElementById('tanggal-filter').value = today;
             
+            // Event listener untuk perubahan status
+            document.querySelectorAll('input[name="status"]').forEach(radio => {
+                radio.addEventListener('change', toggleKeterangan);
+            });
+            
             // Event listener untuk form tambah absensi
             document.getElementById('form-absensi').addEventListener('submit', function(e) {
                 e.preventDefault();
@@ -706,15 +767,23 @@
                 const status = document.querySelector('input[name="status"]:checked').value;
                 const keterangan = document.getElementById('keterangan').value.trim();
                 
-                if (nama && keterangan) {
+                // Validasi untuk izin/sakit harus ada keterangan
+                if ((status === 'izin' || status === 'sakit') && !keterangan) {
+                    alert('Keterangan wajib diisi untuk status Izin atau Sakit!');
+                    return;
+                }
+                
+                if (nama) {
                     tambahAbsensi(nama, tanggal, status, keterangan);
                     
                     // Reset form
                     document.getElementById('form-absensi').reset();
                     document.getElementById('tanggal-absensi').value = today;
-                    document.getElementById('status-izin').checked = true;
+                    document.getElementById('status-hadir').checked = true;
+                    document.getElementById('keterangan').value = '';
+                    toggleKeterangan(); // Update tampilan keterangan
                 } else {
-                    alert('Nama anggota dan keterangan harus diisi!');
+                    alert('Nama anggota harus diisi!');
                 }
             });
             
@@ -759,6 +828,9 @@
                 console.log("Status koneksi Firebase:", isConnected);
                 updateConnectionStatus(isConnected);
             });
+            
+            // Inisialisasi tampilan keterangan
+            toggleKeterangan();
             
             console.log("Aplikasi absensi siap digunakan");
         });
