@@ -18,6 +18,7 @@
             --gray: #A0A4B8;
             --success: #4CD964;
             --card-bg: rgba(255, 255, 255, 0.95);
+            --admin-color: #FF9500;
         }
         
         * {
@@ -258,6 +259,17 @@
         }
         
         .btn-warning:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 149, 0, 0.4);
+        }
+        
+        .btn-admin {
+            background: linear-gradient(135deg, var(--admin-color), #FFB143);
+            color: white;
+            box-shadow: 0 5px 15px rgba(255, 149, 0, 0.3);
+        }
+        
+        .btn-admin:hover {
             transform: translateY(-3px);
             box-shadow: 0 8px 20px rgba(255, 149, 0, 0.4);
         }
@@ -514,6 +526,113 @@
             margin-bottom: 0;
         }
         
+        /* Admin Panel Styles */
+        .admin-panel {
+            position: fixed;
+            top: 0;
+            right: -350px;
+            width: 350px;
+            height: 100vh;
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            box-shadow: -5px 0 30px rgba(0,0,0,0.1);
+            padding: 25px;
+            transition: right 0.3s ease;
+            z-index: 1000;
+            overflow-y: auto;
+        }
+        
+        .admin-panel.active {
+            right: 0;
+        }
+        
+        .admin-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1001;
+            background: var(--admin-color);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(255, 149, 0, 0.3);
+            transition: all 0.3s;
+        }
+        
+        .admin-toggle:hover {
+            transform: scale(1.1);
+        }
+        
+        .admin-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        
+        .admin-header h2 {
+            font-size: 1.5rem;
+            color: var(--admin-color);
+            display: flex;
+            align-items: center;
+        }
+        
+        .admin-header i {
+            margin-right: 10px;
+        }
+        
+        .admin-section {
+            margin-bottom: 25px;
+        }
+        
+        .admin-section h3 {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+        }
+        
+        .admin-section i {
+            margin-right: 10px;
+            color: var(--admin-color);
+        }
+        
+        .admin-badge {
+            display: inline-block;
+            background: var(--admin-color);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+        
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+            z-index: 999;
+            display: none;
+        }
+        
+        .overlay.active {
+            display: block;
+        }
+        
         @media (max-width: 768px) {
             .filters {
                 flex-direction: column;
@@ -539,6 +658,11 @@
             .logo-container {
                 width: 80px;
                 height: 80px;
+            }
+            
+            .admin-panel {
+                width: 100%;
+                right: -100%;
             }
         }
         
@@ -585,7 +709,7 @@
                         <input type="date" id="tanggal-absensi" class="form-control" required>
                     </div>
                     
-                    <div class="add-member-form">
+                    <div class="add-member-form" id="add-member-form">
                         <div class="form-group">
                             <label for="nama-baru"><i class="fas fa-user-plus"></i> Tambah Anggota Baru</label>
                             <div class="form-row">
@@ -670,6 +794,66 @@
         </div>
     </div>
 
+    <!-- Admin Panel -->
+    <button class="admin-toggle" id="admin-toggle">
+        <i class="fas fa-user-shield"></i>
+    </button>
+    
+    <div class="overlay" id="overlay"></div>
+    
+    <div class="admin-panel" id="admin-panel">
+        <div class="admin-header">
+            <h2><i class="fas fa-user-shield"></i> Panel Admin</h2>
+            <button id="close-admin" class="btn btn-danger btn-sm">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="admin-section">
+            <h3><i class="fas fa-key"></i> Login Admin</h3>
+            <div class="form-group">
+                <label for="admin-password">Password Admin</label>
+                <input type="password" id="admin-password" class="form-control" placeholder="Masukkan password admin">
+            </div>
+            <button id="btn-login-admin" class="btn btn-admin" style="width: 100%;">
+                <i class="fas fa-sign-in-alt"></i> Login
+            </button>
+            <button id="btn-logout-admin" class="btn btn-danger" style="width: 100%; margin-top: 10px; display: none;">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </div>
+        
+        <div class="admin-section" id="admin-controls" style="display: none;">
+            <h3><i class="fas fa-cogs"></i> Kontrol Admin</h3>
+            <div class="form-group">
+                <label for="admin-new-password">Ganti Password Admin</label>
+                <input type="password" id="admin-new-password" class="form-control" placeholder="Password baru">
+            </div>
+            <button id="btn-change-password" class="btn btn-admin" style="width: 100%;">
+                <i class="fas fa-key"></i> Ganti Password
+            </button>
+            
+            <div class="form-group" style="margin-top: 20px;">
+                <label for="admin-reset-data">Reset Data</label>
+                <div class="btn-group" style="width: 100%;">
+                    <button id="btn-reset-absensi" class="btn btn-danger" style="flex: 1;">
+                        <i class="fas fa-trash"></i> Reset Absensi
+                    </button>
+                    <button id="btn-reset-anggota" class="btn btn-danger" style="flex: 1;">
+                        <i class="fas fa-trash"></i> Reset Anggota
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="admin-section">
+            <h3><i class="fas fa-info-circle"></i> Informasi Sistem</h3>
+            <p><strong>Versi:</strong> 2.0 (Admin)</p>
+            <p><strong>Status:</strong> <span id="admin-status">Tidak aktif</span></p>
+            <p><strong>Pengguna:</strong> <span id="admin-user">-</span></p>
+        </div>
+    </div>
+
     <script>
         // ==================================================
         // 🔥 AREA KONFIGURASI FIREBASE - EDIT BAGIAN INI 🔥
@@ -704,11 +888,18 @@
         const absensiRef = database.ref('absensi-fotografi');
         // Referensi database untuk daftar anggota
         const anggotaRef = database.ref('anggota-fotografi');
+        // Referensi database untuk admin
+        const adminRef = database.ref('admin-fotografi');
         
         // Array untuk menyimpan data absensi
         let absensi = [];
         // Array untuk menyimpan daftar nama anggota
         let daftarAnggota = [];
+        
+        // Status admin
+        let isAdminLoggedIn = false;
+        const ADMIN_PASSWORD_KEY = 'admin_password_fotografi';
+        const ADMIN_SESSION_KEY = 'admin_session_fotografi';
 
         // Fungsi untuk mengupdate status koneksi
         function updateConnectionStatus(status) {
@@ -766,9 +957,9 @@
                         <td>${formatTanggal(item.tanggal)}</td>
                         <td>
                             <div class="btn-group">
-                                <button class="action-btn btn-danger" onclick="hapusAbsensi('${item.id}')">
+                                ${isAdminLoggedIn ? `<button class="action-btn btn-danger" onclick="hapusAbsensi('${item.id}')">
                                     <i class="fas fa-trash"></i> Hapus
-                                </button>
+                                </button>` : ''}
                             </div>
                         </td>
                     `;
@@ -921,9 +1112,9 @@
                         <button class="mark-present-btn" onclick="tandaiHadir('${anggota.nama}')">
                             <i class="fas fa-check"></i> Hadir
                         </button>
-                        <button class="action-btn btn-danger" onclick="hapusAnggota('${anggota.id}', '${anggota.nama}')">
+                        ${isAdminLoggedIn ? `<button class="action-btn btn-danger" onclick="hapusAnggota('${anggota.id}', '${anggota.nama}')">
                             <i class="fas fa-trash"></i>
-                        </button>
+                        </button>` : ''}
                     </div>
                 `;
                 
@@ -987,6 +1178,109 @@
             }, 3000);
         }
 
+        // Fungsi untuk login admin
+        function loginAdmin(password) {
+            // Cek password admin di localStorage
+            const storedPassword = localStorage.getItem(ADMIN_PASSWORD_KEY);
+            
+            // Jika belum ada password admin, set default password
+            if (!storedPassword) {
+                localStorage.setItem(ADMIN_PASSWORD_KEY, 'admin123');
+            }
+            
+            // Verifikasi password
+            if (password === localStorage.getItem(ADMIN_PASSWORD_KEY)) {
+                isAdminLoggedIn = true;
+                localStorage.setItem(ADMIN_SESSION_KEY, 'active');
+                updateAdminUI();
+                showNotification('Login admin berhasil!', 'success');
+                return true;
+            } else {
+                showNotification('Password admin salah!', 'error');
+                return false;
+            }
+        }
+
+        // Fungsi untuk logout admin
+        function logoutAdmin() {
+            isAdminLoggedIn = false;
+            localStorage.removeItem(ADMIN_SESSION_KEY);
+            updateAdminUI();
+            showNotification('Logout admin berhasil!', 'success');
+        }
+
+        // Fungsi untuk mengubah password admin
+        function changeAdminPassword(newPassword) {
+            if (newPassword.length < 4) {
+                showNotification('Password minimal 4 karakter!', 'error');
+                return;
+            }
+            
+            localStorage.setItem(ADMIN_PASSWORD_KEY, newPassword);
+            showNotification('Password admin berhasil diubah!', 'success');
+            document.getElementById('admin-new-password').value = '';
+        }
+
+        // Fungsi untuk update UI admin
+        function updateAdminUI() {
+            const adminControls = document.getElementById('admin-controls');
+            const addMemberForm = document.getElementById('add-member-form');
+            const btnLoginAdmin = document.getElementById('btn-login-admin');
+            const btnLogoutAdmin = document.getElementById('btn-logout-admin');
+            const adminStatus = document.getElementById('admin-status');
+            const adminUser = document.getElementById('admin-user');
+            
+            if (isAdminLoggedIn) {
+                adminControls.style.display = 'block';
+                addMemberForm.style.display = 'block';
+                btnLoginAdmin.style.display = 'none';
+                btnLogoutAdmin.style.display = 'block';
+                adminStatus.textContent = 'Aktif';
+                adminStatus.style.color = 'var(--success)';
+                adminUser.textContent = 'Admin';
+            } else {
+                adminControls.style.display = 'none';
+                addMemberForm.style.display = 'none';
+                btnLoginAdmin.style.display = 'block';
+                btnLogoutAdmin.style.display = 'none';
+                adminStatus.textContent = 'Tidak aktif';
+                adminStatus.style.color = 'var(--secondary)';
+                adminUser.textContent = '-';
+            }
+            
+            // Refresh tampilan data
+            tampilkanAbsensi();
+            tampilkanDaftarAnggota();
+        }
+
+        // Fungsi untuk reset data absensi
+        function resetAbsensi() {
+            if (confirm('Apakah Anda yakin ingin menghapus SEMUA data absensi? Tindakan ini tidak dapat dibatalkan!')) {
+                absensiRef.remove()
+                    .then(() => {
+                        showNotification('Semua data absensi berhasil dihapus!', 'success');
+                    })
+                    .catch((error) => {
+                        console.error('Error menghapus data absensi:', error);
+                        showNotification('Terjadi kesalahan saat menghapus data absensi', 'error');
+                    });
+            }
+        }
+
+        // Fungsi untuk reset data anggota
+        function resetAnggota() {
+            if (confirm('Apakah Anda yakin ingin menghapus SEMUA data anggota? Tindakan ini tidak dapat dibatalkan!')) {
+                anggotaRef.remove()
+                    .then(() => {
+                        showNotification('Semua data anggota berhasil dihapus!', 'success');
+                    })
+                    .catch((error) => {
+                        console.error('Error menghapus data anggota:', error);
+                        showNotification('Terjadi kesalahan saat menghapus data anggota', 'error');
+                    });
+            }
+        }
+
         // Inisialisasi saat halaman dimuat
         document.addEventListener('DOMContentLoaded', function() {
             // Set tanggal default ke hari ini
@@ -999,6 +1293,11 @@
             
             // Event listener untuk tombol tambah anggota
             document.getElementById('btn-tambah-anggota').addEventListener('click', function() {
+                if (!isAdminLoggedIn) {
+                    showNotification('Hanya admin yang dapat menambah anggota baru!', 'error');
+                    return;
+                }
+                
                 const namaBaru = document.getElementById('nama-baru').value.trim();
                 
                 if (namaBaru) {
@@ -1030,6 +1329,57 @@
             document.getElementById('btn-export').addEventListener('click', function() {
                 showNotification('Fitur export akan segera tersedia!', 'success');
             });
+            
+            // Event listener untuk admin panel
+            document.getElementById('admin-toggle').addEventListener('click', function() {
+                document.getElementById('admin-panel').classList.add('active');
+                document.getElementById('overlay').classList.add('active');
+            });
+            
+            document.getElementById('close-admin').addEventListener('click', function() {
+                document.getElementById('admin-panel').classList.remove('active');
+                document.getElementById('overlay').classList.remove('active');
+            });
+            
+            document.getElementById('overlay').addEventListener('click', function() {
+                document.getElementById('admin-panel').classList.remove('active');
+                document.getElementById('overlay').classList.remove('active');
+            });
+            
+            // Event listener untuk login admin
+            document.getElementById('btn-login-admin').addEventListener('click', function() {
+                const password = document.getElementById('admin-password').value;
+                if (password) {
+                    if (loginAdmin(password)) {
+                        document.getElementById('admin-password').value = '';
+                    }
+                } else {
+                    showNotification('Masukkan password admin!', 'error');
+                }
+            });
+            
+            // Event listener untuk logout admin
+            document.getElementById('btn-logout-admin').addEventListener('click', logoutAdmin);
+            
+            // Event listener untuk ganti password admin
+            document.getElementById('btn-change-password').addEventListener('click', function() {
+                const newPassword = document.getElementById('admin-new-password').value;
+                if (newPassword) {
+                    changeAdminPassword(newPassword);
+                } else {
+                    showNotification('Masukkan password baru!', 'error');
+                }
+            });
+            
+            // Event listener untuk reset data
+            document.getElementById('btn-reset-absensi').addEventListener('click', resetAbsensi);
+            document.getElementById('btn-reset-anggota').addEventListener('click', resetAnggota);
+            
+            // Cek session admin
+            if (localStorage.getItem(ADMIN_SESSION_KEY) === 'active') {
+                isAdminLoggedIn = true;
+                updateAdminUI();
+            }
             
             // Mendengarkan perubahan data absensi di Firebase
             absensiRef.on('value', (snapshot) => {
