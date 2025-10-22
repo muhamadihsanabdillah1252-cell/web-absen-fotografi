@@ -8,59 +8,73 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
     <style>
-        /* CSS styles tetap sama */
         :root {
-            --primary: #3498db;
-            --success: #2ecc71;
-            --warning: #f39c12;
-            --light: #f8f9fa;
-            --dark: #343a40;
+            --primary: #6C63FF;
+            --primary-light: #8A85FF;
+            --secondary: #FF6584;
+            --accent: #36D1DC;
+            --light: #F8F9FF;
+            --dark: #2A2D3E;
+            --gray: #A0A4B8;
+            --success: #4CD964;
+            --card-bg: rgba(255, 255, 255, 0.95);
         }
         
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
         body {
-            background-color: #f5f7fa;
-            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: var(--dark);
             line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
         }
         
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 20px;
         }
         
         header {
-            background: linear-gradient(135deg, #8e44ad, #9b59b6);
-            color: white;
-            padding: 25px 0;
-            border-radius: 10px;
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 25px 30px;
             margin-bottom: 30px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            text-align: center;
-            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 20px;
+            justify-content: space-between;
             flex-wrap: wrap;
+            gap: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
         }
         
         .logo-container {
-            width: 120px;
-            height: 120px;
-            border-radius: 15px;
+            width: 100px;
+            height: 100px;
+            border-radius: 20px;
             background: white;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             overflow: hidden;
             border: 3px solid white;
         }
@@ -76,47 +90,87 @@
             min-width: 300px;
         }
         
-        .connection-status {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            display: flex;
-            align-items: center;
-            font-size: 0.9rem;
-            background-color: rgba(255, 255, 255, 0.2);
-            padding: 5px 10px;
-            border-radius: 20px;
-        }
-        
-        .connection-status.connected {
-            color: #2ecc71;
-        }
-        
-        .connection-status.disconnected {
-            color: #e74c3c;
-        }
-        
-        header h1 {
+        .header-content h1 {
             font-size: 2.2rem;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
         }
         
-        header p {
-            opacity: 0.9;
+        .header-content p {
+            color: var(--gray);
             font-size: 1.1rem;
         }
         
+        .connection-status {
+            display: flex;
+            align-items: center;
+            font-size: 0.9rem;
+            background: rgba(108, 99, 255, 0.1);
+            padding: 8px 15px;
+            border-radius: 20px;
+            color: var(--primary);
+        }
+        
+        .connection-status.connected {
+            color: var(--success);
+        }
+        
+        .connection-status.disconnected {
+            color: var(--secondary);
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 25px;
+        }
+        
+        @media (max-width: 992px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+        
         .card {
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             padding: 25px;
             margin-bottom: 25px;
-            transition: transform 0.3s;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
         
         .card:hover {
             transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        
+        .card-header i {
+            font-size: 1.5rem;
+            margin-right: 10px;
+            color: var(--primary);
+        }
+        
+        .card-header h2 {
+            font-size: 1.5rem;
+            color: var(--dark);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
         }
         
         .form-group {
@@ -132,28 +186,25 @@
         
         .form-control {
             width: 100%;
-            padding: 12px 15px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
+            padding: 15px 20px;
+            border: 1px solid rgba(0,0,0,0.1);
+            border-radius: 12px;
             font-size: 1rem;
-            transition: border 0.3s;
+            transition: all 0.3s;
+            background: rgba(255, 255, 255, 0.7);
         }
         
         .form-control:focus {
             border-color: var(--primary);
             outline: none;
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
-        }
-        
-        textarea.form-control {
-            min-height: 80px;
-            resize: vertical;
+            box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.2);
+            background: white;
         }
         
         .btn {
-            padding: 12px 20px;
+            padding: 15px 25px;
             border: none;
-            border-radius: 8px;
+            border-radius: 12px;
             cursor: pointer;
             font-weight: 600;
             font-size: 1rem;
@@ -168,57 +219,80 @@
         }
         
         .btn-primary {
-            background-color: var(--primary);
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
             color: white;
+            box-shadow: 0 5px 15px rgba(108, 99, 255, 0.3);
         }
         
         .btn-primary:hover {
-            background-color: #2980b9;
-            transform: translateY(-2px);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(108, 99, 255, 0.4);
         }
         
         .btn-success {
-            background-color: var(--success);
+            background: linear-gradient(135deg, var(--success), #34C759);
             color: white;
+            box-shadow: 0 5px 15px rgba(76, 217, 100, 0.3);
         }
         
-        .btn-warning {
-            background-color: var(--warning);
-            color: white;
+        .btn-success:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(76, 217, 100, 0.4);
         }
         
         .btn-danger {
-            background-color: #e74c3c;
+            background: linear-gradient(135deg, var(--secondary), #FF4B6E);
             color: white;
+            box-shadow: 0 5px 15px rgba(255, 101, 132, 0.3);
         }
         
-        .dashboard {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
+        .btn-danger:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 101, 132, 0.4);
+        }
+        
+        .btn-warning {
+            background: linear-gradient(135deg, #FF9500, #FFB143);
+            color: white;
+            box-shadow: 0 5px 15px rgba(255, 149, 0, 0.3);
+        }
+        
+        .btn-warning:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 149, 0, 0.4);
+        }
+        
+        .btn-sm {
+            padding: 10px 15px;
+            font-size: 0.9rem;
         }
         
         .stat-card {
             text-align: center;
             padding: 25px 15px;
-            border-radius: 10px;
+            border-radius: 15px;
             color: white;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             transition: transform 0.3s;
+            margin-bottom: 20px;
         }
         
         .stat-card:hover {
             transform: translateY(-5px);
         }
         
-        .stat-card.hadir { background: linear-gradient(135deg, var(--success), #27ae60); }
-        .stat-card.izin { background: linear-gradient(135deg, var(--warning), #e67e22); }
-        .stat-card.sakit { background: linear-gradient(135deg, var(--primary), #2980b9); }
+        .stat-card.hadir { 
+            background: linear-gradient(135deg, var(--success), #34C759); 
+        }
+        
+        .stat-card.anggota { 
+            background: linear-gradient(135deg, var(--primary), var(--primary-light)); 
+        }
         
         .stat-card h3 {
             font-size: 2.5rem;
             margin-bottom: 10px;
+            font-weight: 700;
         }
         
         .stat-card p {
@@ -229,48 +303,49 @@
         .filters {
             display: flex;
             flex-wrap: wrap;
-            gap: 20px;
+            gap: 15px;
             margin-bottom: 25px;
         }
         
         .filter-group {
             flex: 1;
-            min-width: 200px;
+            min-width: 150px;
         }
         
         .filter-group label {
             display: block;
             margin-bottom: 8px;
             font-weight: 600;
+            font-size: 0.9rem;
         }
         
         table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border-radius: 15px;
             overflow: hidden;
         }
         
         th, td {
             padding: 15px;
             text-align: left;
-            border-bottom: 1px solid #e0e0e0;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
         }
         
         th {
-            background-color: #8e44ad;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
             color: white;
             font-weight: 600;
         }
         
         tr:nth-child(even) {
-            background-color: #f8f9fa;
+            background-color: rgba(248, 249, 255, 0.5);
         }
         
         tr:hover {
-            background-color: #e8f4fc;
+            background-color: rgba(108, 99, 255, 0.05);
         }
         
         .status-badge {
@@ -281,24 +356,26 @@
             display: inline-block;
         }
         
-        .status-hadir { background-color: rgba(46, 204, 113, 0.2); color: var(--success); }
-        .status-izin { background-color: rgba(243, 156, 18, 0.2); color: var(--warning); }
-        .status-sakit { background-color: rgba(52, 152, 219, 0.2); color: var(--primary); }
+        .status-hadir { 
+            background-color: rgba(76, 217, 100, 0.2); 
+            color: var(--success); 
+        }
         
         .action-btn {
             padding: 8px 12px;
             border: none;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
             font-weight: 600;
             transition: all 0.3s;
             margin: 2px;
+            font-size: 0.85rem;
         }
         
-        .btn-hadir { background-color: var(--success); color: white; }
-        .btn-izin { background-color: var(--warning); color: white; }
-        .btn-sakit { background-color: var(--primary); color: white; }
-        .btn-danger { background-color: #e74c3c; color: white; }
+        .btn-danger { 
+            background: var(--secondary); 
+            color: white; 
+        }
         
         .action-btn:hover {
             opacity: 0.9;
@@ -314,40 +391,136 @@
         .empty-state {
             text-align: center;
             padding: 40px 20px;
-            color: #7f8c8d;
+            color: var(--gray);
         }
         
         .empty-state i {
             font-size: 3rem;
             margin-bottom: 15px;
-            color: #bdc3c7;
+            color: var(--gray);
+            opacity: 0.5;
         }
         
-        .keterangan {
-            font-size: 0.85rem;
-            color: #666;
-            margin-top: 5px;
-            font-style: italic;
+        .search-container {
+            position: relative;
         }
         
-        .keterangan-container {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease;
-        }
-        
-        .keterangan-container.show {
+        .search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid rgba(0,0,0,0.1);
+            border-radius: 0 0 12px 12px;
             max-height: 200px;
+            overflow-y: auto;
+            z-index: 10;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            display: none;
         }
         
-        .optional {
-            color: #7f8c8d;
-            font-weight: normal;
+        .search-result-item {
+            padding: 12px 15px;
+            cursor: pointer;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            transition: background 0.2s;
+        }
+        
+        .search-result-item:hover {
+            background-color: rgba(108, 99, 255, 0.1);
+        }
+        
+        .search-result-item:last-child {
+            border-bottom: none;
+        }
+        
+        .hadir-btn {
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        .today-highlight {
+            background: linear-gradient(135deg, var(--accent), #5B86E5);
+            color: white;
+            padding: 15px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(54, 209, 220, 0.3);
+        }
+        
+        .members-list {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 15px;
+            border-radius: 12px;
+            border: 1px solid rgba(0,0,0,0.1);
+        }
+        
+        .member-item {
+            padding: 12px 15px;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.2s;
+        }
+        
+        .member-item:hover {
+            background-color: rgba(108, 99, 255, 0.05);
+        }
+        
+        .member-item:last-child {
+            border-bottom: none;
+        }
+        
+        .member-name {
+            font-weight: 500;
+        }
+        
+        .mark-present-btn {
+            padding: 6px 12px;
+            background: var(--success);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+        
+        .mark-present-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 3px 8px rgba(76, 217, 100, 0.3);
+        }
+        
+        .add-member-form {
+            background: rgba(108, 99, 255, 0.05);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border: 1px dashed rgba(108, 99, 255, 0.3);
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 15px;
+            align-items: flex-end;
+        }
+        
+        .form-row .form-group {
+            flex: 1;
+            margin-bottom: 0;
         }
         
         @media (max-width: 768px) {
-            .dashboard {
-                grid-template-columns: repeat(2, 1fr);
+            .filters {
+                flex-direction: column;
+            }
+            
+            .form-row {
+                flex-direction: column;
             }
             
             th, td {
@@ -364,22 +537,18 @@
             }
             
             .logo-container {
-                width: 100px;
-                height: 100px;
+                width: 80px;
+                height: 80px;
             }
         }
         
         @media (max-width: 480px) {
-            .dashboard {
-                grid-template-columns: 1fr;
-            }
-            
             table {
                 font-size: 0.9rem;
             }
             
-            .filters {
-                flex-direction: column;
+            .card {
+                padding: 20px;
             }
         }
     </style>
@@ -391,124 +560,112 @@
                 <img src="foto/logo-klub.jpg" alt="Logo Ekskul Fotografi" id="logo-image" onerror="this.style.display='none'">
             </div>
             <div class="header-content">
-                <h1><i class="fas fa-clipboard-list"></i> Sistem Absensi Ekskul Fotografi</h1>
-                <p>Kehadiran Anggota Ekskul Fotografi</p>
+                <h1>Sistem Absensi Fotografi</h1>
+                <p>Kelola kehadiran anggota ekskul dengan mudah</p>
             </div>
             <div id="connection-status" class="connection-status">
                 <i class="fas fa-circle"></i> <span>Menyambungkan...</span>
             </div>
         </header>
         
-        <div class="card">
-            <h2 style="margin-bottom: 20px; color: #8e44ad;"><i class="fas fa-plus-circle"></i> Tambah Data Absensi</h2>
-            <form id="form-absensi">
-                <div class="form-group">
-                    <label for="nama-siswa"><i class="fas fa-user"></i> Nama Anggota</label>
-                    <input type="text" id="nama-siswa" class="form-control" placeholder="Masukkan nama anggota ekskul" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="tanggal-absensi"><i class="fas fa-calendar-alt"></i> Tanggal Absensi</label>
-                    <input type="date" id="tanggal-absensi" class="form-control" required>
-                </div>
-                
-                <div class="form-group">
-                    <label><i class="fas fa-clipboard-check"></i> Status Kehadiran</label>
-                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                        <div style="flex: 1; min-width: 120px;">
-                            <input type="radio" id="status-hadir" name="status" value="hadir" checked>
-                            <label for="status-hadir" class="status-badge status-hadir" style="cursor: pointer; display: block; text-align: center;">
-                                <i class="fas fa-check-circle"></i> Hadir
-                            </label>
+        <div class="today-highlight">
+            <h3><i class="far fa-calendar-check"></i> Absensi Hari Ini</h3>
+            <p id="today-date">Minggu, 1 Januari 2023</p>
+        </div>
+        
+        <div class="main-content">
+            <div class="left-column">
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-user-check"></i> Absensi Cepat</h2>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="tanggal-absensi"><i class="far fa-calendar-alt"></i> Tanggal</label>
+                        <input type="date" id="tanggal-absensi" class="form-control" required>
+                    </div>
+                    
+                    <div class="add-member-form">
+                        <div class="form-group">
+                            <label for="nama-baru"><i class="fas fa-user-plus"></i> Tambah Anggota Baru</label>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <input type="text" id="nama-baru" class="form-control" placeholder="Masukkan nama anggota baru">
+                                </div>
+                                <button id="btn-tambah-anggota" class="btn btn-primary btn-sm">
+                                    <i class="fas fa-plus"></i> Tambah
+                                </button>
+                            </div>
                         </div>
-                        <div style="flex: 1; min-width: 120px;">
-                            <input type="radio" id="status-izin" name="status" value="izin">
-                            <label for="status-izin" class="status-badge status-izin" style="cursor: pointer; display: block; text-align: center;">
-                                <i class="fas fa-envelope"></i> Izin
-                            </label>
-                        </div>
-                        <div style="flex: 1; min-width: 120px;">
-                            <input type="radio" id="status-sakit" name="status" value="sakit">
-                            <label for="status-sakit" class="status-badge status-sakit" style="cursor: pointer; display: block; text-align: center;">
-                                <i class="fas fa-procedures"></i> Sakit
-                            </label>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-users"></i> Daftar Anggota</label>
+                        <div class="members-list" id="members-list">
+                            <!-- Daftar anggota akan diisi oleh JavaScript -->
                         </div>
                     </div>
                 </div>
                 
-                <div class="form-group">
-                    <div id="keterangan-container" class="keterangan-container">
-                        <label for="keterangan"><i class="fas fa-sticky-note"></i> Keterangan <span class="optional">(wajib untuk Izin/Sakit)</span></label>
-                        <textarea id="keterangan" class="form-control" placeholder="Masukkan alasan izin atau sakit..."></textarea>
+                <div class="dashboard">
+                    <div class="stat-card hadir">
+                        <h3 id="hadir-count">0</h3>
+                        <p><i class="fas fa-user-check"></i> Hadir Hari Ini</p>
+                    </div>
+                    <div class="stat-card anggota">
+                        <h3 id="anggota-count">0</h3>
+                        <p><i class="fas fa-users"></i> Total Anggota</p>
                     </div>
                 </div>
-                
-                <button type="submit" class="btn btn-primary" style="width: 100%;">
-                    <i class="fas fa-save"></i> Simpan Absensi
-                </button>
-            </form>
-        </div>
-        
-        <div class="dashboard">
-            <div class="stat-card hadir">
-                <h3 id="hadir-count">0</h3>
-                <p><i class="fas fa-check-circle"></i> Hadir</p>
-            </div>
-            <div class="stat-card izin">
-                <h3 id="izin-count">0</h3>
-                <p><i class="fas fa-envelope"></i> Izin</p>
-            </div>
-            <div class="stat-card sakit">
-                <h3 id="sakit-count">0</h3>
-                <p><i class="fas fa-procedures"></i> Sakit</p>
-            </div>
-        </div>
-        
-        <div class="card">
-            <h2 style="margin-bottom: 20px; color: #8e44ad;"><i class="fas fa-list-alt"></i> Data Absensi</h2>
-            
-            <div class="filters">
-                <div class="filter-group">
-                    <label for="tanggal-filter"><i class="fas fa-filter"></i> Filter Tanggal</label>
-                    <input type="date" id="tanggal-filter" class="form-control">
-                </div>
-                <div class="filter-group">
-                    <label for="status-filter"><i class="fas fa-filter"></i> Filter Status</label>
-                    <select id="status-filter" class="form-control">
-                        <option value="semua">Semua Status</option>
-                        <option value="hadir">Hadir</option>
-                        <option value="izin">Izin</option>
-                        <option value="sakit">Sakit</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label style="visibility: hidden;">Aksi</label>
-                    <button id="reset-filter" class="btn btn-danger" style="width: 100%;">
-                        <i class="fas fa-redo"></i> Reset Filter
-                    </button>
-                </div>
             </div>
             
-            <table id="tabel-absensi">
-                <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>Nama Anggota</th>
-                        <th>Status</th>
-                        <th>Tanggal</th>
-                        <th>Keterangan</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-                <tbody id="tabel-body">
-                    <!-- Data akan diisi oleh JavaScript -->
-                </tbody>
-            </table>
-            
-            <div id="empty-state" class="empty-state" style="display: none;">
-                <i class="fas fa-clipboard"></i>
-                <h3>Belum ada data absensi</h3>
-                <p>Silakan tambah data absensi menggunakan form di atas</p>
+            <div class="right-column">
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-list-alt"></i> Data Absensi</h2>
+                        <button id="btn-export" class="btn btn-warning btn-sm">
+                            <i class="fas fa-download"></i> Export
+                        </button>
+                    </div>
+                    
+                    <div class="filters">
+                        <div class="filter-group">
+                            <label for="tanggal-filter"><i class="fas fa-filter"></i> Filter Tanggal</label>
+                            <input type="date" id="tanggal-filter" class="form-control">
+                        </div>
+                        <div class="filter-group">
+                            <label for="nama-filter"><i class="fas fa-search"></i> Cari Nama</label>
+                            <input type="text" id="nama-filter" class="form-control" placeholder="Cari nama...">
+                        </div>
+                        <div class="filter-group">
+                            <label style="visibility: hidden;">Aksi</label>
+                            <button id="reset-filter" class="btn btn-danger" style="width: 100%;">
+                                <i class="fas fa-redo"></i> Reset
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <table id="tabel-absensi">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Nama Anggota</th>
+                                <th>Status</th>
+                                <th>Tanggal</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabel-body">
+                            <!-- Data akan diisi oleh JavaScript -->
+                        </tbody>
+                    </table>
+                    
+                    <div id="empty-state" class="empty-state" style="display: none;">
+                        <i class="fas fa-clipboard-list"></i>
+                        <h3>Belum ada data absensi</h3>
+                        <p>Silakan tandai kehadiran menggunakan form di samping</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -528,9 +685,6 @@
             appId: "1:762892084073:web:2f07f09ce0e561235653f8"
         };
 
-        // Debug info
-        console.log("Menginisialisasi Firebase dengan config:", firebaseConfig);
-
         // ==================================================
         // 🚀 AKHIR AREA KONFIGURASI - JANGAN EDIT DI BAWAH 🚀
         // ==================================================
@@ -548,9 +702,13 @@
         
         // Referensi database untuk absensi
         const absensiRef = database.ref('absensi-fotografi');
+        // Referensi database untuk daftar anggota
+        const anggotaRef = database.ref('anggota-fotografi');
         
         // Array untuk menyimpan data absensi
         let absensi = [];
+        // Array untuk menyimpan daftar nama anggota
+        let daftarAnggota = [];
 
         // Fungsi untuk mengupdate status koneksi
         function updateConnectionStatus(status) {
@@ -566,39 +724,24 @@
             }
         }
 
-        // Fungsi untuk menampilkan/menyembunyikan keterangan berdasarkan status
-        function toggleKeterangan() {
-            const status = document.querySelector('input[name="status"]:checked').value;
-            const keteranganContainer = document.getElementById('keterangan-container');
-            const keteranganInput = document.getElementById('keterangan');
-            
-            if (status === 'hadir') {
-                keteranganContainer.style.maxHeight = '0';
-                keteranganInput.required = false;
-                keteranganInput.placeholder = "Opsional: catatan tambahan...";
-            } else {
-                keteranganContainer.style.maxHeight = '200px';
-                keteranganInput.required = true;
-                keteranganInput.placeholder = "Masukkan alasan izin atau sakit...";
-            }
-        }
-
         // Fungsi untuk menampilkan data absensi
         function tampilkanAbsensi() {
             const tabelBody = document.getElementById('tabel-body');
             const emptyState = document.getElementById('empty-state');
             const tanggalFilter = document.getElementById('tanggal-filter').value;
-            const statusFilter = document.getElementById('status-filter').value;
+            const namaFilter = document.getElementById('nama-filter').value.toLowerCase();
             
-            // Filter data berdasarkan tanggal dan status
+            // Filter data berdasarkan tanggal dan nama
             let dataTampil = absensi;
             
             if (tanggalFilter) {
                 dataTampil = dataTampil.filter(item => item.tanggal === tanggalFilter);
             }
             
-            if (statusFilter !== 'semua') {
-                dataTampil = dataTampil.filter(item => item.status === statusFilter);
+            if (namaFilter) {
+                dataTampil = dataTampil.filter(item => 
+                    item.nama.toLowerCase().includes(namaFilter)
+                );
             }
             
             // Kosongkan tabel
@@ -619,20 +762,10 @@
                     row.innerHTML = `
                         <td>${index + 1}</td>
                         <td>${item.nama}</td>
-                        <td><span class="status-badge status-${item.status}">${item.status.toUpperCase()}</span></td>
+                        <td><span class="status-badge status-hadir">HADIR</span></td>
                         <td>${formatTanggal(item.tanggal)}</td>
-                        <td>${item.keterangan || '-'}</td>
                         <td>
                             <div class="btn-group">
-                                <button class="action-btn btn-hadir" onclick="ubahStatus('${item.id}', 'hadir')">
-                                    <i class="fas fa-check-circle"></i> Hadir
-                                </button>
-                                <button class="action-btn btn-izin" onclick="ubahStatus('${item.id}', 'izin')">
-                                    <i class="fas fa-envelope"></i> Izin
-                                </button>
-                                <button class="action-btn btn-sakit" onclick="ubahStatus('${item.id}', 'sakit')">
-                                    <i class="fas fa-procedures"></i> Sakit
-                                </button>
                                 <button class="action-btn btn-danger" onclick="hapusAbsensi('${item.id}')">
                                     <i class="fas fa-trash"></i> Hapus
                                 </button>
@@ -649,69 +782,89 @@
         }
 
         // Fungsi untuk menambah data absensi ke Firebase
-        function tambahAbsensi(nama, tanggal, status, keterangan) {
+        function tambahAbsensi(nama, tanggal) {
             const id = Date.now().toString(); // ID unik berdasarkan timestamp
             const dataBaru = {
                 id: id,
                 nama: nama,
                 tanggal: tanggal,
-                status: status,
-                keterangan: status === 'hadir' ? (keterangan || '') : keterangan
+                status: 'hadir'
             };
             
-            console.log("Menyimpan data:", dataBaru);
+            console.log("Menyimpan data absensi:", dataBaru);
             
             // Simpan ke Firebase
             absensiRef.child(id).set(dataBaru)
                 .then(() => {
-                    console.log('Data berhasil disimpan ke Firebase');
-                    alert('Data absensi berhasil disimpan!');
+                    console.log('Data absensi berhasil disimpan ke Firebase');
+                    showNotification(`${nama} berhasil dicatat hadir!`, 'success');
                 })
                 .catch((error) => {
-                    console.error('Error menyimpan data:', error);
-                    alert('Terjadi kesalahan saat menyimpan data. Silakan coba lagi.');
+                    console.error('Error menyimpan data absensi:', error);
+                    showNotification('Terjadi kesalahan saat menyimpan data absensi', 'error');
                 });
         }
 
-        // Fungsi untuk mengubah status kehadiran di Firebase
-        function ubahStatus(id, statusBaru) {
-            let keterangan = '';
+        // Fungsi untuk menambah anggota baru ke Firebase
+        function tambahAnggota(nama) {
+            // Cek apakah nama sudah ada di daftarAnggota
+            const namaSudahAda = daftarAnggota.some(anggota => 
+                anggota.nama.toLowerCase() === nama.toLowerCase()
+            );
             
-            if (statusBaru !== 'hadir') {
-                keterangan = prompt(`Masukkan keterangan untuk status ${statusBaru}:`);
-                if (keterangan === null) return; // User membatalkan
+            if (namaSudahAda) {
+                showNotification('Nama anggota sudah ada!', 'error');
+                return;
             }
             
-            const updateData = { 
-                status: statusBaru
+            const id = Date.now().toString(); // ID unik berdasarkan timestamp
+            const dataBaru = {
+                id: id,
+                nama: nama,
+                tanggal_daftar: new Date().toISOString().split('T')[0]
             };
             
-            if (keterangan) {
-                updateData.keterangan = keterangan;
-            }
+            console.log("Menyimpan data anggota:", dataBaru);
             
-            absensiRef.child(id).update(updateData)
-            .then(() => {
-                console.log('Status berhasil diubah');
-                alert('Status berhasil diubah!');
-            })
-            .catch((error) => {
-                console.error('Error mengubah status:', error);
-                alert('Terjadi kesalahan saat mengubah status. Silakan coba lagi.');
-            });
+            // Simpan ke Firebase
+            anggotaRef.child(id).set(dataBaru)
+                .then(() => {
+                    console.log('Data anggota berhasil disimpan ke Firebase');
+                    document.getElementById('nama-baru').value = '';
+                    showNotification(`Anggota ${nama} berhasil ditambahkan!`, 'success');
+                })
+                .catch((error) => {
+                    console.error('Error menyimpan data anggota:', error);
+                    showNotification('Terjadi kesalahan saat menambah anggota', 'error');
+                });
         }
 
         // Fungsi untuk menghapus data absensi dari Firebase
         function hapusAbsensi(id) {
-            if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {
+            if (confirm('Apakah Anda yakin ingin menghapus data absensi ini?')) {
                 absensiRef.child(id).remove()
                     .then(() => {
-                        console.log('Data berhasil dihapus');
-                        alert('Data berhasil dihapus!');
+                        console.log('Data absensi berhasil dihapus');
+                        showNotification('Data absensi berhasil dihapus!', 'success');
                     })
                     .catch((error) => {
-                        console.error('Error menghapus data:', error);
-                        alert('Terjadi kesalahan saat menghapus data. Silakan coba lagi.');
+                        console.error('Error menghapus data absensi:', error);
+                        showNotification('Terjadi kesalahan saat menghapus data absensi', 'error');
+                    });
+            }
+        }
+
+        // Fungsi untuk menghapus anggota dari Firebase
+        function hapusAnggota(id, nama) {
+            if (confirm(`Apakah Anda yakin ingin menghapus anggota ${nama}?`)) {
+                anggotaRef.child(id).remove()
+                    .then(() => {
+                        console.log('Data anggota berhasil dihapus');
+                        showNotification(`Anggota ${nama} berhasil dihapus!`, 'success');
+                    })
+                    .catch((error) => {
+                        console.error('Error menghapus data anggota:', error);
+                        showNotification('Terjadi kesalahan saat menghapus anggota', 'error');
                     });
             }
         }
@@ -719,22 +872,24 @@
         // Fungsi untuk mengupdate statistik
         function updateStatistik() {
             const tanggalFilter = document.getElementById('tanggal-filter').value;
+            const today = new Date().toISOString().split('T')[0];
             
             // Filter data berdasarkan tanggal
             let dataHitung = absensi;
             if (tanggalFilter) {
                 dataHitung = dataHitung.filter(item => item.tanggal === tanggalFilter);
+            } else {
+                // Default: hitung untuk hari ini
+                dataHitung = dataHitung.filter(item => item.tanggal === today);
             }
             
             // Hitung jumlah berdasarkan status
-            const hadirCount = dataHitung.filter(item => item.status === 'hadir').length;
-            const izinCount = dataHitung.filter(item => item.status === 'izin').length;
-            const sakitCount = dataHitung.filter(item => item.status === 'sakit').length;
+            const hadirCount = dataHitung.length;
+            const anggotaCount = daftarAnggota.length;
             
             // Update tampilan
             document.getElementById('hadir-count').textContent = hadirCount;
-            document.getElementById('izin-count').textContent = izinCount;
-            document.getElementById('sakit-count').textContent = sakitCount;
+            document.getElementById('anggota-count').textContent = anggotaCount;
         }
 
         // Fungsi untuk memformat tanggal
@@ -746,6 +901,92 @@
             return tanggal.toLocaleDateString('id-ID', options);
         }
 
+        // Fungsi untuk menampilkan daftar anggota
+        function tampilkanDaftarAnggota() {
+            const membersList = document.getElementById('members-list');
+            membersList.innerHTML = '';
+            
+            if (daftarAnggota.length === 0) {
+                membersList.innerHTML = '<div class="member-item" style="justify-content: center; color: var(--gray);">Belum ada anggota</div>';
+                return;
+            }
+            
+            daftarAnggota.forEach(anggota => {
+                const memberItem = document.createElement('div');
+                memberItem.className = 'member-item';
+                
+                memberItem.innerHTML = `
+                    <span class="member-name">${anggota.nama}</span>
+                    <div>
+                        <button class="mark-present-btn" onclick="tandaiHadir('${anggota.nama}')">
+                            <i class="fas fa-check"></i> Hadir
+                        </button>
+                        <button class="action-btn btn-danger" onclick="hapusAnggota('${anggota.id}', '${anggota.nama}')">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+                
+                membersList.appendChild(memberItem);
+            });
+        }
+
+        // Fungsi untuk menandai kehadiran
+        function tandaiHadir(nama) {
+            const tanggal = document.getElementById('tanggal-absensi').value;
+            
+            if (!tanggal) {
+                showNotification('Pilih tanggal terlebih dahulu!', 'error');
+                return;
+            }
+            
+            tambahAbsensi(nama, tanggal);
+        }
+
+        // Fungsi untuk menampilkan notifikasi
+        function showNotification(message, type) {
+            // Buat elemen notifikasi
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 20px;
+                border-radius: 10px;
+                color: white;
+                font-weight: 600;
+                z-index: 1000;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+                transform: translateX(150%);
+                transition: transform 0.3s ease;
+            `;
+            
+            if (type === 'success') {
+                notification.style.background = 'linear-gradient(135deg, var(--success), #34C759)';
+            } else {
+                notification.style.background = 'linear-gradient(135deg, var(--secondary), #FF4B6E)';
+            }
+            
+            notification.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check' : 'exclamation'}-circle"></i> ${message}
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Tampilkan notifikasi
+            setTimeout(() => {
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+            
+            // Sembunyikan notifikasi setelah 3 detik
+            setTimeout(() => {
+                notification.style.transform = 'translateX(150%)';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
         // Inisialisasi saat halaman dimuat
         document.addEventListener('DOMContentLoaded', function() {
             // Set tanggal default ke hari ini
@@ -753,52 +994,44 @@
             document.getElementById('tanggal-absensi').value = today;
             document.getElementById('tanggal-filter').value = today;
             
-            // Event listener untuk perubahan status
-            document.querySelectorAll('input[name="status"]').forEach(radio => {
-                radio.addEventListener('change', toggleKeterangan);
+            // Update tanggal hari ini di highlight
+            document.getElementById('today-date').textContent = formatTanggal(today);
+            
+            // Event listener untuk tombol tambah anggota
+            document.getElementById('btn-tambah-anggota').addEventListener('click', function() {
+                const namaBaru = document.getElementById('nama-baru').value.trim();
+                
+                if (namaBaru) {
+                    tambahAnggota(namaBaru);
+                } else {
+                    showNotification('Masukkan nama anggota terlebih dahulu!', 'error');
+                }
             });
             
-            // Event listener untuk form tambah absensi
-            document.getElementById('form-absensi').addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const nama = document.getElementById('nama-siswa').value.trim();
-                const tanggal = document.getElementById('tanggal-absensi').value;
-                const status = document.querySelector('input[name="status"]:checked').value;
-                const keterangan = document.getElementById('keterangan').value.trim();
-                
-                // Validasi untuk izin/sakit harus ada keterangan
-                if ((status === 'izin' || status === 'sakit') && !keterangan) {
-                    alert('Keterangan wajib diisi untuk status Izin atau Sakit!');
-                    return;
-                }
-                
-                if (nama) {
-                    tambahAbsensi(nama, tanggal, status, keterangan);
-                    
-                    // Reset form
-                    document.getElementById('form-absensi').reset();
-                    document.getElementById('tanggal-absensi').value = today;
-                    document.getElementById('status-hadir').checked = true;
-                    document.getElementById('keterangan').value = '';
-                    toggleKeterangan(); // Update tampilan keterangan
-                } else {
-                    alert('Nama anggota harus diisi!');
+            // Event listener untuk Enter pada input nama baru
+            document.getElementById('nama-baru').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    document.getElementById('btn-tambah-anggota').click();
                 }
             });
             
             // Event listener untuk filter
             document.getElementById('tanggal-filter').addEventListener('change', tampilkanAbsensi);
-            document.getElementById('status-filter').addEventListener('change', tampilkanAbsensi);
+            document.getElementById('nama-filter').addEventListener('input', tampilkanAbsensi);
             
             // Event listener untuk reset filter
             document.getElementById('reset-filter').addEventListener('click', function() {
                 document.getElementById('tanggal-filter').value = '';
-                document.getElementById('status-filter').value = 'semua';
+                document.getElementById('nama-filter').value = '';
                 tampilkanAbsensi();
             });
             
-            // Mendengarkan perubahan data di Firebase
+            // Event listener untuk export data
+            document.getElementById('btn-export').addEventListener('click', function() {
+                showNotification('Fitur export akan segera tersedia!', 'success');
+            });
+            
+            // Mendengarkan perubahan data absensi di Firebase
             absensiRef.on('value', (snapshot) => {
                 const data = snapshot.val();
                 absensi = [];
@@ -813,13 +1046,38 @@
                     absensi.sort((a, b) => b.id - a.id);
                 }
                 
-                console.log("Data diterima dari Firebase:", absensi);
+                console.log("Data absensi diterima dari Firebase:", absensi);
                 
                 // Tampilkan data
                 tampilkanAbsensi();
             }, (error) => {
-                console.error("Error membaca data dari Firebase:", error);
-                alert("Error membaca data dari Firebase: " + error.message);
+                console.error("Error membaca data absensi dari Firebase:", error);
+                showNotification("Error membaca data absensi dari Firebase", 'error');
+            });
+            
+            // Mendengarkan perubahan data anggota di Firebase
+            anggotaRef.on('value', (snapshot) => {
+                const data = snapshot.val();
+                daftarAnggota = [];
+                
+                if (data) {
+                    // Konversi data dari Firebase ke array
+                    Object.keys(data).forEach(key => {
+                        daftarAnggota.push(data[key]);
+                    });
+                    
+                    // Urutkan berdasarkan nama
+                    daftarAnggota.sort((a, b) => a.nama.localeCompare(b.nama));
+                }
+                
+                console.log("Data anggota diterima dari Firebase:", daftarAnggota);
+                
+                // Tampilkan daftar anggota
+                tampilkanDaftarAnggota();
+                updateStatistik();
+            }, (error) => {
+                console.error("Error membaca data anggota dari Firebase:", error);
+                showNotification("Error membaca data anggota dari Firebase", 'error');
             });
             
             // Monitor status koneksi Firebase
@@ -828,9 +1086,6 @@
                 console.log("Status koneksi Firebase:", isConnected);
                 updateConnectionStatus(isConnected);
             });
-            
-            // Inisialisasi tampilan keterangan
-            toggleKeterangan();
             
             console.log("Aplikasi absensi siap digunakan");
         });
