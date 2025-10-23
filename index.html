@@ -19,6 +19,7 @@
             --success: #4CD964;
             --card-bg: rgba(255, 255, 255, 0.95);
             --admin-color: #FF9500;
+            --info: #5B86E5;
         }
         
         * {
@@ -202,6 +203,11 @@
             background: white;
         }
         
+        textarea.form-control {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
         .btn {
             padding: 15px 25px;
             border: none;
@@ -274,6 +280,17 @@
             box-shadow: 0 8px 20px rgba(255, 149, 0, 0.4);
         }
         
+        .btn-info {
+            background: linear-gradient(135deg, var(--info), #36D1DC);
+            color: white;
+            box-shadow: 0 5px 15px rgba(91, 134, 229, 0.3);
+        }
+        
+        .btn-info:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(91, 134, 229, 0.4);
+        }
+        
         .btn-sm {
             padding: 10px 15px;
             font-size: 0.9rem;
@@ -299,6 +316,10 @@
         
         .stat-card.anggota { 
             background: linear-gradient(135deg, var(--primary), var(--primary-light)); 
+        }
+        
+        .stat-card.pengumuman { 
+            background: linear-gradient(135deg, var(--info), #36D1DC); 
         }
         
         .stat-card h3 {
@@ -633,6 +654,84 @@
             display: block;
         }
         
+        /* Pengumuman Styles */
+        .announcement-card {
+            background: rgba(91, 134, 229, 0.1);
+            border-left: 5px solid var(--info);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .announcement-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(91, 134, 229, 0.2);
+        }
+        
+        .announcement-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+        
+        .announcement-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 5px;
+        }
+        
+        .announcement-date {
+            font-size: 0.85rem;
+            color: var(--gray);
+        }
+        
+        .announcement-content {
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        .announcement-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 15px;
+            gap: 10px;
+        }
+        
+        .announcement-form {
+            background: rgba(91, 134, 229, 0.05);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border: 1px dashed rgba(91, 134, 229, 0.3);
+        }
+        
+        .priority-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+        
+        .priority-high {
+            background-color: rgba(255, 101, 132, 0.2);
+            color: var(--secondary);
+        }
+        
+        .priority-medium {
+            background-color: rgba(255, 149, 0, 0.2);
+            color: var(--admin-color);
+        }
+        
+        .priority-low {
+            background-color: rgba(76, 217, 100, 0.2);
+            color: var(--success);
+        }
+        
         @media (max-width: 768px) {
             .filters {
                 flex-direction: column;
@@ -663,6 +762,16 @@
             .admin-panel {
                 width: 100%;
                 right: -100%;
+            }
+            
+            .announcement-header {
+                flex-direction: column;
+            }
+            
+            .announcement-actions {
+                margin-top: 10px;
+                width: 100%;
+                justify-content: flex-start;
             }
         }
         
@@ -740,10 +849,64 @@
                         <h3 id="anggota-count">0</h3>
                         <p><i class="fas fa-users"></i> Total Anggota</p>
                     </div>
+                    <div class="stat-card pengumuman">
+                        <h3 id="pengumuman-count">0</h3>
+                        <p><i class="fas fa-bullhorn"></i> Pengumuman Aktif</p>
+                    </div>
                 </div>
             </div>
             
             <div class="right-column">
+                <!-- Card Pengumuman -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-bullhorn"></i> Pengumuman</h2>
+                        <button id="btn-tambah-pengumuman" class="btn btn-info btn-sm" style="display: none;">
+                            <i class="fas fa-plus"></i> Buat Pengumuman
+                        </button>
+                    </div>
+                    
+                    <div id="pengumuman-form" class="announcement-form" style="display: none;">
+                        <div class="form-group">
+                            <label for="pengumuman-judul"><i class="fas fa-heading"></i> Judul Pengumuman</label>
+                            <input type="text" id="pengumuman-judul" class="form-control" placeholder="Masukkan judul pengumuman">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="pengumuman-isi"><i class="fas fa-align-left"></i> Isi Pengumuman</label>
+                            <textarea id="pengumuman-isi" class="form-control" placeholder="Tulis isi pengumuman di sini..."></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="pengumuman-prioritas"><i class="fas fa-exclamation-circle"></i> Prioritas</label>
+                            <select id="pengumuman-prioritas" class="form-control">
+                                <option value="low">Rendah</option>
+                                <option value="medium">Sedang</option>
+                                <option value="high">Tinggi</option>
+                            </select>
+                        </div>
+                        
+                        <div class="btn-group" style="width: 100%;">
+                            <button id="btn-simpan-pengumuman" class="btn btn-success" style="flex: 1;">
+                                <i class="fas fa-save"></i> Simpan
+                            </button>
+                            <button id="btn-batal-pengumuman" class="btn btn-danger" style="flex: 1;">
+                                <i class="fas fa-times"></i> Batal
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div id="pengumuman-list">
+                        <!-- Daftar pengumuman akan diisi oleh JavaScript -->
+                    </div>
+                    
+                    <div id="pengumuman-empty" class="empty-state">
+                        <i class="fas fa-bullhorn"></i>
+                        <h3>Belum ada pengumuman</h3>
+                        <p>Admin dapat membuat pengumuman untuk anggota</p>
+                    </div>
+                </div>
+                
                 <div class="card">
                     <div class="card-header">
                         <h2><i class="fas fa-list-alt"></i> Data Absensi</h2>
@@ -844,6 +1007,13 @@
                     </button>
                 </div>
             </div>
+            
+            <div class="form-group" style="margin-top: 20px;">
+                <label for="admin-reset-pengumuman">Kelola Pengumuman</label>
+                <button id="btn-reset-pengumuman" class="btn btn-danger" style="width: 100%;">
+                    <i class="fas fa-trash"></i> Hapus Semua Pengumuman
+                </button>
+            </div>
         </div>
         
         <div class="admin-section">
@@ -890,11 +1060,15 @@
         const anggotaRef = database.ref('anggota-fotografi');
         // Referensi database untuk admin
         const adminRef = database.ref('admin-fotografi');
+        // Referensi database untuk pengumuman
+        const pengumumanRef = database.ref('pengumuman-fotografi');
         
         // Array untuk menyimpan data absensi
         let absensi = [];
         // Array untuk menyimpan daftar nama anggota
         let daftarAnggota = [];
+        // Array untuk menyimpan pengumuman
+        let daftarPengumuman = [];
         
         // Status admin
         let isAdminLoggedIn = false;
@@ -1030,6 +1204,35 @@
                 });
         }
 
+        // Fungsi untuk menambah pengumuman baru ke Firebase
+        function tambahPengumuman(judul, isi, prioritas) {
+            const id = Date.now().toString(); // ID unik berdasarkan timestamp
+            const dataBaru = {
+                id: id,
+                judul: judul,
+                isi: isi,
+                prioritas: prioritas,
+                tanggal: new Date().toISOString().split('T')[0],
+                waktu: new Date().toISOString()
+            };
+            
+            console.log("Menyimpan data pengumuman:", dataBaru);
+            
+            // Simpan ke Firebase
+            pengumumanRef.child(id).set(dataBaru)
+                .then(() => {
+                    console.log('Data pengumuman berhasil disimpan ke Firebase');
+                    document.getElementById('pengumuman-judul').value = '';
+                    document.getElementById('pengumuman-isi').value = '';
+                    document.getElementById('pengumuman-prioritas').value = 'low';
+                    showNotification(`Pengumuman berhasil ditambahkan!`, 'success');
+                })
+                .catch((error) => {
+                    console.error('Error menyimpan data pengumuman:', error);
+                    showNotification('Terjadi kesalahan saat menambah pengumuman', 'error');
+                });
+        }
+
         // Fungsi untuk menghapus data absensi dari Firebase
         function hapusAbsensi(id) {
             if (confirm('Apakah Anda yakin ingin menghapus data absensi ini?')) {
@@ -1060,6 +1263,21 @@
             }
         }
 
+        // Fungsi untuk menghapus pengumuman dari Firebase
+        function hapusPengumuman(id, judul) {
+            if (confirm(`Apakah Anda yakin ingin menghapus pengumuman "${judul}"?`)) {
+                pengumumanRef.child(id).remove()
+                    .then(() => {
+                        console.log('Data pengumuman berhasil dihapus');
+                        showNotification(`Pengumuman berhasil dihapus!`, 'success');
+                    })
+                    .catch((error) => {
+                        console.error('Error menghapus data pengumuman:', error);
+                        showNotification('Terjadi kesalahan saat menghapus pengumuman', 'error');
+                    });
+            }
+        }
+
         // Fungsi untuk mengupdate statistik
         function updateStatistik() {
             const tanggalFilter = document.getElementById('tanggal-filter').value;
@@ -1077,10 +1295,12 @@
             // Hitung jumlah berdasarkan status
             const hadirCount = dataHitung.length;
             const anggotaCount = daftarAnggota.length;
+            const pengumumanCount = daftarPengumuman.length;
             
             // Update tampilan
             document.getElementById('hadir-count').textContent = hadirCount;
             document.getElementById('anggota-count').textContent = anggotaCount;
+            document.getElementById('pengumuman-count').textContent = pengumumanCount;
         }
 
         // Fungsi untuk memformat tanggal
@@ -1090,6 +1310,14 @@
             const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
             const tanggal = new Date(tanggalString);
             return tanggal.toLocaleDateString('id-ID', options);
+        }
+
+        // Fungsi untuk memformat tanggal dan waktu
+        function formatTanggalWaktu(tanggalString) {
+            if (!tanggalString) return '-';
+            
+            const tanggal = new Date(tanggalString);
+            return tanggal.toLocaleDateString('id-ID') + ' ' + tanggal.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
         }
 
         // Fungsi untuk menampilkan daftar anggota
@@ -1119,6 +1347,69 @@
                 `;
                 
                 membersList.appendChild(memberItem);
+            });
+        }
+
+        // Fungsi untuk menampilkan daftar pengumuman
+        function tampilkanDaftarPengumuman() {
+            const pengumumanList = document.getElementById('pengumuman-list');
+            const pengumumanEmpty = document.getElementById('pengumuman-empty');
+            pengumumanList.innerHTML = '';
+            
+            if (daftarPengumuman.length === 0) {
+                pengumumanEmpty.style.display = 'block';
+                pengumumanList.style.display = 'none';
+                return;
+            }
+            
+            pengumumanEmpty.style.display = 'none';
+            pengumumanList.style.display = 'block';
+            
+            // Urutkan pengumuman berdasarkan waktu (terbaru pertama)
+            const sortedPengumuman = [...daftarPengumuman].sort((a, b) => new Date(b.waktu) - new Date(a.waktu));
+            
+            sortedPengumuman.forEach(pengumuman => {
+                const pengumumanCard = document.createElement('div');
+                pengumumanCard.className = 'announcement-card';
+                
+                // Tentukan kelas prioritas
+                let priorityClass = '';
+                let priorityText = '';
+                
+                switch(pengumuman.prioritas) {
+                    case 'high':
+                        priorityClass = 'priority-high';
+                        priorityText = 'Tinggi';
+                        break;
+                    case 'medium':
+                        priorityClass = 'priority-medium';
+                        priorityText = 'Sedang';
+                        break;
+                    case 'low':
+                    default:
+                        priorityClass = 'priority-low';
+                        priorityText = 'Rendah';
+                        break;
+                }
+                
+                pengumumanCard.innerHTML = `
+                    <div class="announcement-header">
+                        <div>
+                            <div class="announcement-title">${pengumuman.judul} <span class="priority-badge ${priorityClass}">${priorityText}</span></div>
+                            <div class="announcement-date">${formatTanggalWaktu(pengumuman.waktu)}</div>
+                        </div>
+                    </div>
+                    <div class="announcement-content">${pengumuman.isi}</div>
+                    ${isAdminLoggedIn ? `
+                    <div class="announcement-actions">
+                        <button class="btn btn-danger btn-sm" onclick="hapusPengumuman('${pengumuman.id}', '${pengumuman.judul}')">
+                            <i class="fas fa-trash"></i> Hapus
+                        </button>
+                    </div>
+                    ` : ''}
+                `;
+                
+                pengumumanList.appendChild(pengumumanCard);
             });
         }
 
@@ -1229,12 +1520,15 @@
             const btnLogoutAdmin = document.getElementById('btn-logout-admin');
             const adminStatus = document.getElementById('admin-status');
             const adminUser = document.getElementById('admin-user');
+            const btnTambahPengumuman = document.getElementById('btn-tambah-pengumuman');
+            const pengumumanForm = document.getElementById('pengumuman-form');
             
             if (isAdminLoggedIn) {
                 adminControls.style.display = 'block';
                 addMemberForm.style.display = 'block';
                 btnLoginAdmin.style.display = 'none';
                 btnLogoutAdmin.style.display = 'block';
+                btnTambahPengumuman.style.display = 'block';
                 adminStatus.textContent = 'Aktif';
                 adminStatus.style.color = 'var(--success)';
                 adminUser.textContent = 'Admin';
@@ -1243,6 +1537,8 @@
                 addMemberForm.style.display = 'none';
                 btnLoginAdmin.style.display = 'block';
                 btnLogoutAdmin.style.display = 'none';
+                btnTambahPengumuman.style.display = 'none';
+                pengumumanForm.style.display = 'none';
                 adminStatus.textContent = 'Tidak aktif';
                 adminStatus.style.color = 'var(--secondary)';
                 adminUser.textContent = '-';
@@ -1251,6 +1547,7 @@
             // Refresh tampilan data
             tampilkanAbsensi();
             tampilkanDaftarAnggota();
+            tampilkanDaftarPengumuman();
         }
 
         // Fungsi untuk reset data absensi
@@ -1277,6 +1574,20 @@
                     .catch((error) => {
                         console.error('Error menghapus data anggota:', error);
                         showNotification('Terjadi kesalahan saat menghapus data anggota', 'error');
+                    });
+            }
+        }
+
+        // Fungsi untuk reset data pengumuman
+        function resetPengumuman() {
+            if (confirm('Apakah Anda yakin ingin menghapus SEMUA data pengumuman? Tindakan ini tidak dapat dibatalkan!')) {
+                pengumumanRef.remove()
+                    .then(() => {
+                        showNotification('Semua data pengumuman berhasil dihapus!', 'success');
+                    })
+                    .catch((error) => {
+                        console.error('Error menghapus data pengumuman:', error);
+                        showNotification('Terjadi kesalahan saat menghapus data pengumuman', 'error');
                     });
             }
         }
@@ -1374,6 +1685,43 @@
             // Event listener untuk reset data
             document.getElementById('btn-reset-absensi').addEventListener('click', resetAbsensi);
             document.getElementById('btn-reset-anggota').addEventListener('click', resetAnggota);
+            document.getElementById('btn-reset-pengumuman').addEventListener('click', resetPengumuman);
+            
+            // Event listener untuk pengumuman
+            document.getElementById('btn-tambah-pengumuman').addEventListener('click', function() {
+                const pengumumanForm = document.getElementById('pengumuman-form');
+                if (pengumumanForm.style.display === 'none') {
+                    pengumumanForm.style.display = 'block';
+                } else {
+                    pengumumanForm.style.display = 'none';
+                }
+            });
+            
+            document.getElementById('btn-simpan-pengumuman').addEventListener('click', function() {
+                const judul = document.getElementById('pengumuman-judul').value.trim();
+                const isi = document.getElementById('pengumuman-isi').value.trim();
+                const prioritas = document.getElementById('pengumuman-prioritas').value;
+                
+                if (!judul) {
+                    showNotification('Masukkan judul pengumuman!', 'error');
+                    return;
+                }
+                
+                if (!isi) {
+                    showNotification('Masukkan isi pengumuman!', 'error');
+                    return;
+                }
+                
+                tambahPengumuman(judul, isi, prioritas);
+                document.getElementById('pengumuman-form').style.display = 'none';
+            });
+            
+            document.getElementById('btn-batal-pengumuman').addEventListener('click', function() {
+                document.getElementById('pengumuman-form').style.display = 'none';
+                document.getElementById('pengumuman-judul').value = '';
+                document.getElementById('pengumuman-isi').value = '';
+                document.getElementById('pengumuman-prioritas').value = 'low';
+            });
             
             // Cek session admin
             if (localStorage.getItem(ADMIN_SESSION_KEY) === 'active') {
@@ -1430,6 +1778,28 @@
                 showNotification("Error membaca data anggota dari Firebase", 'error');
             });
             
+            // Mendengarkan perubahan data pengumuman di Firebase
+            pengumumanRef.on('value', (snapshot) => {
+                const data = snapshot.val();
+                daftarPengumuman = [];
+                
+                if (data) {
+                    // Konversi data dari Firebase ke array
+                    Object.keys(data).forEach(key => {
+                        daftarPengumuman.push(data[key]);
+                    });
+                }
+                
+                console.log("Data pengumuman diterima dari Firebase:", daftarPengumuman);
+                
+                // Tampilkan daftar pengumuman
+                tampilkanDaftarPengumuman();
+                updateStatistik();
+            }, (error) => {
+                console.error("Error membaca data pengumuman dari Firebase:", error);
+                showNotification("Error membaca data pengumuman dari Firebase", 'error');
+            });
+            
             // Monitor status koneksi Firebase
             database.ref('.info/connected').on('value', (snapshot) => {
                 const isConnected = snapshot.val();
@@ -1442,4 +1812,3 @@
     </script>
 </body>
 </html>
-
