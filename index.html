@@ -1086,4 +1086,807 @@
             <div class="form-group" style="margin-top: 20px;">
                 <label for="admin-reset-pengumuman">Kelola Pengumuman</label>
                 <button id="btn-reset-pengumuman" class="btn btn-danger" style="width: 100%;">
-                    <i
+                    <i class="fas fa-trash"></i> Hapus Semua Pengumuman
+                </button>
+            </div>
+        </div>
+        
+        <div class="admin-section">
+            <h3><i class="fas fa-info-circle"></i> Informasi Sistem</h3>
+            <p><strong>Versi:</strong> 2.0 (Admin)</p>
+            <p><strong>Status:</strong> <span id="admin-status">Tidak aktif</span></p>
+            <p><strong>Pengguna:</strong> <span id="admin-user">-</span></p>
+        </div>
+    </div>
+
+    <script>
+        // Kode JavaScript tetap sama seperti sebelumnya
+        // ==================================================
+        // 🔥 AREA KONFIGURASI FIREBASE - EDIT BAGIAN INI 🔥
+        // ==================================================
+        
+        const firebaseConfig = {
+            apiKey: "AIzaSyBjQCxB7aDD5rj2B_aR19s9RFhNgzsxxSA",
+            authDomain: "database-af06f.firebaseapp.com",
+            databaseURL: "https://database-af06f-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "database-af06f",
+            storageBucket: "database-af06f.appspot.com",
+            messagingSenderId: "762892084073",
+            appId: "1:762892084073:web:2f07f09ce0e561235653f8"
+        };
+
+        // ==================================================
+        // 🚀 AKHIR AREA KONFIGURASI - JANGAN EDIT DI BAWAH 🚀
+        // ==================================================
+
+        // Inisialisasi Firebase
+        try {
+            firebase.initializeApp(firebaseConfig);
+            console.log("Firebase berhasil diinisialisasi");
+        } catch (error) {
+            console.error("Error inisialisasi Firebase:", error);
+            alert("Error inisialisasi Firebase: " + error.message);
+        }
+        
+        const database = firebase.database();
+        
+        // Referensi database untuk absensi
+        const absensiRef = database.ref('absensi-fotografi');
+        // Referensi database untuk daftar anggota
+        const anggotaRef = database.ref('anggota-fotografi');
+        // Referensi database untuk admin
+        const adminRef = database.ref('admin-fotografi');
+        // Referensi database untuk pengumuman
+        const pengumumanRef = database.ref('pengumuman-fotografi');
+        
+        // Array untuk menyimpan data absensi
+        let absensi = [];
+        // Array untuk menyimpan daftar nama anggota
+        let daftarAnggota = [];
+        // Array untuk menyimpan pengumuman
+        let daftarPengumuman = [];
+        
+        // Status admin
+        let isAdminLoggedIn = false;
+        const ADMIN_PASSWORD_KEY = 'admin_password_fotografi';
+        const ADMIN_SESSION_KEY = 'admin_session_fotografi';
+
+        // Fungsi untuk mengupdate status koneksi
+        function updateConnectionStatus(status) {
+            const connectionStatus = document.getElementById('connection-status');
+            if (status) {
+                connectionStatus.innerHTML = '<i class="fas fa-circle"></i> <span>Tersambung</span>';
+                connectionStatus.classList.remove('disconnected');
+                connectionStatus.classList.add('connected');
+            } else {
+                connectionStatus.innerHTML = '<i class="fas fa-circle"></i> <span>Terputus</span>';
+                connectionStatus.classList.remove('connected');
+                connectionStatus.classList.add('disconnected');
+            }
+        }
+
+        // Fungsi untuk menampilkan data absensi
+        function tampilkanAbsensi() {
+            const tabelBody = document.getElementById('tabel-body');
+            const emptyState = document.getElementById('empty-state');
+            const tanggalFilter = document.getElementById('tanggal-filter').value;
+            const namaFilter = document.getElementById('nama-filter').value.toLowerCase();
+            
+            // Filter data berdasarkan tanggal dan nama
+            let dataTampil = absensi;
+            
+            if (tanggalFilter) {
+                dataTampil = dataTampil.filter(item => item.tanggal === tanggalFilter);
+            }
+            
+            if (namaFilter) {
+                dataTampil = dataTampil.filter(item => 
+                    item.nama.toLowerCase().includes(namaFilter)
+                );
+            }
+            
+            // Kosongkan tabel
+            tabelBody.innerHTML = '';
+            
+            // Tampilkan empty state jika tidak ada data
+            if (dataTampil.length === 0) {
+                emptyState.style.display = 'block';
+                document.getElementById('tabel-absensi').style.display = 'none';
+            } else {
+                emptyState.style.display = 'none';
+                document.getElementById('tabel-absensi').style.display = 'table';
+                
+                // Isi tabel dengan data
+                dataTampil.forEach((item, index) => {
+                    const row = document.createElement('tr');
+                    
+                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${item.nama}</td>
+                        <td><span class="status-badge status-hadir">HADIR</span></td>
+                        <td>${formatTanggal(item.tanggal)}</td>
+                        <td>
+                            <div class="btn-group">
+                                ${isAdminLoggedIn ? `<button class="action-btn btn-danger" onclick="hapusAbsensi('${item.id}')">
+                                    <i class="fas fa-trash"></i> Hapus
+                                </button>` : ''}
+                            </div>
+                        </td>
+                    `;
+                    
+                    tabelBody.appendChild(row);
+                });
+            }
+            
+            // Update statistik
+            updateStatistik();
+        }
+
+        // Fungsi untuk menambah data absensi ke Firebase
+        function tambahAbsensi(nama, tanggal) {
+            const id = Date.now().toString(); // ID unik berdasarkan timestamp
+            const dataBaru = {
+                id: id,
+                nama: nama,
+                tanggal: tanggal,
+                status: 'hadir'
+            };
+            
+            console.log("Menyimpan data absensi:", dataBaru);
+            
+            // Simpan ke Firebase
+            absensiRef.child(id).set(dataBaru)
+                .then(() => {
+                    console.log('Data absensi berhasil disimpan ke Firebase');
+                    showNotification(`${nama} berhasil dicatat hadir!`, 'success');
+                })
+                .catch((error) => {
+                    console.error('Error menyimpan data absensi:', error);
+                    showNotification('Terjadi kesalahan saat menyimpan data absensi', 'error');
+                });
+        }
+
+        // Fungsi untuk menambah anggota baru ke Firebase
+        function tambahAnggota(nama) {
+            // Cek apakah nama sudah ada di daftarAnggota
+            const namaSudahAda = daftarAnggota.some(anggota => 
+                anggota.nama.toLowerCase() === nama.toLowerCase()
+            );
+            
+            if (namaSudahAda) {
+                showNotification('Nama anggota sudah ada!', 'error');
+                return;
+            }
+            
+            const id = Date.now().toString(); // ID unik berdasarkan timestamp
+            const dataBaru = {
+                id: id,
+                nama: nama,
+                tanggal_daftar: new Date().toISOString().split('T')[0]
+            };
+            
+            console.log("Menyimpan data anggota:", dataBaru);
+            
+            // Simpan ke Firebase
+            anggotaRef.child(id).set(dataBaru)
+                .then(() => {
+                    console.log('Data anggota berhasil disimpan ke Firebase');
+                    document.getElementById('nama-baru').value = '';
+                    showNotification(`Anggota ${nama} berhasil ditambahkan!`, 'success');
+                })
+                .catch((error) => {
+                    console.error('Error menyimpan data anggota:', error);
+                    showNotification('Terjadi kesalahan saat menambah anggota', 'error');
+                });
+        }
+
+        // Fungsi untuk menambah pengumuman baru ke Firebase
+        function tambahPengumuman(judul, isi, prioritas) {
+            const id = Date.now().toString(); // ID unik berdasarkan timestamp
+            const dataBaru = {
+                id: id,
+                judul: judul,
+                isi: isi,
+                prioritas: prioritas,
+                tanggal: new Date().toISOString().split('T')[0],
+                waktu: new Date().toISOString()
+            };
+            
+            console.log("Menyimpan data pengumuman:", dataBaru);
+            
+            // Simpan ke Firebase
+            pengumumanRef.child(id).set(dataBaru)
+                .then(() => {
+                    console.log('Data pengumuman berhasil disimpan ke Firebase');
+                    document.getElementById('pengumuman-judul').value = '';
+                    document.getElementById('pengumuman-isi').value = '';
+                    document.getElementById('pengumuman-prioritas').value = 'low';
+                    showNotification(`Pengumuman berhasil ditambahkan!`, 'success');
+                })
+                .catch((error) => {
+                    console.error('Error menyimpan data pengumuman:', error);
+                    showNotification('Terjadi kesalahan saat menambah pengumuman', 'error');
+                });
+        }
+
+        // Fungsi untuk menghapus data absensi dari Firebase
+        function hapusAbsensi(id) {
+            if (confirm('Apakah Anda yakin ingin menghapus data absensi ini?')) {
+                absensiRef.child(id).remove()
+                    .then(() => {
+                        console.log('Data absensi berhasil dihapus');
+                        showNotification('Data absensi berhasil dihapus!', 'success');
+                    })
+                    .catch((error) => {
+                        console.error('Error menghapus data absensi:', error);
+                        showNotification('Terjadi kesalahan saat menghapus data absensi', 'error');
+                    });
+            }
+        }
+
+        // Fungsi untuk menghapus anggota dari Firebase
+        function hapusAnggota(id, nama) {
+            if (confirm(`Apakah Anda yakin ingin menghapus anggota ${nama}?`)) {
+                anggotaRef.child(id).remove()
+                    .then(() => {
+                        console.log('Data anggota berhasil dihapus');
+                        showNotification(`Anggota ${nama} berhasil dihapus!`, 'success');
+                    })
+                    .catch((error) => {
+                        console.error('Error menghapus data anggota:', error);
+                        showNotification('Terjadi kesalahan saat menghapus anggota', 'error');
+                    });
+            }
+        }
+
+        // Fungsi untuk menghapus pengumuman dari Firebase
+        function hapusPengumuman(id, judul) {
+            if (confirm(`Apakah Anda yakin ingin menghapus pengumuman "${judul}"?`)) {
+                pengumumanRef.child(id).remove()
+                    .then(() => {
+                        console.log('Data pengumuman berhasil dihapus');
+                        showNotification(`Pengumuman berhasil dihapus!`, 'success');
+                    })
+                    .catch((error) => {
+                        console.error('Error menghapus data pengumuman:', error);
+                        showNotification('Terjadi kesalahan saat menghapus pengumuman', 'error');
+                    });
+            }
+        }
+
+        // Fungsi untuk mengupdate statistik
+        function updateStatistik() {
+            const tanggalFilter = document.getElementById('tanggal-filter').value;
+            const today = new Date().toISOString().split('T')[0];
+            
+            // Filter data berdasarkan tanggal
+            let dataHitung = absensi;
+            if (tanggalFilter) {
+                dataHitung = dataHitung.filter(item => item.tanggal === tanggalFilter);
+            } else {
+                // Default: hitung untuk hari ini
+                dataHitung = dataHitung.filter(item => item.tanggal === today);
+            }
+            
+            // Hitung jumlah berdasarkan status
+            const hadirCount = dataHitung.length;
+            const anggotaCount = daftarAnggota.length;
+            const pengumumanCount = daftarPengumuman.length;
+            
+            // Update tampilan
+            document.getElementById('hadir-count').textContent = hadirCount;
+            document.getElementById('anggota-count').textContent = anggotaCount;
+            document.getElementById('pengumuman-count').textContent = pengumumanCount;
+        }
+
+        // Fungsi untuk memformat tanggal
+        function formatTanggal(tanggalString) {
+            if (!tanggalString) return '-';
+            
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const tanggal = new Date(tanggalString);
+            return tanggal.toLocaleDateString('id-ID', options);
+        }
+
+        // Fungsi untuk memformat tanggal dan waktu
+        function formatTanggalWaktu(tanggalString) {
+            if (!tanggalString) return '-';
+            
+            const tanggal = new Date(tanggalString);
+            return tanggal.toLocaleDateString('id-ID') + ' ' + tanggal.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+        }
+
+        // Fungsi untuk menampilkan daftar anggota
+        function tampilkanDaftarAnggota() {
+            const membersList = document.getElementById('members-list');
+            membersList.innerHTML = '';
+            
+            if (daftarAnggota.length === 0) {
+                membersList.innerHTML = '<div class="member-item" style="justify-content: center; color: var(--gray);">Belum ada anggota</div>';
+                return;
+            }
+            
+            daftarAnggota.forEach(anggota => {
+                const memberItem = document.createElement('div');
+                memberItem.className = 'member-item';
+                
+                memberItem.innerHTML = `
+                    <span class="member-name">${anggota.nama}</span>
+                    <div>
+                        <button class="mark-present-btn" onclick="tandaiHadir('${anggota.nama}')">
+                            <i class="fas fa-check"></i> Hadir
+                        </button>
+                        ${isAdminLoggedIn ? `<button class="action-btn btn-danger" onclick="hapusAnggota('${anggota.id}', '${anggota.nama}')">
+                            <i class="fas fa-trash"></i>
+                        </button>` : ''}
+                    </div>
+                `;
+                
+                membersList.appendChild(memberItem);
+            });
+        }
+
+        // Fungsi untuk menampilkan daftar pengumuman
+        function tampilkanDaftarPengumuman() {
+            const pengumumanList = document.getElementById('pengumuman-list');
+            const pengumumanEmpty = document.getElementById('pengumuman-empty');
+            pengumumanList.innerHTML = '';
+            
+            if (daftarPengumuman.length === 0) {
+                pengumumanEmpty.style.display = 'block';
+                pengumumanList.style.display = 'none';
+                return;
+            }
+            
+            pengumumanEmpty.style.display = 'none';
+            pengumumanList.style.display = 'block';
+            
+            // Urutkan pengumuman berdasarkan waktu (terbaru pertama)
+            const sortedPengumuman = [...daftarPengumuman].sort((a, b) => new Date(b.waktu) - new Date(a.waktu));
+            
+            sortedPengumuman.forEach(pengumuman => {
+                const pengumumanCard = document.createElement('div');
+                pengumumanCard.className = 'announcement-card';
+                
+                // Tentukan kelas prioritas
+                let priorityClass = '';
+                let priorityText = '';
+                
+                switch(pengumuman.prioritas) {
+                    case 'high':
+                        priorityClass = 'priority-high';
+                        priorityText = 'Tinggi';
+                        break;
+                    case 'medium':
+                        priorityClass = 'priority-medium';
+                        priorityText = 'Sedang';
+                        break;
+                    case 'low':
+                    default:
+                        priorityClass = 'priority-low';
+                        priorityText = 'Rendah';
+                        break;
+                }
+                
+                pengumumanCard.innerHTML = `
+                    <div class="announcement-header">
+                        <div>
+                            <div class="announcement-title">${pengumuman.judul} <span class="priority-badge ${priorityClass}">${priorityText}</span></div>
+                            <div class="announcement-date">${formatTanggalWaktu(pengumuman.waktu)}</div>
+                        </div>
+                    </div>
+                    <div class="announcement-content">${pengumuman.isi}</div>
+                    ${isAdminLoggedIn ? `
+                    <div class="announcement-actions">
+                        <button class="btn btn-danger btn-sm" onclick="hapusPengumuman('${pengumuman.id}', '${pengumuman.judul}')">
+                            <i class="fas fa-trash"></i> Hapus
+                        </button>
+                    </div>
+                    ` : ''}
+                `;
+                
+                pengumumanList.appendChild(pengumumanCard);
+            });
+        }
+
+        // Fungsi untuk menandai kehadiran
+        function tandaiHadir(nama) {
+            const tanggal = document.getElementById('tanggal-absensi').value;
+            
+            if (!tanggal) {
+                showNotification('Pilih tanggal terlebih dahulu!', 'error');
+                return;
+            }
+            
+            tambahAbsensi(nama, tanggal);
+        }
+
+        // Fungsi untuk menampilkan notifikasi
+        function showNotification(message, type) {
+            // Buat elemen notifikasi
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 20px;
+                border-radius: 10px;
+                color: white;
+                font-weight: 600;
+                z-index: 1000;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+                transform: translateX(150%);
+                transition: transform 0.3s ease;
+                max-width: calc(100vw - 40px);
+                word-wrap: break-word;
+            `;
+            
+            if (type === 'success') {
+                notification.style.background = 'linear-gradient(135deg, var(--success), #34C759)';
+            } else {
+                notification.style.background = 'linear-gradient(135deg, var(--secondary), #FF4B6E)';
+            }
+            
+            notification.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check' : 'exclamation'}-circle"></i> ${message}
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Tampilkan notifikasi
+            setTimeout(() => {
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+            
+            // Sembunyikan notifikasi setelah 3 detik
+            setTimeout(() => {
+                notification.style.transform = 'translateX(150%)';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
+        // Fungsi untuk login admin
+        function loginAdmin(password) {
+            // Cek password admin di localStorage
+            const storedPassword = localStorage.getItem(ADMIN_PASSWORD_KEY);
+            
+            // Jika belum ada password admin, set default password
+            if (!storedPassword) {
+                localStorage.setItem(ADMIN_PASSWORD_KEY, 'admin fotografi.112');
+            }
+            
+            // Verifikasi password
+            if (password === localStorage.getItem(ADMIN_PASSWORD_KEY)) {
+                isAdminLoggedIn = true;
+                localStorage.setItem(ADMIN_SESSION_KEY, 'active');
+                updateAdminUI();
+                showNotification('Login admin berhasil!', 'success');
+                return true;
+            } else {
+                showNotification('Password admin salah!', 'error');
+                return false;
+            }
+        }
+
+        // Fungsi untuk logout admin
+        function logoutAdmin() {
+            isAdminLoggedIn = false;
+            localStorage.removeItem(ADMIN_SESSION_KEY);
+            updateAdminUI();
+            showNotification('Logout admin berhasil!', 'success');
+        }
+
+        // Fungsi untuk mengubah password admin
+        function changeAdminPassword(newPassword) {
+            if (newPassword.length < 4) {
+                showNotification('Password minimal 4 karakter!', 'error');
+                return;
+            }
+            
+            localStorage.setItem(ADMIN_PASSWORD_KEY, newPassword);
+            showNotification('Password admin berhasil diubah!', 'success');
+            document.getElementById('admin-new-password').value = '';
+        }
+
+        // Fungsi untuk update UI admin
+        function updateAdminUI() {
+            const adminControls = document.getElementById('admin-controls');
+            const addMemberForm = document.getElementById('add-member-form');
+            const btnLoginAdmin = document.getElementById('btn-login-admin');
+            const btnLogoutAdmin = document.getElementById('btn-logout-admin');
+            const adminStatus = document.getElementById('admin-status');
+            const adminUser = document.getElementById('admin-user');
+            const btnTambahPengumuman = document.getElementById('btn-tambah-pengumuman');
+            const pengumumanForm = document.getElementById('pengumuman-form');
+            
+            if (isAdminLoggedIn) {
+                adminControls.style.display = 'block';
+                addMemberForm.style.display = 'block';
+                btnLoginAdmin.style.display = 'none';
+                btnLogoutAdmin.style.display = 'block';
+                btnTambahPengumuman.style.display = 'block';
+                adminStatus.textContent = 'Aktif';
+                adminStatus.style.color = 'var(--success)';
+                adminUser.textContent = 'Admin';
+            } else {
+                adminControls.style.display = 'none';
+                addMemberForm.style.display = 'none';
+                btnLoginAdmin.style.display = 'block';
+                btnLogoutAdmin.style.display = 'none';
+                btnTambahPengumuman.style.display = 'none';
+                pengumumanForm.style.display = 'none';
+                adminStatus.textContent = 'Tidak aktif';
+                adminStatus.style.color = 'var(--secondary)';
+                adminUser.textContent = '-';
+            }
+            
+            // Refresh tampilan data
+            tampilkanAbsensi();
+            tampilkanDaftarAnggota();
+            tampilkanDaftarPengumuman();
+        }
+
+        // Fungsi untuk reset data absensi
+        function resetAbsensi() {
+            if (confirm('Apakah Anda yakin ingin menghapus SEMUA data absensi? Tindakan ini tidak dapat dibatalkan!')) {
+                absensiRef.remove()
+                    .then(() => {
+                        showNotification('Semua data absensi berhasil dihapus!', 'success');
+                    })
+                    .catch((error) => {
+                        console.error('Error menghapus data absensi:', error);
+                        showNotification('Terjadi kesalahan saat menghapus data absensi', 'error');
+                    });
+            }
+        }
+
+        // Fungsi untuk reset data anggota
+        function resetAnggota() {
+            if (confirm('Apakah Anda yakin ingin menghapus SEMUA data anggota? Tindakan ini tidak dapat dibatalkan!')) {
+                anggotaRef.remove()
+                    .then(() => {
+                        showNotification('Semua data anggota berhasil dihapus!', 'success');
+                    })
+                    .catch((error) => {
+                        console.error('Error menghapus data anggota:', error);
+                        showNotification('Terjadi kesalahan saat menghapus data anggota', 'error');
+                    });
+            }
+        }
+
+        // Fungsi untuk reset data pengumuman
+        function resetPengumuman() {
+            if (confirm('Apakah Anda yakin ingin menghapus SEMUA data pengumuman? Tindakan ini tidak dapat dibatalkan!')) {
+                pengumumanRef.remove()
+                    .then(() => {
+                        showNotification('Semua data pengumuman berhasil dihapus!', 'success');
+                    })
+                    .catch((error) => {
+                        console.error('Error menghapus data pengumuman:', error);
+                        showNotification('Terjadi kesalahan saat menghapus data pengumuman', 'error');
+                    });
+            }
+        }
+
+        // Inisialisasi saat halaman dimuat
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set tanggal default ke hari ini
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('tanggal-absensi').value = today;
+            document.getElementById('tanggal-filter').value = today;
+            
+            // Update tanggal hari ini di highlight
+            document.getElementById('today-date').textContent = formatTanggal(today);
+            
+            // Event listener untuk tombol tambah anggota
+            document.getElementById('btn-tambah-anggota').addEventListener('click', function() {
+                if (!isAdminLoggedIn) {
+                    showNotification('Hanya admin yang dapat menambah anggota baru!', 'error');
+                    return;
+                }
+                
+                const namaBaru = document.getElementById('nama-baru').value.trim();
+                
+                if (namaBaru) {
+                    tambahAnggota(namaBaru);
+                } else {
+                    showNotification('Masukkan nama anggota terlebih dahulu!', 'error');
+                }
+            });
+            
+            // Event listener untuk Enter pada input nama baru
+            document.getElementById('nama-baru').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    document.getElementById('btn-tambah-anggota').click();
+                }
+            });
+            
+            // Event listener untuk filter
+            document.getElementById('tanggal-filter').addEventListener('change', tampilkanAbsensi);
+            document.getElementById('nama-filter').addEventListener('input', tampilkanAbsensi);
+            
+            // Event listener untuk reset filter
+            document.getElementById('reset-filter').addEventListener('click', function() {
+                document.getElementById('tanggal-filter').value = '';
+                document.getElementById('nama-filter').value = '';
+                tampilkanAbsensi();
+            });
+            
+            // Event listener untuk export data
+            document.getElementById('btn-export').addEventListener('click', function() {
+                showNotification('Fitur export akan segera tersedia!', 'success');
+            });
+            
+            // Event listener untuk admin panel
+            document.getElementById('admin-toggle').addEventListener('click', function() {
+                document.getElementById('admin-panel').classList.add('active');
+                document.getElementById('overlay').classList.add('active');
+            });
+            
+            document.getElementById('close-admin').addEventListener('click', function() {
+                document.getElementById('admin-panel').classList.remove('active');
+                document.getElementById('overlay').classList.remove('active');
+            });
+            
+            document.getElementById('overlay').addEventListener('click', function() {
+                document.getElementById('admin-panel').classList.remove('active');
+                document.getElementById('overlay').classList.remove('active');
+            });
+            
+            // Event listener untuk login admin
+            document.getElementById('btn-login-admin').addEventListener('click', function() {
+                const password = document.getElementById('admin-password').value;
+                if (password) {
+                    if (loginAdmin(password)) {
+                        document.getElementById('admin-password').value = '';
+                    }
+                } else {
+                    showNotification('Masukkan password admin!', 'error');
+                }
+            });
+            
+            // Event listener untuk logout admin
+            document.getElementById('btn-logout-admin').addEventListener('click', logoutAdmin);
+            
+            // Event listener untuk ganti password admin
+            document.getElementById('btn-change-password').addEventListener('click', function() {
+                const newPassword = document.getElementById('admin-new-password').value;
+                if (newPassword) {
+                    changeAdminPassword(newPassword);
+                } else {
+                    showNotification('Masukkan password baru!', 'error');
+                }
+            });
+            
+            // Event listener untuk reset data
+            document.getElementById('btn-reset-absensi').addEventListener('click', resetAbsensi);
+            document.getElementById('btn-reset-anggota').addEventListener('click', resetAnggota);
+            document.getElementById('btn-reset-pengumuman').addEventListener('click', resetPengumuman);
+            
+            // Event listener untuk pengumuman
+            document.getElementById('btn-tambah-pengumuman').addEventListener('click', function() {
+                const pengumumanForm = document.getElementById('pengumuman-form');
+                if (pengumumanForm.style.display === 'none') {
+                    pengumumanForm.style.display = 'block';
+                } else {
+                    pengumumanForm.style.display = 'none';
+                }
+            });
+            
+            document.getElementById('btn-simpan-pengumuman').addEventListener('click', function() {
+                const judul = document.getElementById('pengumuman-judul').value.trim();
+                const isi = document.getElementById('pengumuman-isi').value.trim();
+                const prioritas = document.getElementById('pengumuman-prioritas').value;
+                
+                if (!judul) {
+                    showNotification('Masukkan judul pengumuman!', 'error');
+                    return;
+                }
+                
+                if (!isi) {
+                    showNotification('Masukkan isi pengumuman!', 'error');
+                    return;
+                }
+                
+                tambahPengumuman(judul, isi, prioritas);
+                document.getElementById('pengumuman-form').style.display = 'none';
+            });
+            
+            document.getElementById('btn-batal-pengumuman').addEventListener('click', function() {
+                document.getElementById('pengumuman-form').style.display = 'none';
+                document.getElementById('pengumuman-judul').value = '';
+                document.getElementById('pengumuman-isi').value = '';
+                document.getElementById('pengumuman-prioritas').value = 'low';
+            });
+            
+            // Cek session admin
+            if (localStorage.getItem(ADMIN_SESSION_KEY) === 'active') {
+                isAdminLoggedIn = true;
+                updateAdminUI();
+            }
+            
+            // Mendengarkan perubahan data absensi di Firebase
+            absensiRef.on('value', (snapshot) => {
+                const data = snapshot.val();
+                absensi = [];
+                
+                if (data) {
+                    // Konversi data dari Firebase ke array
+                    Object.keys(data).forEach(key => {
+                        absensi.push(data[key]);
+                    });
+                    
+                    // Urutkan berdasarkan ID (timestamp) terbaru
+                    absensi.sort((a, b) => b.id - a.id);
+                }
+                
+                console.log("Data absensi diterima dari Firebase:", absensi);
+                
+                // Tampilkan data
+                tampilkanAbsensi();
+            }, (error) => {
+                console.error("Error membaca data absensi dari Firebase:", error);
+                showNotification("Error membaca data absensi dari Firebase", 'error');
+            });
+            
+            // Mendengarkan perubahan data anggota di Firebase
+            anggotaRef.on('value', (snapshot) => {
+                const data = snapshot.val();
+                daftarAnggota = [];
+                
+                if (data) {
+                    // Konversi data dari Firebase ke array
+                    Object.keys(data).forEach(key => {
+                        daftarAnggota.push(data[key]);
+                    });
+                    
+                    // Urutkan berdasarkan nama
+                    daftarAnggota.sort((a, b) => a.nama.localeCompare(b.nama));
+                }
+                
+                console.log("Data anggota diterima dari Firebase:", daftarAnggota);
+                
+                // Tampilkan daftar anggota
+                tampilkanDaftarAnggota();
+                updateStatistik();
+            }, (error) => {
+                console.error("Error membaca data anggota dari Firebase:", error);
+                showNotification("Error membaca data anggota dari Firebase", 'error');
+            });
+            
+            // Mendengarkan perubahan data pengumuman di Firebase
+            pengumumanRef.on('value', (snapshot) => {
+                const data = snapshot.val();
+                daftarPengumuman = [];
+                
+                if (data) {
+                    // Konversi data dari Firebase ke array
+                    Object.keys(data).forEach(key => {
+                        daftarPengumuman.push(data[key]);
+                    });
+                }
+                
+                console.log("Data pengumuman diterima dari Firebase:", daftarPengumuman);
+                
+                // Tampilkan daftar pengumuman
+                tampilkanDaftarPengumuman();
+                updateStatistik();
+            }, (error) => {
+                console.error("Error membaca data pengumuman dari Firebase:", error);
+                showNotification("Error membaca data pengumuman dari Firebase", 'error');
+            });
+            
+            // Monitor status koneksi Firebase
+            database.ref('.info/connected').on('value', (snapshot) => {
+                const isConnected = snapshot.val();
+                console.log("Status koneksi Firebase:", isConnected);
+                updateConnectionStatus(isConnected);
+            });
+            
+            console.log("Aplikasi absensi siap digunakan");
+        });
+    </script>
+</body>
+</html>
