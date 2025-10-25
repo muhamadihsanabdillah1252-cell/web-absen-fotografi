@@ -604,6 +604,10 @@
             transition: all 0.3s;
         }
         
+        .admin-toggle.hidden {
+            display: none;
+        }
+        
         .admin-toggle:hover {
             transform: scale(1.1);
         }
@@ -1043,7 +1047,7 @@
         <div class="admin-header">
             <h2><i class="fas fa-user-shield"></i> Panel Admin</h2>
             <button id="close-admin" class="btn btn-danger btn-sm">
-                <i class="fas fa-times"></i>
+                <i class="fas fa-times"></i> Tutup
             </button>
         </div>
         
@@ -1100,7 +1104,6 @@
     </div>
 
     <script>
-        // Kode JavaScript tetap sama seperti sebelumnya
         // ==================================================
         // 🔥 AREA KONFIGURASI FIREBASE - EDIT BAGIAN INI 🔥
         // ==================================================
@@ -1150,6 +1153,20 @@
         let isAdminLoggedIn = false;
         const ADMIN_PASSWORD_KEY = 'admin_password_fotografi';
         const ADMIN_SESSION_KEY = 'admin_session_fotografi';
+
+        // Fungsi untuk membuka panel admin
+        function openAdminPanel() {
+            document.getElementById('admin-panel').classList.add('active');
+            document.getElementById('overlay').classList.add('active');
+            document.getElementById('admin-toggle').classList.add('hidden');
+        }
+
+        // Fungsi untuk menutup panel admin
+        function closeAdminPanel() {
+            document.getElementById('admin-panel').classList.remove('active');
+            document.getElementById('overlay').classList.remove('active');
+            document.getElementById('admin-toggle').classList.remove('hidden');
+        }
 
         // Fungsi untuk mengupdate status koneksi
         function updateConnectionStatus(status) {
@@ -1720,20 +1737,11 @@
             });
             
             // Event listener untuk admin panel
-            document.getElementById('admin-toggle').addEventListener('click', function() {
-                document.getElementById('admin-panel').classList.add('active');
-                document.getElementById('overlay').classList.add('active');
-            });
+            document.getElementById('admin-toggle').addEventListener('click', openAdminPanel);
             
-            document.getElementById('close-admin').addEventListener('click', function() {
-                document.getElementById('admin-panel').classList.remove('active');
-                document.getElementById('overlay').classList.remove('active');
-            });
+            document.getElementById('close-admin').addEventListener('click', closeAdminPanel);
             
-            document.getElementById('overlay').addEventListener('click', function() {
-                document.getElementById('admin-panel').classList.remove('active');
-                document.getElementById('overlay').classList.remove('active');
-            });
+            document.getElementById('overlay').addEventListener('click', closeAdminPanel);
             
             // Event listener untuk login admin
             document.getElementById('btn-login-admin').addEventListener('click', function() {
