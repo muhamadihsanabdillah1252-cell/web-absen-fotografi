@@ -860,6 +860,96 @@
             color: var(--success);
         }
         
+        /* Password Input Styles */
+        .password-input {
+            position: relative;
+        }
+        
+        .toggle-password {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--gray);
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        
+        .password-strength {
+            height: 5px;
+            border-radius: 5px;
+            margin-top: 5px;
+            background-color: #f0f0f0;
+            overflow: hidden;
+        }
+        
+        .password-strength-bar {
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s, background-color 0.3s;
+        }
+        
+        .password-strength-weak {
+            background-color: var(--secondary);
+            width: 33%;
+        }
+        
+        .password-strength-medium {
+            background-color: var(--admin-color);
+            width: 66%;
+        }
+        
+        .password-strength-strong {
+            background-color: var(--success);
+            width: 100%;
+        }
+        
+        .password-requirements {
+            font-size: 0.75rem;
+            color: var(--gray);
+            margin-top: 5px;
+        }
+        
+        .password-requirement {
+            display: flex;
+            align-items: center;
+            margin-bottom: 3px;
+        }
+        
+        .password-requirement i {
+            margin-right: 5px;
+            font-size: 0.7rem;
+        }
+        
+        .requirement-met {
+            color: var(--success);
+        }
+        
+        .requirement-not-met {
+            color: var(--gray);
+        }
+        
+        .change-password-form {
+            background: rgba(142, 68, 173, 0.05);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            border: 1px dashed rgba(142, 68, 173, 0.3);
+        }
+        
+        .change-password-form h4 {
+            margin-bottom: 15px;
+            color: var(--user-color);
+            display: flex;
+            align-items: center;
+        }
+        
+        .change-password-form h4 i {
+            margin-right: 8px;
+        }
+        
         /* Media Queries untuk Tablet */
         @media (min-width: 768px) {
             body {
@@ -975,7 +1065,7 @@
         <div class="login-container">
             <div class="login-header">
                 <h2>Login Anggota</h2>
-                <p>Silakan pilih nama Anda untuk melanjutkan</p>
+                <p>Silakan pilih nama Anda dan masukkan password</p>
             </div>
             
             <div class="form-group">
@@ -987,14 +1077,30 @@
             </div>
             
             <div class="form-group">
+                <label for="user-password"><i class="fas fa-lock"></i> Password</label>
+                <div class="password-input">
+                    <input type="password" id="user-password" class="form-control" placeholder="Masukkan password Anda">
+                    <button type="button" class="toggle-password" id="toggle-password">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+                <div class="password-info" style="font-size: 0.8rem; color: var(--gray); margin-top: 5px;">
+                    <i class="fas fa-info-circle"></i> Password default: <strong>1234</strong>
+                </div>
+            </div>
+            
+            <div class="form-group">
                 <button id="btn-login-user" class="btn btn-user" style="width: 100%;">
                     <i class="fas fa-sign-in-alt"></i> Login
                 </button>
             </div>
             
-            <div class="user-info" id="user-info" style="display: none;">
-                <i class="fas fa-user-circle"></i>
-                <span id="current-user-name">-</span>
+            <div class="demo-accounts" style="background: rgba(108, 99, 255, 0.05); padding: 15px; border-radius: 10px; margin-top: 20px;">
+                <h4 style="margin-bottom: 10px; color: var(--primary);"><i class="fas fa-users"></i> Akun Demo</h4>
+                <div style="font-size: 0.8rem;">
+                    <p><strong>Admin:</strong> Password: <code>admin fotografi.112</code></p>
+                    <p><strong>Anggota:</strong> Password: <code>1234</code> (semua akun)</p>
+                </div>
             </div>
         </div>
     </div>
@@ -1002,7 +1108,7 @@
     <div class="container" id="main-container" style="display: none;">
         <header>
             <div class="logo-container">
-                <img src="foto/logo-klub.jpg" alt="Logo Ekskul Fotografi" id="logo-image" onerror="this.style.display='none'">
+                <i class="fas fa-camera" style="font-size: 2rem; color: var(--primary);"></i>
             </div>
             <div class="header-content">
                 <h1>Sistem Absensi Fotografi</h1>
@@ -1030,7 +1136,7 @@
                         <input type="date" id="tanggal-absensi" class="form-control" required>
                     </div>
                     
-                    <div class="add-member-form" id="add-member-form">
+                    <div class="add-member-form" id="add-member-form" style="display: none;">
                         <div class="form-group">
                             <label for="nama-baru"><i class="fas fa-user-plus"></i> Tambah Anggota Baru</label>
                             <div class="form-row">
@@ -1051,7 +1157,7 @@
                         </div>
                     </div>
                     
-                    <div class="user-info" id="user-info-main">
+                    <div class="user-info" id="user-info-main" style="display: none;">
                         <i class="fas fa-user-circle"></i>
                         <span id="current-user-name-main">-</span>
                     </div>
@@ -1294,6 +1400,8 @@
         const adminRef = database.ref('admin-fotografi');
         // Referensi database untuk pengumuman
         const pengumumanRef = database.ref('pengumuman-fotografi');
+        // Referensi database untuk password anggota
+        const passwordRef = database.ref('password-anggota');
         
         // Array untuk menyimpan data absensi
         let absensi = [];
@@ -1301,6 +1409,8 @@
         let daftarAnggota = [];
         // Array untuk menyimpan pengumuman
         let daftarPengumuman = [];
+        // Object untuk menyimpan password anggota
+        let passwordAnggota = {};
         
         // Status admin
         let isAdminLoggedIn = false;
@@ -1310,6 +1420,71 @@
         // Status user
         let currentUser = null;
         const USER_SESSION_KEY = 'user_session_fotografi';
+
+        // Fungsi untuk inisialisasi data contoh
+        function initializeSampleData() {
+            // Cek apakah data sudah ada
+            anggotaRef.once('value').then((snapshot) => {
+                if (!snapshot.exists()) {
+                    console.log("Membuat data contoh...");
+                    
+                    // Data anggota contoh
+                    const sampleMembers = [
+                        { id: '1', nama: 'Ahmad Fauzi', tanggal_daftar: '2023-10-01' },
+                        { id: '2', nama: 'Siti Rahayu', tanggal_daftar: '2023-10-01' },
+                        { id: '3', nama: 'Budi Santoso', tanggal_daftar: '2023-10-01' },
+                        { id: '4', nama: 'Maya Sari', tanggal_daftar: '2023-10-01' },
+                        { id: '5', nama: 'Rizki Pratama', tanggal_daftar: '2023-10-01' }
+                    ];
+                    
+                    // Data password contoh (semua password: 1234)
+                    const samplePasswords = {
+                        '1': '1234',
+                        '2': '1234', 
+                        '3': '1234',
+                        '4': '1234',
+                        '5': '1234'
+                    };
+                    
+                    // Data pengumuman contoh
+                    const sampleAnnouncements = [
+                        {
+                            id: '1',
+                            judul: 'Selamat Datang di Ekskul Fotografi',
+                            isi: 'Selamat datang para anggota baru! Mari kita belajar fotografi bersama-sama dan eksplorasi dunia visual yang menarik.',
+                            prioritas: 'high',
+                            tanggal: new Date().toISOString().split('T')[0],
+                            waktu: new Date().toISOString()
+                        },
+                        {
+                            id: '2', 
+                            judul: 'Jadwal Pertemuan Rutin',
+                            isi: 'Pertemuan rutin setiap hari Jumat pukul 15.00-17.00 di ruang multimedia. Jangan sampai terlambat!',
+                            prioritas: 'medium',
+                            tanggal: new Date().toISOString().split('T')[0],
+                            waktu: new Date().toISOString()
+                        }
+                    ];
+                    
+                    // Simpan data anggota
+                    sampleMembers.forEach(member => {
+                        anggotaRef.child(member.id).set(member);
+                    });
+                    
+                    // Simpan password
+                    Object.keys(samplePasswords).forEach(id => {
+                        passwordRef.child(id).set(samplePasswords[id]);
+                    });
+                    
+                    // Simpan pengumuman
+                    sampleAnnouncements.forEach(announcement => {
+                        pengumumanRef.child(announcement.id).set(announcement);
+                    });
+                    
+                    console.log("Data contoh berhasil dibuat");
+                }
+            });
+        }
 
         // Fungsi untuk membuka panel admin
         function openAdminPanel() {
@@ -1328,19 +1503,27 @@
         }
 
         // Fungsi untuk login user
-        function loginUser(userId, userName) {
-            currentUser = {
-                id: userId,
-                name: userName
-            };
-            
-            localStorage.setItem(USER_SESSION_KEY, JSON.stringify(currentUser));
-            updateUserUI();
-            showNotification(`Login berhasil! Selamat datang ${userName}`, 'success');
-            
-            // Sembunyikan login panel dan tampilkan main container
-            document.getElementById('login-panel').style.display = 'none';
-            document.getElementById('main-container').style.display = 'block';
+        function loginUser(userId, userName, password) {
+            // Cek apakah password benar
+            if (passwordAnggota[userId] && passwordAnggota[userId] === password) {
+                currentUser = {
+                    id: userId,
+                    name: userName
+                };
+                
+                localStorage.setItem(USER_SESSION_KEY, JSON.stringify(currentUser));
+                updateUserUI();
+                showNotification(`Login berhasil! Selamat datang ${userName}`, 'success');
+                
+                // Sembunyikan login panel dan tampilkan main container
+                document.getElementById('login-panel').style.display = 'none';
+                document.getElementById('main-container').style.display = 'block';
+                
+                return true;
+            } else {
+                showNotification('Password salah! Gunakan password: 1234', 'error');
+                return false;
+            }
         }
 
         // Fungsi untuk logout user
@@ -1352,20 +1535,20 @@
             document.getElementById('login-panel').style.display = 'flex';
             document.getElementById('main-container').style.display = 'none';
             
+            // Reset form login
+            document.getElementById('user-select').value = '';
+            document.getElementById('user-password').value = '';
+            
             showNotification('Logout berhasil!', 'success');
         }
 
         // Fungsi untuk update UI user
         function updateUserUI() {
             if (currentUser) {
-                document.getElementById('current-user-name').textContent = currentUser.name;
                 document.getElementById('current-user-name-main').textContent = currentUser.name;
-                document.getElementById('user-info').style.display = 'flex';
                 document.getElementById('user-info-main').style.display = 'flex';
             } else {
-                document.getElementById('current-user-name').textContent = '-';
                 document.getElementById('current-user-name-main').textContent = '-';
-                document.getElementById('user-info').style.display = 'none';
                 document.getElementById('user-info-main').style.display = 'none';
             }
             
@@ -1505,11 +1688,55 @@
                     console.log('Data anggota berhasil disimpan ke Firebase');
                     document.getElementById('nama-baru').value = '';
                     showNotification(`Anggota ${nama} berhasil ditambahkan!`, 'success');
+                    
+                    // Set password default untuk anggota baru
+                    setPasswordAnggota(id, '1234');
                 })
                 .catch((error) => {
                     console.error('Error menyimpan data anggota:', error);
                     showNotification('Terjadi kesalahan saat menambah anggota', 'error');
                 });
+        }
+
+        // Fungsi untuk set password anggota
+        function setPasswordAnggota(userId, password) {
+            passwordRef.child(userId).set(password)
+                .then(() => {
+                    console.log('Password anggota berhasil disimpan');
+                })
+                .catch((error) => {
+                    console.error('Error menyimpan password anggota:', error);
+                });
+        }
+
+        // Fungsi untuk mengubah password anggota
+        function ubahPasswordAnggota(userId, passwordLama, passwordBaru) {
+            // Verifikasi password lama
+            if (passwordAnggota[userId] !== passwordLama) {
+                showNotification('Password lama salah!', 'error');
+                return false;
+            }
+            
+            // Set password baru
+            passwordRef.child(userId).set(passwordBaru)
+                .then(() => {
+                    console.log('Password anggota berhasil diubah');
+                    showNotification('Password berhasil diubah!', 'success');
+                    return true;
+                })
+                .catch((error) => {
+                    console.error('Error mengubah password anggota:', error);
+                    showNotification('Terjadi kesalahan saat mengubah password', 'error');
+                    return false;
+                });
+        }
+
+        // Fungsi untuk reset password anggota (admin only)
+        function resetPasswordAnggota(userId, nama) {
+            if (confirm(`Apakah Anda yakin ingin mereset password ${nama}? Password akan diubah menjadi "1234"`)) {
+                setPasswordAnggota(userId, '1234');
+                showNotification(`Password ${nama} berhasil direset!`, 'success');
+            }
         }
 
         // Fungsi untuk menambah pengumuman baru ke Firebase
@@ -1562,6 +1789,8 @@
                 anggotaRef.child(id).remove()
                     .then(() => {
                         console.log('Data anggota berhasil dihapus');
+                        // Hapus juga password anggota
+                        passwordRef.child(id).remove();
                         showNotification(`Anggota ${nama} berhasil dihapus!`, 'success');
                     })
                     .catch((error) => {
@@ -1653,11 +1882,17 @@
                         <button class="action-btn btn-danger" onclick="hapusAnggota('${anggota.id}', '${anggota.nama}')">
                             <i class="fas fa-trash"></i>
                         </button>
+                        <button class="action-btn btn-warning" onclick="resetPasswordAnggota('${anggota.id}', '${anggota.nama}')">
+                            <i class="fas fa-key"></i>
+                        </button>
                     `;
                 } else if (currentUser && currentUser.name === anggota.nama) {
                     actionButtons = `
                         <button class="mark-present-btn" onclick="tandaiHadir('${anggota.nama}')">
                             <i class="fas fa-check"></i> Hadir
+                        </button>
+                        <button class="action-btn btn-info" onclick="showChangePasswordForm('${anggota.id}', '${anggota.nama}')">
+                            <i class="fas fa-key"></i>
                         </button>
                     `;
                 } else {
@@ -1673,6 +1908,144 @@
                 
                 membersList.appendChild(memberItem);
             });
+        }
+
+        // Fungsi untuk menampilkan form ganti password
+        function showChangePasswordForm(userId, userName) {
+            const formHTML = `
+                <div class="change-password-form" id="change-password-form">
+                    <h4><i class="fas fa-key"></i> Ganti Password</h4>
+                    <div class="form-group">
+                        <label for="old-password">Password Lama</label>
+                        <div class="password-input">
+                            <input type="password" id="old-password" class="form-control" placeholder="Masukkan password lama">
+                            <button type="button" class="toggle-password" onclick="togglePasswordVisibility('old-password')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="new-password">Password Baru</label>
+                        <div class="password-input">
+                            <input type="password" id="new-password" class="form-control" placeholder="Masukkan password baru">
+                            <button type="button" class="toggle-password" onclick="togglePasswordVisibility('new-password')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <div class="password-strength">
+                            <div class="password-strength-bar" id="password-strength-bar"></div>
+                        </div>
+                        <div class="password-requirements">
+                            <div class="password-requirement">
+                                <i class="fas fa-check requirement-not-met" id="req-length"></i>
+                                <span>Minimal 4 karakter</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirm-password">Konfirmasi Password Baru</label>
+                        <div class="password-input">
+                            <input type="password" id="confirm-password" class="form-control" placeholder="Konfirmasi password baru">
+                            <button type="button" class="toggle-password" onclick="togglePasswordVisibility('confirm-password')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="btn-group" style="width: 100%;">
+                        <button class="btn btn-success" onclick="changeUserPassword('${userId}', '${userName}')" style="flex: 1;">
+                            <i class="fas fa-save"></i> Simpan
+                        </button>
+                        <button class="btn btn-danger" onclick="hideChangePasswordForm()" style="flex: 1;">
+                            <i class="fas fa-times"></i> Batal
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            // Hapus form sebelumnya jika ada
+            const existingForm = document.getElementById('change-password-form');
+            if (existingForm) {
+                existingForm.remove();
+            }
+            
+            // Tambahkan form baru
+            const userInfoMain = document.getElementById('user-info-main');
+            userInfoMain.insertAdjacentHTML('afterend', formHTML);
+            
+            // Tambahkan event listener untuk memeriksa kekuatan password
+            document.getElementById('new-password').addEventListener('input', checkPasswordStrength);
+        }
+
+        // Fungsi untuk menyembunyikan form ganti password
+        function hideChangePasswordForm() {
+            const form = document.getElementById('change-password-form');
+            if (form) {
+                form.remove();
+            }
+        }
+
+        // Fungsi untuk mengubah password user
+        function changeUserPassword(userId, userName) {
+            const oldPassword = document.getElementById('old-password').value;
+            const newPassword = document.getElementById('new-password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            
+            if (!oldPassword || !newPassword || !confirmPassword) {
+                showNotification('Harap isi semua field!', 'error');
+                return;
+            }
+            
+            if (newPassword !== confirmPassword) {
+                showNotification('Password baru dan konfirmasi password tidak cocok!', 'error');
+                return;
+            }
+            
+            if (newPassword.length < 4) {
+                showNotification('Password baru minimal 4 karakter!', 'error');
+                return;
+            }
+            
+            if (ubahPasswordAnggota(userId, oldPassword, newPassword)) {
+                hideChangePasswordForm();
+            }
+        }
+
+        // Fungsi untuk memeriksa kekuatan password
+        function checkPasswordStrength() {
+            const password = document.getElementById('new-password').value;
+            const strengthBar = document.getElementById('password-strength-bar');
+            const reqLength = document.getElementById('req-length');
+            
+            // Reset kelas
+            strengthBar.className = 'password-strength-bar';
+            reqLength.className = 'password-requirement';
+            
+            if (password.length === 0) {
+                strengthBar.style.width = '0%';
+                reqLength.innerHTML = '<i class="fas fa-check requirement-not-met"></i>';
+                reqLength.className = 'password-requirement';
+            } else if (password.length < 4) {
+                strengthBar.className = 'password-strength-weak';
+                reqLength.innerHTML = '<i class="fas fa-times requirement-not-met"></i>';
+            } else {
+                strengthBar.className = 'password-strength-strong';
+                reqLength.innerHTML = '<i class="fas fa-check requirement-met"></i>';
+                reqLength.className = 'password-requirement requirement-met';
+            }
+        }
+
+        // Fungsi untuk toggle visibility password
+        function togglePasswordVisibility(inputId) {
+            const input = document.getElementById(inputId);
+            const icon = input.nextElementSibling.querySelector('i');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.className = 'fas fa-eye-slash';
+            } else {
+                input.type = 'password';
+                icon.className = 'fas fa-eye';
+            }
         }
 
         // Fungsi untuk menampilkan daftar pengumuman
@@ -1820,7 +2193,7 @@
                 showNotification('Login admin berhasil!', 'success');
                 return true;
             } else {
-                showNotification('Password admin salah!', 'error');
+                showNotification('Password admin salah! Gunakan: admin fotografi.112', 'error');
                 return false;
             }
         }
@@ -1902,6 +2275,8 @@
             if (confirm('Apakah Anda yakin ingin menghapus SEMUA data anggota? Tindakan ini tidak dapat dibatalkan!')) {
                 anggotaRef.remove()
                     .then(() => {
+                        // Hapus juga semua password
+                        passwordRef.remove();
                         showNotification('Semua data anggota berhasil dihapus!', 'success');
                     })
                     .catch((error) => {
@@ -1947,6 +2322,14 @@
             
             // Update tanggal hari ini di highlight
             document.getElementById('today-date').textContent = formatTanggal(today);
+            
+            // Inisialisasi data contoh
+            initializeSampleData();
+            
+            // Event listener untuk toggle password visibility
+            document.getElementById('toggle-password').addEventListener('click', function() {
+                togglePasswordVisibility('user-password');
+            });
             
             // Event listener untuk tombol tambah anggota
             document.getElementById('btn-tambah-anggota').addEventListener('click', function() {
@@ -2072,13 +2455,26 @@
                 const userSelect = document.getElementById('user-select');
                 const selectedUserId = userSelect.value;
                 const selectedUserName = userSelect.options[userSelect.selectedIndex].text;
+                const password = document.getElementById('user-password').value;
                 
                 if (!selectedUserId) {
                     showNotification('Pilih nama Anda terlebih dahulu!', 'error');
                     return;
                 }
                 
-                loginUser(selectedUserId, selectedUserName);
+                if (!password) {
+                    showNotification('Masukkan password!', 'error');
+                    return;
+                }
+                
+                loginUser(selectedUserId, selectedUserName, password);
+            });
+            
+            // Event listener untuk Enter pada input password
+            document.getElementById('user-password').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    document.getElementById('btn-login-user').click();
+                }
             });
             
             // Event listener untuk logout user
@@ -2192,6 +2588,17 @@
             }, (error) => {
                 console.error("Error membaca data pengumuman dari Firebase:", error);
                 showNotification("Error membaca data pengumuman dari Firebase", 'error');
+            });
+            
+            // Mendengarkan perubahan data password di Firebase
+            passwordRef.on('value', (snapshot) => {
+                const data = snapshot.val();
+                passwordAnggota = data || {};
+                
+                console.log("Data password diterima dari Firebase:", passwordAnggota);
+            }, (error) => {
+                console.error("Error membaca data password dari Firebase:", error);
+                showNotification("Error membaca data password dari Firebase", 'error');
             });
             
             // Monitor status koneksi Firebase
