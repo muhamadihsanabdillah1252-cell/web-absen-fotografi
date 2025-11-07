@@ -20,6 +20,7 @@
             --card-bg: rgba(255, 255, 255, 0.95);
             --admin-color: #FF9500;
             --info: #5B86E5;
+            --user-color: #8E44AD;
         }
         
         * {
@@ -287,6 +288,17 @@
         .btn-info:hover {
             transform: translateY(-3px);
             box-shadow: 0 8px 20px rgba(91, 134, 229, 0.4);
+        }
+        
+        .btn-user {
+            background: linear-gradient(135deg, var(--user-color), #9B59B6);
+            color: white;
+            box-shadow: 0 5px 15px rgba(142, 68, 173, 0.3);
+        }
+        
+        .btn-user:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(142, 68, 173, 0.4);
         }
         
         .btn-sm {
@@ -565,6 +577,73 @@
             margin-bottom: 0;
         }
         
+        /* Login Panel Styles */
+        .login-panel {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            box-shadow: -5px 0 30px rgba(0,0,0,0.1);
+            padding: 20px;
+            z-index: 1000;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .login-container {
+            max-width: 400px;
+            width: 100%;
+            padding: 30px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        }
+        
+        .login-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        
+        .login-header h2 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, var(--primary), var(--user-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .login-header p {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: rgba(142, 68, 173, 0.1);
+            padding: 10px 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .user-info i {
+            color: var(--user-color);
+            font-size: 1.2rem;
+        }
+        
+        .user-info span {
+            font-weight: 600;
+            color: var(--user-color);
+        }
+        
         /* Admin Panel Styles */
         .admin-panel {
             position: fixed;
@@ -609,6 +688,33 @@
         }
         
         .admin-toggle:hover {
+            transform: scale(1.1);
+        }
+        
+        .user-toggle {
+            position: fixed;
+            top: 70px;
+            right: 15px;
+            z-index: 1001;
+            background: var(--user-color);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(142, 68, 173, 0.3);
+            transition: all 0.3s;
+        }
+        
+        .user-toggle.hidden {
+            display: none;
+        }
+        
+        .user-toggle:hover {
             transform: scale(1.1);
         }
         
@@ -864,7 +970,36 @@
     </style>
 </head>
 <body>
-    <div class="container">
+    <!-- Login Panel -->
+    <div class="login-panel" id="login-panel">
+        <div class="login-container">
+            <div class="login-header">
+                <h2>Login Anggota</h2>
+                <p>Silakan pilih nama Anda untuk melanjutkan</p>
+            </div>
+            
+            <div class="form-group">
+                <label for="user-select"><i class="fas fa-user"></i> Pilih Nama Anda</label>
+                <select id="user-select" class="form-control">
+                    <option value="">-- Pilih Nama --</option>
+                    <!-- Daftar anggota akan diisi oleh JavaScript -->
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <button id="btn-login-user" class="btn btn-user" style="width: 100%;">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+            </div>
+            
+            <div class="user-info" id="user-info" style="display: none;">
+                <i class="fas fa-user-circle"></i>
+                <span id="current-user-name">-</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="container" id="main-container" style="display: none;">
         <header>
             <div class="logo-container">
                 <img src="foto/logo-klub.jpg" alt="Logo Ekskul Fotografi" id="logo-image" onerror="this.style.display='none'">
@@ -915,6 +1050,19 @@
                             <!-- Daftar anggota akan diisi oleh JavaScript -->
                         </div>
                     </div>
+                    
+                    <div class="user-info" id="user-info-main">
+                        <i class="fas fa-user-circle"></i>
+                        <span id="current-user-name-main">-</span>
+                    </div>
+                    
+                    <button id="btn-hadir-sendiri" class="btn btn-success hadir-btn">
+                        <i class="fas fa-user-check"></i> Tandai Kehadiran Saya
+                    </button>
+                    
+                    <button id="btn-logout-user" class="btn btn-danger hadir-btn" style="margin-top: 10px;">
+                        <i class="fas fa-sign-out-alt"></i> Ganti Akun
+                    </button>
                 </div>
                 
                 <div class="dashboard">
@@ -1041,6 +1189,11 @@
         <i class="fas fa-user-shield"></i>
     </button>
     
+    <!-- User Toggle -->
+    <button class="user-toggle" id="user-toggle">
+        <i class="fas fa-user"></i>
+    </button>
+    
     <div class="overlay" id="overlay"></div>
     
     <div class="admin-panel" id="admin-panel">
@@ -1097,7 +1250,7 @@
         
         <div class="admin-section">
             <h3><i class="fas fa-info-circle"></i> Informasi Sistem</h3>
-            <p><strong>Versi:</strong> 2.0 (Admin)</p>
+            <p><strong>Versi:</strong> 2.0 (Personal Login)</p>
             <p><strong>Status:</strong> <span id="admin-status">Tidak aktif</span></p>
             <p><strong>Pengguna:</strong> <span id="admin-user">-</span></p>
         </div>
@@ -1153,12 +1306,17 @@
         let isAdminLoggedIn = false;
         const ADMIN_PASSWORD_KEY = 'admin_password_fotografi';
         const ADMIN_SESSION_KEY = 'admin_session_fotografi';
+        
+        // Status user
+        let currentUser = null;
+        const USER_SESSION_KEY = 'user_session_fotografi';
 
         // Fungsi untuk membuka panel admin
         function openAdminPanel() {
             document.getElementById('admin-panel').classList.add('active');
             document.getElementById('overlay').classList.add('active');
             document.getElementById('admin-toggle').classList.add('hidden');
+            document.getElementById('user-toggle').classList.add('hidden');
         }
 
         // Fungsi untuk menutup panel admin
@@ -1166,6 +1324,53 @@
             document.getElementById('admin-panel').classList.remove('active');
             document.getElementById('overlay').classList.remove('active');
             document.getElementById('admin-toggle').classList.remove('hidden');
+            document.getElementById('user-toggle').classList.remove('hidden');
+        }
+
+        // Fungsi untuk login user
+        function loginUser(userId, userName) {
+            currentUser = {
+                id: userId,
+                name: userName
+            };
+            
+            localStorage.setItem(USER_SESSION_KEY, JSON.stringify(currentUser));
+            updateUserUI();
+            showNotification(`Login berhasil! Selamat datang ${userName}`, 'success');
+            
+            // Sembunyikan login panel dan tampilkan main container
+            document.getElementById('login-panel').style.display = 'none';
+            document.getElementById('main-container').style.display = 'block';
+        }
+
+        // Fungsi untuk logout user
+        function logoutUser() {
+            currentUser = null;
+            localStorage.removeItem(USER_SESSION_KEY);
+            
+            // Tampilkan login panel dan sembunyikan main container
+            document.getElementById('login-panel').style.display = 'flex';
+            document.getElementById('main-container').style.display = 'none';
+            
+            showNotification('Logout berhasil!', 'success');
+        }
+
+        // Fungsi untuk update UI user
+        function updateUserUI() {
+            if (currentUser) {
+                document.getElementById('current-user-name').textContent = currentUser.name;
+                document.getElementById('current-user-name-main').textContent = currentUser.name;
+                document.getElementById('user-info').style.display = 'flex';
+                document.getElementById('user-info-main').style.display = 'flex';
+            } else {
+                document.getElementById('current-user-name').textContent = '-';
+                document.getElementById('current-user-name-main').textContent = '-';
+                document.getElementById('user-info').style.display = 'none';
+                document.getElementById('user-info-main').style.display = 'none';
+            }
+            
+            // Refresh tampilan daftar anggota
+            tampilkanDaftarAnggota();
         }
 
         // Fungsi untuk mengupdate status koneksi
@@ -1241,6 +1446,16 @@
 
         // Fungsi untuk menambah data absensi ke Firebase
         function tambahAbsensi(nama, tanggal) {
+            // Cek apakah user sudah absen pada tanggal yang sama
+            const sudahAbsen = absensi.some(item => 
+                item.nama === nama && item.tanggal === tanggal
+            );
+            
+            if (sudahAbsen) {
+                showNotification('Anda sudah absen hari ini!', 'error');
+                return;
+            }
+            
             const id = Date.now().toString(); // ID unik berdasarkan timestamp
             const dataBaru = {
                 id: id,
@@ -1427,15 +1642,32 @@
                 const memberItem = document.createElement('div');
                 memberItem.className = 'member-item';
                 
-                memberItem.innerHTML = `
-                    <span class="member-name">${anggota.nama}</span>
-                    <div>
+                // Tampilkan tombol hadir hanya untuk admin atau untuk user yang sedang login
+                let actionButtons = '';
+                
+                if (isAdminLoggedIn) {
+                    actionButtons = `
                         <button class="mark-present-btn" onclick="tandaiHadir('${anggota.nama}')">
                             <i class="fas fa-check"></i> Hadir
                         </button>
-                        ${isAdminLoggedIn ? `<button class="action-btn btn-danger" onclick="hapusAnggota('${anggota.id}', '${anggota.nama}')">
+                        <button class="action-btn btn-danger" onclick="hapusAnggota('${anggota.id}', '${anggota.nama}')">
                             <i class="fas fa-trash"></i>
-                        </button>` : ''}
+                        </button>
+                    `;
+                } else if (currentUser && currentUser.name === anggota.nama) {
+                    actionButtons = `
+                        <button class="mark-present-btn" onclick="tandaiHadir('${anggota.nama}')">
+                            <i class="fas fa-check"></i> Hadir
+                        </button>
+                    `;
+                } else {
+                    actionButtons = `<span style="color: var(--gray); font-size: 0.8rem;">Login untuk absen</span>`;
+                }
+                
+                memberItem.innerHTML = `
+                    <span class="member-name">${anggota.nama}</span>
+                    <div>
+                        ${actionButtons}
                     </div>
                 `;
                 
@@ -1508,6 +1740,12 @@
 
         // Fungsi untuk menandai kehadiran
         function tandaiHadir(nama) {
+            // Jika bukan admin, cek apakah user mencoba absen untuk dirinya sendiri
+            if (!isAdminLoggedIn && currentUser && currentUser.name !== nama) {
+                showNotification('Anda hanya dapat mencatat kehadiran untuk diri sendiri!', 'error');
+                return;
+            }
+            
             const tanggal = document.getElementById('tanggal-absensi').value;
             
             if (!tanggal) {
@@ -1687,6 +1925,19 @@
             }
         }
 
+        // Fungsi untuk mengisi dropdown user
+        function isiDropdownUser() {
+            const userSelect = document.getElementById('user-select');
+            userSelect.innerHTML = '<option value="">-- Pilih Nama --</option>';
+            
+            daftarAnggota.forEach(anggota => {
+                const option = document.createElement('option');
+                option.value = anggota.id;
+                option.textContent = anggota.nama;
+                userSelect.appendChild(option);
+            });
+        }
+
         // Inisialisasi saat halaman dimuat
         document.addEventListener('DOMContentLoaded', function() {
             // Set tanggal default ke hari ini
@@ -1742,6 +1993,13 @@
             document.getElementById('close-admin').addEventListener('click', closeAdminPanel);
             
             document.getElementById('overlay').addEventListener('click', closeAdminPanel);
+            
+            // Event listener untuk user toggle
+            document.getElementById('user-toggle').addEventListener('click', function() {
+                if (confirm('Apakah Anda ingin logout dan ganti akun?')) {
+                    logoutUser();
+                }
+            });
             
             // Event listener untuk login admin
             document.getElementById('btn-login-admin').addEventListener('click', function() {
@@ -1809,10 +2067,57 @@
                 document.getElementById('pengumuman-prioritas').value = 'low';
             });
             
+            // Event listener untuk login user
+            document.getElementById('btn-login-user').addEventListener('click', function() {
+                const userSelect = document.getElementById('user-select');
+                const selectedUserId = userSelect.value;
+                const selectedUserName = userSelect.options[userSelect.selectedIndex].text;
+                
+                if (!selectedUserId) {
+                    showNotification('Pilih nama Anda terlebih dahulu!', 'error');
+                    return;
+                }
+                
+                loginUser(selectedUserId, selectedUserName);
+            });
+            
+            // Event listener untuk logout user
+            document.getElementById('btn-logout-user').addEventListener('click', function() {
+                if (confirm('Apakah Anda yakin ingin logout?')) {
+                    logoutUser();
+                }
+            });
+            
+            // Event listener untuk tombol hadir sendiri
+            document.getElementById('btn-hadir-sendiri').addEventListener('click', function() {
+                if (!currentUser) {
+                    showNotification('Silakan login terlebih dahulu!', 'error');
+                    return;
+                }
+                
+                tandaiHadir(currentUser.name);
+            });
+            
             // Cek session admin
             if (localStorage.getItem(ADMIN_SESSION_KEY) === 'active') {
                 isAdminLoggedIn = true;
                 updateAdminUI();
+            }
+            
+            // Cek session user
+            const savedUser = localStorage.getItem(USER_SESSION_KEY);
+            if (savedUser) {
+                try {
+                    currentUser = JSON.parse(savedUser);
+                    updateUserUI();
+                    
+                    // Sembunyikan login panel dan tampilkan main container
+                    document.getElementById('login-panel').style.display = 'none';
+                    document.getElementById('main-container').style.display = 'block';
+                } catch (e) {
+                    console.error('Error parsing user session:', e);
+                    localStorage.removeItem(USER_SESSION_KEY);
+                }
             }
             
             // Mendengarkan perubahan data absensi di Firebase
@@ -1855,6 +2160,9 @@
                 }
                 
                 console.log("Data anggota diterima dari Firebase:", daftarAnggota);
+                
+                // Isi dropdown user
+                isiDropdownUser();
                 
                 // Tampilkan daftar anggota
                 tampilkanDaftarAnggota();
