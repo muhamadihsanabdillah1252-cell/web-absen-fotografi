@@ -1493,7 +1493,7 @@
                         {
                             id: '2', 
                             judul: 'Jadwal Pertemuan Rutin',
-                            isi: 'Pertemuan rutin setiap hari Jumat pukul 15.00-17.00 di ruang multimedia. Jangan sampai terlambat!',
+                            isi: 'Pertemuan rutin setiap hari Jumat pukul 13.45-16.00 di ruang multimedia. Jangan sampai terlambat!',
                             prioritas: 'medium',
                             tanggal: new Date().toISOString().split('T')[0],
                             waktu: new Date().toISOString()
@@ -1754,7 +1754,7 @@
                 closeAdminPanel();
                 return true;
             } else {
-                showNotification('Password admin salah! Gunakan: ' + DEFAULT_ADMIN_PASSWORD, 'error');
+                showNotification('Password admin salah! Gunakan', 'error');
                 return false;
             }
         }
@@ -2560,6 +2560,7 @@
     </script>
 </body>
 </html>
+
 
 
 
