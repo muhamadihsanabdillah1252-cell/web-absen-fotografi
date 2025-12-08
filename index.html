@@ -1080,6 +1080,33 @@
             transform: scale(1.1);
         }
         
+        /* Browser Notification Toggle */
+        .browser-notification-toggle {
+            position: fixed;
+            bottom: 70px;
+            right: 20px;
+            background: var(--card-bg);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            z-index: 1999;
+            transition: all 0.3s;
+        }
+        
+        .browser-notification-toggle.muted {
+            opacity: 0.5;
+            background: var(--gray);
+        }
+        
+        .browser-notification-toggle:hover {
+            transform: scale(1.1);
+        }
+        
         /* Media Queries untuk Tablet */
         @media (min-width: 768px) {
             body {
@@ -1227,6 +1254,15 @@
                 <div style="font-size: 0.8rem;">
                     <p><strong>Masukkan Password Yg Diberikan</strong></p>
                 </div>
+            </div>
+            
+            <!-- Permintaan Notifikasi Browser -->
+            <div id="browser-notification-request" style="background: rgba(91, 134, 229, 0.1); padding: 15px; border-radius: 10px; margin-top: 20px; display: none;">
+                <h4 style="margin-bottom: 10px; color: var(--info);"><i class="fas fa-desktop"></i> Notifikasi Browser</h4>
+                <p style="font-size: 0.8rem; margin-bottom: 10px;">Aktifkan notifikasi browser untuk mendapatkan pemberitahuan pengumuman langsung di desktop Anda!</p>
+                <button id="btn-enable-browser-notifications" class="btn btn-info" style="width: 100%;">
+                    <i class="fas fa-bell"></i> Aktifkan Notifikasi Browser
+                </button>
             </div>
         </div>
     </div>
@@ -1530,9 +1566,10 @@
         
         <div class="admin-section">
             <h3><i class="fas fa-info-circle"></i> Informasi Sistem</h3>
-            <p><strong>Versi:</strong> 2.2 (Notifikasi Pengumuman)</p>
+            <p><strong>Versi:</strong> 3.0 (Notifikasi Browser)</p>
             <p><strong>Status:</strong> <span id="admin-status">Tidak aktif</span></p>
             <p><strong>Pengguna:</strong> <span id="admin-user">-</span></p>
+            <p><strong>Notifikasi Browser:</strong> <span id="browser-notification-status">Memeriksa...</span></p>
         </div>
     </div>
 
@@ -1542,6 +1579,11 @@
     <!-- Sound Indicator -->
     <div class="sound-indicator" id="sound-indicator" title="Toggle notification sound">
         <i class="fas fa-bell"></i>
+    </div>
+    
+    <!-- Browser Notification Toggle -->
+    <div class="browser-notification-toggle" id="browser-notification-toggle" title="Toggle browser notifications">
+        <i class="fas fa-desktop"></i>
     </div>
     
     <!-- Audio untuk notifikasi suara (tersembunyi) -->
@@ -1594,12 +1636,14 @@
         let isAdminLoggedIn = false;
         let currentUser = null;
         let isNotificationSoundEnabled = true;
+        let isBrowserNotificationEnabled = false;
         let announcedPengumumanIds = new Set();
         
         // Key untuk localStorage
         const ADMIN_PASSWORD_KEY = 'admin_password_fotografi';
         const ADMIN_SESSION_KEY = 'admin_session_fotografi';
         const USER_SESSION_KEY = 'user_session_fotografi';
+        const BROWSER_NOTIFICATION_KEY = 'browser_notification_fotografi';
 
         // Fungsi untuk inisialisasi data contoh
         function initializeSampleData() {
@@ -1664,6 +1708,178 @@
         }
 
         // ==================================================
+        // 🖥️ FUNGSI NOTIFIKASI BROWSER (DESKTOP) 🖥️
+        // ==================================================
+
+        // Fungsi untuk memeriksa dan meminta izin notifikasi browser
+        function checkBrowserNotificationPermission() {
+            // Periksa apakah browser mendukung notifikasi
+            if (!("Notification" in window)) {
+                console.log("Browser ini tidak mendukung notifikasi desktop");
+                updateBrowserNotificationStatus("Tidak didukung");
+                return false;
+            }
+            
+            // Cek status izin
+            if (Notification.permission === "granted") {
+                console.log("Izin notifikasi browser sudah diberikan");
+                isBrowserNotificationEnabled = true;
+                updateBrowserNotificationStatus("Aktif");
+                updateBrowserNotificationToggle();
+                return true;
+            } else if (Notification.permission === "denied") {
+                console.log("Izin notifikasi browser ditolak");
+                isBrowserNotificationEnabled = false;
+                updateBrowserNotificationStatus("Ditolak");
+                updateBrowserNotificationToggle();
+                return false;
+            } else {
+                console.log("Izin notifikasi browser belum diminta");
+                isBrowserNotificationEnabled = false;
+                updateBrowserNotificationStatus("Belum diizinkan");
+                
+                // Tampilkan permintaan di login panel jika user belum login
+                if (!currentUser) {
+                    document.getElementById('browser-notification-request').style.display = 'block';
+                }
+                return false;
+            }
+        }
+
+        // Fungsi untuk meminta izin notifikasi browser
+        function requestBrowserNotificationPermission() {
+            if (!("Notification" in window)) {
+                showNotification("Browser Anda tidak mendukung notifikasi desktop", "error");
+                return;
+            }
+            
+            Notification.requestPermission().then(function(permission) {
+                if (permission === "granted") {
+                    isBrowserNotificationEnabled = true;
+                    localStorage.setItem(BROWSER_NOTIFICATION_KEY, 'enabled');
+                    showNotification("🎉 Notifikasi browser diaktifkan! Anda akan menerima notifikasi di desktop.", "success");
+                    updateBrowserNotificationStatus("Aktif");
+                    updateBrowserNotificationToggle();
+                    document.getElementById('browser-notification-request').style.display = 'none';
+                    
+                    // Tampilkan notifikasi contoh
+                    showBrowserNotification("Notifikasi Diaktifkan", "Selamat! Anda akan menerima notifikasi pengumuman baru di desktop.");
+                } else {
+                    isBrowserNotificationEnabled = false;
+                    localStorage.setItem(BROWSER_NOTIFICATION_KEY, 'disabled');
+                    showNotification("Notifikasi browser ditolak. Anda dapat mengaktifkannya nanti di pengaturan browser.", "info");
+                    updateBrowserNotificationStatus("Ditolak");
+                    updateBrowserNotificationToggle();
+                }
+            });
+        }
+
+        // Fungsi untuk menampilkan notifikasi browser (desktop)
+        function showBrowserNotification(title, message) {
+            if (!isBrowserNotificationEnabled || !("Notification" in window) || Notification.permission !== "granted") {
+                return;
+            }
+            
+            try {
+                // Buat notifikasi
+                const notification = new Notification(title, {
+                    body: message,
+                    icon: 'https://cdn-icons-png.flaticon.com/512/1041/1041916.png', // Ganti dengan logo klub
+                    badge: 'https://cdn-icons-png.flaticon.com/512/1041/1041916.png',
+                    tag: 'fotografi-announcement',
+                    requireInteraction: false,
+                    silent: false
+                });
+                
+                // Tutup notifikasi setelah 8 detik
+                setTimeout(() => {
+                    notification.close();
+                }, 8000);
+                
+                // Event listener untuk klik notifikasi
+                notification.onclick = function() {
+                    window.focus();
+                    this.close();
+                    
+                    // Arahkan ke halaman pengumuman jika browser terbuka
+                    if (document.getElementById('main-container').style.display !== 'none') {
+                        document.getElementById('btn-tambah-pengumuman').scrollIntoView({ behavior: 'smooth' });
+                    }
+                };
+                
+                console.log("Notifikasi browser ditampilkan:", title);
+            } catch (error) {
+                console.error("Error menampilkan notifikasi browser:", error);
+            }
+        }
+
+        // Fungsi untuk update status notifikasi browser di UI
+        function updateBrowserNotificationStatus(status) {
+            const statusElement = document.getElementById('browser-notification-status');
+            if (statusElement) {
+                statusElement.textContent = status;
+                
+                switch(status) {
+                    case "Aktif":
+                        statusElement.style.color = "var(--success)";
+                        break;
+                    case "Ditolak":
+                    case "Tidak didukung":
+                        statusElement.style.color = "var(--secondary)";
+                        break;
+                    default:
+                        statusElement.style.color = "var(--admin-color)";
+                        break;
+                }
+            }
+        }
+
+        // Fungsi untuk update toggle notifikasi browser
+        function updateBrowserNotificationToggle() {
+            const toggle = document.getElementById('browser-notification-toggle');
+            if (toggle) {
+                if (isBrowserNotificationEnabled && Notification.permission === "granted") {
+                    toggle.classList.remove('muted');
+                    toggle.innerHTML = '<i class="fas fa-desktop"></i>';
+                    toggle.title = "Notifikasi browser aktif (klik untuk nonaktifkan)";
+                } else {
+                    toggle.classList.add('muted');
+                    toggle.innerHTML = '<i class="fas fa-desktop-slash"></i>';
+                    toggle.title = "Notifikasi browser nonaktif (klik untuk mengaktifkan)";
+                }
+            }
+        }
+
+        // Fungsi untuk toggle notifikasi browser
+        function toggleBrowserNotifications() {
+            if (!("Notification" in window)) {
+                showNotification("Browser Anda tidak mendukung notifikasi desktop", "error");
+                return;
+            }
+            
+            if (Notification.permission === "granted") {
+                // Jika sudah diizinkan, matikan
+                isBrowserNotificationEnabled = !isBrowserNotificationEnabled;
+                localStorage.setItem(BROWSER_NOTIFICATION_KEY, isBrowserNotificationEnabled ? 'enabled' : 'disabled');
+                
+                if (isBrowserNotificationEnabled) {
+                    showNotification("🔔 Notifikasi browser diaktifkan!", "success");
+                } else {
+                    showNotification("🔕 Notifikasi browser dinonaktifkan!", "info");
+                }
+                
+                updateBrowserNotificationToggle();
+                updateBrowserNotificationStatus(isBrowserNotificationEnabled ? "Aktif" : "Dinonaktifkan");
+            } else if (Notification.permission === "denied") {
+                // Jika ditolak, beri instruksi
+                showNotification("Izin notifikasi ditolak. Silakan aktifkan di pengaturan browser Anda.", "error");
+            } else {
+                // Jika belum diminta, minta izin
+                requestBrowserNotificationPermission();
+            }
+        }
+
+        // ==================================================
         // 🔔 FUNGSI NOTIFIKASI PENGUMUMAN 🔔
         // ==================================================
 
@@ -1700,6 +1916,7 @@
         function showAnnouncementNotification(judul, isi, waktu) {
             playNotificationSound();
             
+            // Tampilkan notifikasi dalam aplikasi (popup)
             const container = document.getElementById('notification-container');
             const notificationId = 'notification-' + Date.now();
             
@@ -1733,6 +1950,9 @@
             
             // Tampilkan juga toast notification kecil
             showNotification(`📢 Pengumuman baru: ${judul}`, 'info');
+            
+            // Tampilkan notifikasi browser (desktop notification)
+            showBrowserNotification("📢 Pengumuman Baru: " + judul, isiSingkat);
         }
 
         // Fungsi untuk menghapus notifikasi
@@ -1809,6 +2029,12 @@
             if (pengumumanBaru.length > 0) {
                 setTimeout(() => {
                     showNotification(`📢 Ada ${pengumumanBaru.length} pengumuman baru hari ini`, 'info');
+                    
+                    // Tampilkan notifikasi browser untuk pengumuman terbaru
+                    if (pengumumanBaru.length > 0 && isBrowserNotificationEnabled) {
+                        const pengumumanTerbaru = pengumumanBaru.sort((a, b) => new Date(b.waktu) - new Date(a.waktu))[0];
+                        showBrowserNotification("📢 Pengumuman Terbaru", pengumumanTerbaru.judul);
+                    }
                 }, 1000);
             }
         }
@@ -1974,6 +2200,9 @@
                 
                 // Tampilkan notifikasi pengumuman baru
                 showUnreadAnnouncements();
+                
+                // Sembunyikan permintaan notifikasi browser jika masih ditampilkan
+                document.getElementById('browser-notification-request').style.display = 'none';
                 
                 return true;
             } else {
@@ -2541,7 +2770,7 @@
             // Inisialisasi data contoh
             initializeSampleData();
             
-            // Load sound preference from localStorage
+            // Load preferences from localStorage
             const savedSoundPref = localStorage.getItem('notification_sound_enabled');
             if (savedSoundPref !== null) {
                 isNotificationSoundEnabled = savedSoundPref === 'true';
@@ -2552,8 +2781,23 @@
                 }
             }
             
+            // Load browser notification preference
+            const savedBrowserPref = localStorage.getItem(BROWSER_NOTIFICATION_KEY);
+            if (savedBrowserPref === 'enabled') {
+                isBrowserNotificationEnabled = true;
+            }
+            
+            // Periksa izin notifikasi browser
+            checkBrowserNotificationPermission();
+            
             // Event listener untuk sound indicator
             document.getElementById('sound-indicator').addEventListener('click', toggleNotificationSound);
+            
+            // Event listener untuk browser notification toggle
+            document.getElementById('browser-notification-toggle').addEventListener('click', toggleBrowserNotifications);
+            
+            // Event listener untuk tombol aktifkan notifikasi browser di login panel
+            document.getElementById('btn-enable-browser-notifications').addEventListener('click', requestBrowserNotificationPermission);
             
             // Event listener untuk toggle password visibility
             document.getElementById('toggle-password').addEventListener('click', function() {
@@ -2751,6 +2995,9 @@
                     
                     // Tampilkan notifikasi pengumuman baru
                     showUnreadAnnouncements();
+                    
+                    // Sembunyikan permintaan notifikasi browser
+                    document.getElementById('browser-notification-request').style.display = 'none';
                 } catch (e) {
                     console.error('Error parsing user session:', e);
                     localStorage.removeItem(USER_SESSION_KEY);
