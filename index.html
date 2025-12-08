@@ -4,21 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Absensi Ekskul Fotografi</title>
-    
-    <!-- PWA Meta Tags -->
-    <link rel="manifest" id="manifest-placeholder">
-    <meta name="theme-color" content="#6C63FF">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Absensi Fotografi">
-    
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
-    
     <style>
         :root {
             --primary: #6C63FF;
@@ -39,7 +27,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
         body {
@@ -57,6 +45,7 @@
         
         header {
             background: var(--card-bg);
+            backdrop-filter: blur(10px);
             border-radius: 15px;
             padding: 20px;
             margin-bottom: 20px;
@@ -93,15 +82,23 @@
             border: 3px solid white;
         }
         
-        .logo-container i {
-            font-size: 2.5rem;
-            color: var(--primary);
+        .logo-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .header-content {
+            flex: 1;
+            width: 100%;
         }
         
         .header-content h1 {
             font-size: 1.5rem;
             margin-bottom: 5px;
-            color: var(--dark);
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
             font-weight: 700;
         }
         
@@ -137,39 +134,20 @@
             gap: 20px;
         }
         
-        @media (min-width: 768px) {
-            .main-content {
-                display: grid;
-                grid-template-columns: 1fr 2fr;
-                gap: 25px;
-            }
-            
-            header {
-                flex-direction: row;
-                text-align: left;
-                padding: 25px 30px;
-                border-radius: 20px;
-            }
-            
-            .header-content h1 {
-                font-size: 2rem;
-            }
-        }
-        
         .card {
             background: var(--card-bg);
+            backdrop-filter: blur(10px);
             border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             padding: 20px;
             margin-bottom: 20px;
+            transition: transform 0.3s, box-shadow 0.3s;
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
         
-        @media (min-width: 768px) {
-            .card {
-                padding: 25px;
-                border-radius: 20px;
-            }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
         }
         
         .card-header {
@@ -181,24 +159,18 @@
             border-bottom: 1px solid rgba(0,0,0,0.05);
         }
         
+        .card-header i {
+            font-size: 1.2rem;
+            margin-right: 8px;
+            color: var(--primary);
+        }
+        
         .card-header h2 {
             font-size: 1.2rem;
             color: var(--dark);
             font-weight: 600;
             display: flex;
             align-items: center;
-        }
-        
-        @media (min-width: 768px) {
-            .card-header h2 {
-                font-size: 1.5rem;
-            }
-        }
-        
-        .card-header i {
-            font-size: 1.2rem;
-            margin-right: 8px;
-            color: var(--primary);
         }
         
         .form-group {
@@ -255,6 +227,7 @@
         .btn-primary {
             background: linear-gradient(135deg, var(--primary), var(--primary-light));
             color: white;
+            box-shadow: 0 5px 15px rgba(108, 99, 255, 0.3);
         }
         
         .btn-primary:hover {
@@ -265,6 +238,7 @@
         .btn-success {
             background: linear-gradient(135deg, var(--success), #34C759);
             color: white;
+            box-shadow: 0 5px 15px rgba(76, 217, 100, 0.3);
         }
         
         .btn-success:hover {
@@ -275,6 +249,7 @@
         .btn-danger {
             background: linear-gradient(135deg, var(--secondary), #FF4B6E);
             color: white;
+            box-shadow: 0 5px 15px rgba(255, 101, 132, 0.3);
         }
         
         .btn-danger:hover {
@@ -285,6 +260,7 @@
         .btn-warning {
             background: linear-gradient(135deg, #FF9500, #FFB143);
             color: white;
+            box-shadow: 0 5px 15px rgba(255, 149, 0, 0.3);
         }
         
         .btn-warning:hover {
@@ -295,6 +271,7 @@
         .btn-admin {
             background: linear-gradient(135deg, var(--admin-color), #FFB143);
             color: white;
+            box-shadow: 0 5px 15px rgba(255, 149, 0, 0.3);
         }
         
         .btn-admin:hover {
@@ -305,6 +282,7 @@
         .btn-info {
             background: linear-gradient(135deg, var(--info), #36D1DC);
             color: white;
+            box-shadow: 0 5px 15px rgba(91, 134, 229, 0.3);
         }
         
         .btn-info:hover {
@@ -315,6 +293,7 @@
         .btn-user {
             background: linear-gradient(135deg, var(--user-color), #9B59B6);
             color: white;
+            box-shadow: 0 5px 15px rgba(142, 68, 173, 0.3);
         }
         
         .btn-user:hover {
@@ -340,6 +319,11 @@
             border-radius: 12px;
             color: white;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
         }
         
         .stat-card.hadir { 
@@ -365,16 +349,6 @@
             opacity: 0.9;
         }
         
-        @media (min-width: 768px) {
-            .stat-card h3 {
-                font-size: 2rem;
-            }
-            
-            .stat-card p {
-                font-size: 1rem;
-            }
-        }
-        
         .filters {
             display: flex;
             flex-direction: column;
@@ -382,14 +356,15 @@
             margin-bottom: 20px;
         }
         
-        @media (min-width: 768px) {
-            .filters {
-                flex-direction: row;
-            }
-        }
-        
         .filter-group {
             width: 100%;
+        }
+        
+        .filter-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
         }
         
         .table-container {
@@ -450,6 +425,16 @@
             font-size: 0.75rem;
         }
         
+        .btn-danger { 
+            background: var(--secondary); 
+            color: white; 
+        }
+        
+        .action-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+        
         .btn-group {
             display: flex;
             gap: 5px;
@@ -467,6 +452,41 @@
             margin-bottom: 10px;
             color: var(--gray);
             opacity: 0.5;
+        }
+        
+        .search-container {
+            position: relative;
+        }
+        
+        .search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid rgba(0,0,0,0.1);
+            border-radius: 0 0 10px 10px;
+            max-height: 150px;
+            overflow-y: auto;
+            z-index: 10;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            display: none;
+        }
+        
+        .search-result-item {
+            padding: 10px 12px;
+            cursor: pointer;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            transition: background 0.2s;
+            font-size: 0.9rem;
+        }
+        
+        .search-result-item:hover {
+            background-color: rgba(108, 99, 255, 0.1);
+        }
+        
+        .search-result-item:last-child {
+            border-bottom: none;
         }
         
         .hadir-btn {
@@ -506,6 +526,15 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            transition: background 0.2s;
+        }
+        
+        .member-item:hover {
+            background-color: rgba(108, 99, 255, 0.05);
+        }
+        
+        .member-item:last-child {
+            border-bottom: none;
         }
         
         .member-name {
@@ -521,6 +550,12 @@
             border-radius: 6px;
             cursor: pointer;
             font-size: 0.75rem;
+            transition: all 0.2s;
+        }
+        
+        .mark-present-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 3px 8px rgba(76, 217, 100, 0.3);
         }
         
         .add-member-form {
@@ -537,6 +572,12 @@
             align-items: flex-end;
         }
         
+        .form-row .form-group {
+            flex: 1;
+            margin-bottom: 0;
+        }
+        
+        /* Login Panel Styles */
         .login-panel {
             position: fixed;
             top: 0;
@@ -544,6 +585,8 @@
             width: 100%;
             height: 100vh;
             background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            box-shadow: -5px 0 30px rgba(0,0,0,0.1);
             padding: 20px;
             z-index: 1000;
             overflow-y: auto;
@@ -570,7 +613,14 @@
         .login-header h2 {
             font-size: 1.8rem;
             margin-bottom: 10px;
-            color: var(--primary);
+            background: linear-gradient(90deg, var(--primary), var(--user-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .login-header p {
+            color: var(--gray);
+            font-size: 0.9rem;
         }
         
         .user-info {
@@ -589,6 +639,12 @@
             font-size: 1.2rem;
         }
         
+        .user-info span {
+            font-weight: 600;
+            color: var(--user-color);
+        }
+        
+        /* Admin Panel Styles */
         .admin-panel {
             position: fixed;
             top: 0;
@@ -596,17 +652,12 @@
             width: 100%;
             height: 100vh;
             background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            box-shadow: -5px 0 30px rgba(0,0,0,0.1);
             padding: 20px;
             transition: right 0.3s ease;
             z-index: 1000;
             overflow-y: auto;
-        }
-        
-        @media (min-width: 768px) {
-            .admin-panel {
-                width: 350px;
-                right: -350px;
-            }
         }
         
         .admin-panel.active {
@@ -628,10 +679,16 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
+            box-shadow: 0 5px 15px rgba(255, 149, 0, 0.3);
+            transition: all 0.3s;
         }
         
         .admin-toggle.hidden {
             display: none;
+        }
+        
+        .admin-toggle:hover {
+            transform: scale(1.1);
         }
         
         .user-toggle {
@@ -649,10 +706,16 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
+            box-shadow: 0 5px 15px rgba(142, 68, 173, 0.3);
+            transition: all 0.3s;
         }
         
         .user-toggle.hidden {
             display: none;
+        }
+        
+        .user-toggle:hover {
+            transform: scale(1.1);
         }
         
         .admin-header {
@@ -664,8 +727,43 @@
             border-bottom: 1px solid rgba(0,0,0,0.05);
         }
         
+        .admin-header h2 {
+            font-size: 1.3rem;
+            color: var(--admin-color);
+            display: flex;
+            align-items: center;
+        }
+        
+        .admin-header i {
+            margin-right: 8px;
+        }
+        
         .admin-section {
             margin-bottom: 20px;
+        }
+        
+        .admin-section h3 {
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+        }
+        
+        .admin-section i {
+            margin-right: 8px;
+            color: var(--admin-color);
+        }
+        
+        .admin-badge {
+            display: inline-block;
+            background: var(--admin-color);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 15px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-left: 8px;
         }
         
         .overlay {
@@ -675,6 +773,7 @@
             width: 100%;
             height: 100%;
             background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
             z-index: 999;
             display: none;
         }
@@ -683,12 +782,50 @@
             display: block;
         }
         
+        /* Pengumuman Styles */
         .announcement-card {
             background: rgba(91, 134, 229, 0.1);
             border-left: 5px solid var(--info);
             padding: 15px;
             border-radius: 10px;
             margin-bottom: 15px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .announcement-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(91, 134, 229, 0.2);
+        }
+        
+        .announcement-header {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 10px;
+        }
+        
+        .announcement-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 5px;
+        }
+        
+        .announcement-date {
+            font-size: 0.75rem;
+            color: var(--gray);
+        }
+        
+        .announcement-content {
+            color: var(--dark);
+            line-height: 1.5;
+            font-size: 0.9rem;
+        }
+        
+        .announcement-actions {
+            display: flex;
+            justify-content: flex-start;
+            margin-top: 12px;
+            gap: 8px;
         }
         
         .announcement-form {
@@ -723,6 +860,7 @@
             color: var(--success);
         }
         
+        /* Password Input Styles */
         .password-input {
             position: relative;
         }
@@ -739,6 +877,60 @@
             font-size: 0.9rem;
         }
         
+        .password-strength {
+            height: 5px;
+            border-radius: 5px;
+            margin-top: 5px;
+            background-color: #f0f0f0;
+            overflow: hidden;
+        }
+        
+        .password-strength-bar {
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s, background-color 0.3s;
+        }
+        
+        .password-strength-weak {
+            background-color: var(--secondary);
+            width: 33%;
+        }
+        
+        .password-strength-medium {
+            background-color: var(--admin-color);
+            width: 66%;
+        }
+        
+        .password-strength-strong {
+            background-color: var(--success);
+            width: 100%;
+        }
+        
+        .password-requirements {
+            font-size: 0.75rem;
+            color: var(--gray);
+            margin-top: 5px;
+        }
+        
+        .password-requirement {
+            display: flex;
+            align-items: center;
+            margin-bottom: 3px;
+        }
+        
+        .password-requirement i {
+            margin-right: 5px;
+            font-size: 0.7rem;
+        }
+        
+        .requirement-met {
+            color: var(--success);
+        }
+        
+        .requirement-not-met {
+            color: var(--gray);
+        }
+        
         .change-password-section {
             background: rgba(142, 68, 173, 0.05);
             padding: 15px;
@@ -747,178 +939,123 @@
             border: 1px dashed rgba(142, 68, 173, 0.3);
         }
         
-        /* Notifikasi untuk HP */
-        .mobile-notification-container {
-            position: fixed;
-            top: 10px;
-            left: 10px;
-            right: 10px;
-            z-index: 2000;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        
-        .mobile-notification {
-            background: white;
-            border-radius: 12px;
-            padding: 15px;
-            box-shadow: 0 5px 25px rgba(0,0,0,0.2);
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-            border-left: 5px solid var(--info);
-            animation: slideDown 0.5s forwards;
-        }
-        
-        @keyframes slideDown {
-            from {
-                transform: translateY(-100px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-        
-        .mobile-notification-icon {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
+        .change-password-section h4 {
+            margin-bottom: 15px;
+            color: var(--user-color);
             display: flex;
             align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            background: var(--info);
-            color: white;
         }
         
-        .mobile-toast {
-            position: fixed;
-            bottom: 20px;
-            left: 10px;
-            right: 10px;
-            background: rgba(0,0,0,0.85);
-            color: white;
-            padding: 15px;
-            border-radius: 12px;
-            text-align: center;
-            font-weight: 600;
-            z-index: 1999;
-            transform: translateY(100px);
-            transition: transform 0.5s;
+        .change-password-section h4 i {
+            margin-right: 8px;
         }
         
-        .mobile-toast.show {
-            transform: translateY(0);
-        }
-        
-        .pwa-install-prompt {
-            position: fixed;
-            bottom: 20px;
-            left: 10px;
-            right: 10px;
-            background: white;
-            border-radius: 15px;
-            padding: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            z-index: 1997;
-            display: none;
-            align-items: center;
-            gap: 15px;
-            border-left: 5px solid var(--success);
-        }
-        
-        .pwa-install-prompt.show {
-            display: flex;
-        }
-        
-        .pwa-install-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 12px;
-            background: linear-gradient(135deg, var(--primary), var(--primary-light));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.5rem;
-            flex-shrink: 0;
-        }
-        
-        /* Desktop Notifications */
-        .desktop-notification-container {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 2000;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            max-width: 350px;
-        }
-        
-        .desktop-notification {
-            background: white;
-            border-radius: 10px;
-            padding: 15px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-            border-left: 4px solid var(--info);
-            animation: slideIn 0.5s forwards;
-        }
-        
-        @keyframes slideIn {
-            from {
-                transform: translateX(400px);
-            }
-            to {
-                transform: translateX(0);
-            }
-        }
-        
-        /* Sembunyikan notifikasi desktop di mobile */
-        @media (max-width: 767px) {
-            .desktop-notification-container {
-                display: none !important;
-            }
-        }
-        
-        /* Sembunyikan notifikasi mobile di desktop */
+        /* Media Queries untuk Tablet */
         @media (min-width: 768px) {
-            .mobile-notification-container,
-            .mobile-toast {
-                display: none !important;
+            body {
+                padding: 20px;
+            }
+            
+            header {
+                flex-direction: row;
+                text-align: left;
+                padding: 25px 30px;
+                border-radius: 20px;
+            }
+            
+            .header-content {
+                min-width: 300px;
+            }
+            
+            .header-content h1 {
+                font-size: 2rem;
+            }
+            
+            .header-content p {
+                font-size: 1rem;
+            }
+            
+            .connection-status {
+                width: auto;
+                max-width: none;
+            }
+            
+            .main-content {
+                display: grid;
+                grid-template-columns: 1fr 2fr;
+                gap: 25px;
+            }
+            
+            .card {
+                padding: 25px;
+                border-radius: 20px;
+            }
+            
+            .card-header h2 {
+                font-size: 1.5rem;
+            }
+            
+            .form-control {
+                padding: 15px 20px;
+                font-size: 1rem;
+            }
+            
+            .btn {
+                padding: 15px 25px;
+                font-size: 1rem;
+            }
+            
+            .stat-card {
+                padding: 25px 15px;
+            }
+            
+            .stat-card h3 {
+                font-size: 2rem;
+            }
+            
+            .stat-card p {
+                font-size: 1rem;
+            }
+            
+            .filters {
+                flex-direction: row;
+            }
+            
+            .filter-group {
+                flex: 1;
+                min-width: 150px;
+            }
+            
+            .admin-panel {
+                width: 350px;
+                right: -350px;
+            }
+            
+            .announcement-header {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: flex-start;
+            }
+            
+            .announcement-actions {
+                justify-content: flex-end;
             }
         }
         
-        .pulse {
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-        
-        .install-instructions {
-            margin-top: 20px;
-            padding: 15px;
-            background: rgba(76, 217, 100, 0.1);
-            border-radius: 10px;
-            border-left: 4px solid var(--success);
-        }
-        
-        .install-instructions h4 {
-            color: var(--success);
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+        /* Media Queries untuk Desktop */
+        @media (min-width: 992px) {
+            .logo-container {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .header-content h1 {
+                font-size: 2.2rem;
+            }
+            
+            .stat-card h3 {
+                font-size: 2.5rem;
+            }
         }
     </style>
 </head>
@@ -927,7 +1064,7 @@
     <div class="login-panel" id="login-panel">
         <div class="login-container">
             <div class="login-header">
-                <h2><i class="fas fa-camera"></i> Login Anggota</h2>
+                <h2>Login Anggota</h2>
                 <p>Silakan pilih nama Anda dan masukkan password</p>
             </div>
             
@@ -935,14 +1072,15 @@
                 <label for="user-select"><i class="fas fa-user"></i> Pilih Nama Anda</label>
                 <select id="user-select" class="form-control">
                     <option value="">-- Pilih Nama --</option>
+                    <!-- Daftar anggota akan diisi oleh JavaScript -->
                 </select>
             </div>
             
             <div class="form-group">
                 <label for="user-password"><i class="fas fa-lock"></i> Password</label>
                 <div class="password-input">
-                    <input type="password" id="user-password" class="form-control" placeholder="Masukkan password">
-                    <button type="button" class="toggle-password" id="toggle-login-password">
+                    <input type="password" id="user-password" class="form-control" placeholder="Masukkan password Anda">
+                    <button type="button" class="toggle-password" id="toggle-password">
                         <i class="fas fa-eye"></i>
                     </button>
                 </div>
@@ -954,22 +1092,19 @@
                 </button>
             </div>
             
-            <div class="install-instructions">
-                <h4><i class="fas fa-mobile-alt"></i> Install di Beranda HP</h4>
-                <p style="font-size: 0.9rem; margin-bottom: 10px;">
-                    <strong>Untuk notifikasi push:</strong> Buka di Chrome/Edge di HP, tap menu (3 titik), pilih "Add to Home Screen"
-                </p>
-                <p style="font-size: 0.8rem; color: var(--gray);">
-                    Password default: <strong>1234</strong>
-                </p>
+            <div class="demo-accounts" style="background: rgba(108, 99, 255, 0.05); padding: 15px; border-radius: 10px; margin-top: 20px;">
+                <h4 style="margin-bottom: 10px; color: var(--primary);"><i class="fas fa-users"></i> Announcement</h4>
+                <div style="font-size: 0.8rem;">
+                    <p><strong>Masukkan Password Yg Diberikan</strong></p>
+                </div>
             </div>
         </div>
     </div>
 
     <div class="container" id="main-container" style="display: none;">
         <header>
-            <div class="logo-container pulse">
-                <i class="fas fa-camera"></i>
+            <div class="logo-container">
+                <img src="foto/logo-klub.jpg" alt="Logo Ekskul Fotografi" id="logo-image" onerror="this.style.display="none">
             </div>
             <div class="header-content">
                 <h1>Sistem Absensi Fotografi</h1>
@@ -1023,6 +1158,7 @@
                         <span id="current-user-name-main">-</span>
                     </div>
                     
+                    <!-- SECTION GANTI PASSWORD ANGGOTA -->
                     <div class="change-password-section" id="change-password-section">
                         <h4><i class="fas fa-key"></i> Ganti Password Saya</h4>
                         
@@ -1030,7 +1166,7 @@
                             <label for="current-password">Password Saat Ini</label>
                             <div class="password-input">
                                 <input type="password" id="current-password" class="form-control" placeholder="Masukkan password saat ini">
-                                <button type="button" class="toggle-password" id="toggle-current-password">
+                                <button type="button" class="toggle-password" onclick="togglePasswordVisibility('current-password')">
                                     <i class="fas fa-eye"></i>
                                 </button>
                             </div>
@@ -1040,9 +1176,18 @@
                             <label for="new-password">Password Baru</label>
                             <div class="password-input">
                                 <input type="password" id="new-password" class="form-control" placeholder="Masukkan password baru">
-                                <button type="button" class="toggle-password" id="toggle-new-password">
+                                <button type="button" class="toggle-password" onclick="togglePasswordVisibility('new-password')">
                                     <i class="fas fa-eye"></i>
                                 </button>
+                            </div>
+                            <div class="password-strength">
+                                <div class="password-strength-bar" id="password-strength-bar"></div>
+                            </div>
+                            <div class="password-requirements" id="password-requirements">
+                                <div class="password-requirement">
+                                    <i class="fas fa-circle requirement-not-met" id="req-length"></i>
+                                    <span>Minimal 4 karakter</span>
+                                </div>
                             </div>
                         </div>
                         
@@ -1050,7 +1195,7 @@
                             <label for="confirm-password">Konfirmasi Password Baru</label>
                             <div class="password-input">
                                 <input type="password" id="confirm-password" class="form-control" placeholder="Masukkan ulang password baru">
-                                <button type="button" class="toggle-password" id="toggle-confirm-password">
+                                <button type="button" class="toggle-password" onclick="togglePasswordVisibility('confirm-password')">
                                     <i class="fas fa-eye"></i>
                                 </button>
                             </div>
@@ -1087,6 +1232,7 @@
             </div>
             
             <div class="right-column">
+                <!-- Card Pengumuman -->
                 <div class="card">
                     <div class="card-header">
                         <h2><i class="fas fa-bullhorn"></i> Pengumuman</h2>
@@ -1250,66 +1396,21 @@
                     <i class="fas fa-trash"></i> Hapus Semua Pengumuman
                 </button>
             </div>
-            
-            <div class="form-group" style="margin-top: 20px;">
-                <label for="admin-pwa">Pengaturan PWA</label>
-                <div class="btn-group" style="width: 100%;">
-                    <button id="btn-request-notification-permission" class="btn btn-info" style="flex: 1;">
-                        <i class="fas fa-bell"></i> Izin Notifikasi
-                    </button>
-                    <button id="btn-install-pwa" class="btn btn-success" style="flex: 1;">
-                        <i class="fas fa-download"></i> Install App
-                    </button>
-                </div>
-            </div>
         </div>
         
         <div class="admin-section">
             <h3><i class="fas fa-info-circle"></i> Informasi Sistem</h3>
-            <p><strong>Versi:</strong> 4.0 (PWA & Push Notifications)</p>
+            <p><strong>Versi:</strong> 2.1 (Personal Login + Ganti Password)</p>
             <p><strong>Status:</strong> <span id="admin-status">Tidak aktif</span></p>
             <p><strong>Pengguna:</strong> <span id="admin-user">-</span></p>
-            <p><strong>Perangkat:</strong> <span id="device-type">Memeriksa...</span></p>
-            <p><strong>PWA Status:</strong> <span id="pwa-status">Memeriksa...</span></p>
-            <p><strong>Notifikasi:</strong> <span id="notification-status">Memeriksa...</span></p>
         </div>
     </div>
-
-    <!-- PWA Install Prompt -->
-    <div class="pwa-install-prompt" id="pwa-install-prompt">
-        <div class="pwa-install-icon">
-            <i class="fas fa-camera"></i>
-        </div>
-        <div class="pwa-install-content">
-            <div class="pwa-install-title">Install Absensi Fotografi</div>
-            <div class="pwa-install-description">Install aplikasi untuk akses cepat dari beranda HP dan dapatkan notifikasi</div>
-            <div class="pwa-install-actions">
-                <button id="btn-pwa-install" class="btn btn-success btn-sm">
-                    <i class="fas fa-download"></i> Install
-                </button>
-                <button id="btn-pwa-cancel" class="btn btn-danger btn-sm">
-                    Nanti
-                </button>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Notifikasi Mobile -->
-    <div class="mobile-notification-container" id="mobile-notification-container"></div>
-    <div class="mobile-toast" id="mobile-toast"></div>
-    
-    <!-- Notifikasi Desktop -->
-    <div class="desktop-notification-container" id="desktop-notification-container"></div>
-
-    <!-- Audio untuk notifikasi suara -->
-    <audio id="notification-sound" preload="auto" style="display: none;">
-        <source src="https://assets.mixkit.co/sfx/preview/mixkit-correct-answer-tone-2870.mp3" type="audio/mpeg">
-    </audio>
 
     <script>
         // ==================================================
-        // 🔥 KONFIGURASI FIREBASE 🔥
+        // 🔥 KONFIGURASI FIREBASE - SIAP PAKAI 🔥
         // ==================================================
+        
         const firebaseConfig = {
             apiKey: "AIzaSyBjQCxB7aDD5rj2B_aR19s9RFhNgzsxxSA",
             authDomain: "database-af06f.firebaseapp.com",
@@ -1321,18 +1422,24 @@
         };
 
         // ==================================================
-        // 🚀 INISIALISASI APLIKASI 🚀
+        // 🚀 INISIALISASI APLIKASI - LANGSUNG JALAN 🚀
         // ==================================================
+
+        // Inisialisasi Firebase
         try {
             firebase.initializeApp(firebaseConfig);
             console.log("Firebase berhasil diinisialisasi");
         } catch (error) {
             console.error("Error inisialisasi Firebase:", error);
+            alert("Error inisialisasi Firebase: " + error.message);
         }
         
         const database = firebase.database();
+        
+        // Referensi database
         const absensiRef = database.ref('absensi-fotografi');
         const anggotaRef = database.ref('anggota-fotografi');
+        const adminRef = database.ref('admin-fotografi');
         const pengumumanRef = database.ref('pengumuman-fotografi');
         const passwordRef = database.ref('password-anggota');
         
@@ -1343,671 +1450,93 @@
         let passwordAnggota = {};
         let isAdminLoggedIn = false;
         let currentUser = null;
-        let isMobileDevice = false;
-        let deferredPrompt = null;
-        let serviceWorkerRegistration = null;
         
         // Key untuk localStorage
         const ADMIN_PASSWORD_KEY = 'admin_password_fotografi';
         const ADMIN_SESSION_KEY = 'admin_session_fotografi';
         const USER_SESSION_KEY = 'user_session_fotografi';
 
-        // ==================================================
-        // 📱 FUNGSI UTILITY 📱
-        // ==================================================
-        function detectMobileDevice() {
-            const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-            const isMobile = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent.toLowerCase());
-            const isSmallScreen = window.innerWidth <= 768;
-            isMobileDevice = isMobile || isSmallScreen;
-            
-            document.getElementById('device-type').textContent = isMobileDevice ? "📱 Mobile" : "💻 Desktop";
-            return isMobileDevice;
-        }
-
-        function updateConnectionStatus(status) {
-            const connectionStatus = document.getElementById('connection-status');
-            if (status) {
-                connectionStatus.innerHTML = '<i class="fas fa-circle"></i> <span>Tersambung</span>';
-                connectionStatus.classList.remove('disconnected');
-                connectionStatus.classList.add('connected');
-            } else {
-                connectionStatus.innerHTML = '<i class="fas fa-circle"></i> <span>Terputus</span>';
-                connectionStatus.classList.remove('connected');
-                connectionStatus.classList.add('disconnected');
-            }
-        }
-
-        function formatTanggal(tanggalString) {
-            if (!tanggalString) return '-';
-            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            return new Date(tanggalString).toLocaleDateString('id-ID', options);
-        }
-
-        function formatTanggalWaktu(tanggalString) {
-            if (!tanggalString) return '-';
-            const tanggal = new Date(tanggalString);
-            return tanggal.toLocaleDateString('id-ID') + ' ' + tanggal.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
-        }
-
-        function showNotification(message, type = 'info') {
-            const notification = document.createElement('div');
-            notification.style.cssText = `
-                position: fixed;
-                top: 20px;
-                left: 50%;
-                transform: translateX(-50%) translateY(-100px);
-                padding: 12px 20px;
-                border-radius: 10px;
-                color: white;
-                font-weight: 600;
-                z-index: 1000;
-                box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-                transition: transform 0.5s;
-                max-width: 80%;
-                text-align: center;
-                word-wrap: break-word;
-            `;
-            
-            if (type === 'success') {
-                notification.style.background = 'linear-gradient(135deg, var(--success), #34C759)';
-            } else if (type === 'error') {
-                notification.style.background = 'linear-gradient(135deg, var(--secondary), #FF4B6E)';
-            } else if (type === 'info') {
-                notification.style.background = 'linear-gradient(135deg, var(--info), #36D1DC)';
-            } else if (type === 'warning') {
-                notification.style.background = 'linear-gradient(135deg, var(--admin-color), #FFB143)';
-            }
-            
-            notification.innerHTML = message;
-            document.body.appendChild(notification);
-            
-            setTimeout(() => {
-                notification.style.transform = 'translateX(-50%) translateY(0)';
-            }, 100);
-            
-            setTimeout(() => {
-                notification.style.transform = 'translateX(-50%) translateY(-100px)';
-                setTimeout(() => {
-                    if (notification.parentNode) {
-                        document.body.removeChild(notification);
-                    }
-                }, 500);
-            }, 3000);
-        }
-
-        // ==================================================
-        // 🔔 FUNGSI NOTIFIKASI PUSH 🔔
-        // ==================================================
-        async function registerServiceWorker() {
-            if ('serviceWorker' in navigator) {
-                try {
-                    // Buat Service Worker dari string
-                    const swCode = `
-                        self.addEventListener('install', (event) => {
-                            console.log('Service Worker installing...');
-                            self.skipWaiting();
-                        });
-
-                        self.addEventListener('activate', (event) => {
-                            console.log('Service Worker activating...');
-                        });
-
-                        self.addEventListener('push', (event) => {
-                            let data = { title: 'Absensi Fotografi', body: 'Ada pengumuman baru!' };
-                            
-                            if (event.data) {
-                                try {
-                                    data = event.data.json();
-                                } catch (e) {
-                                    console.log('Push data error:', e);
-                                }
-                            }
-
-                            const options = {
-                                body: data.body,
-                                icon: 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📸</text></svg>',
-                                badge: 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📸</text></svg>',
-                                vibrate: [200, 100, 200],
-                                data: data
-                            };
-
-                            event.waitUntil(self.registration.showNotification(data.title, options));
-                        });
-
-                        self.addEventListener('notificationclick', (event) => {
-                            event.notification.close();
-                            event.waitUntil(clients.openWindow('/'));
-                        });
-                    `;
+        // Fungsi untuk inisialisasi data contoh
+        function initializeSampleData() {
+            anggotaRef.once('value').then((snapshot) => {
+                if (!snapshot.exists()) {
+                    console.log("Membuat data contoh...");
                     
-                    const blob = new Blob([swCode], { type: 'application/javascript' });
-                    const swURL = URL.createObjectURL(blob);
+                    // Data anggota contoh
+                    const sampleMembers = [
+                        { id: '1', nama: 'Ahmad Fauzi', tanggal_daftar: new Date().toISOString().split('T')[0] },
+                        { id: '2', nama: 'Siti Rahayu', tanggal_daftar: new Date().toISOString().split('T')[0] },
+                        { id: '3', nama: 'Budi Santoso', tanggal_daftar: new Date().toISOString().split('T')[0] },
+                        { id: '4', nama: 'Maya Sari', tanggal_daftar: new Date().toISOString().split('T')[0] },
+                        { id: '5', nama: 'Rizki Pratama', tanggal_daftar: new Date().toISOString().split('T')[0] }
+                    ];
                     
-                    const registration = await navigator.serviceWorker.register(swURL);
-                    serviceWorkerRegistration = registration;
-                    console.log('Service Worker registered');
+                    // Data password contoh
+                    const samplePasswords = {
+                        '1': '1234',
+                        '2': '1234', 
+                        '3': '1234',
+                        '4': '1234',
+                        '5': '1234'
+                    };
                     
-                    // Update PWA status
-                    updatePWAStatus();
+                    // Data pengumuman contoh
+                    const sampleAnnouncements = [
+                        {
+                            id: '1',
+                            judul: 'Selamat Datang di Ekskul Fotografi',
+                            isi: 'Selamat datang para anggota baru! Mari kita belajar fotografi bersama-sama dan eksplorasi dunia visual yang menarik.',
+                            prioritas: 'high',
+                            tanggal: new Date().toISOString().split('T')[0],
+                            waktu: new Date().toISOString()
+                        },
+                        {
+                            id: '2', 
+                            judul: 'Jadwal Pertemuan Rutin',
+                            isi: 'Pertemuan rutin setiap hari Jumat pukul 13.45-16.00. Jangan sampai terlambat!',
+                            prioritas: 'medium',
+                            tanggal: new Date().toISOString().split('T')[0],
+                            waktu: new Date().toISOString()
+                        }
+                    ];
                     
-                    return registration;
-                } catch (error) {
-                    console.error('Service Worker registration failed:', error);
-                    return null;
+                    // Simpan data
+                    sampleMembers.forEach(member => {
+                        anggotaRef.child(member.id).set(member);
+                    });
+                    
+                    Object.keys(samplePasswords).forEach(id => {
+                        passwordRef.child(id).set(samplePasswords[id]);
+                    });
+                    
+                    sampleAnnouncements.forEach(announcement => {
+                        pengumumanRef.child(announcement.id).set(announcement);
+                    });
+                    
+                    console.log("Data contoh berhasil dibuat");
                 }
-            }
-            return null;
-        }
-
-        async function requestNotificationPermission() {
-            if (!('Notification' in window)) {
-                console.log('Browser tidak mendukung notifikasi');
-                return false;
-            }
-            
-            if (Notification.permission === 'granted') {
-                console.log('Notifikasi sudah diizinkan');
-                updateNotificationStatus();
-                return true;
-            }
-            
-            if (Notification.permission === 'denied') {
-                console.log('Notifikasi ditolak');
-                updateNotificationStatus();
-                return false;
-            }
-            
-            try {
-                const permission = await Notification.requestPermission();
-                console.log('Hasil permintaan notifikasi:', permission);
-                updateNotificationStatus();
-                
-                if (permission === 'granted') {
-                    showNotification('🔔 Notifikasi diaktifkan! Anda akan menerima pemberitahuan.', 'success');
-                    return true;
-                }
-            } catch (error) {
-                console.error('Error meminta izin notifikasi:', error);
-            }
-            
-            return false;
-        }
-
-        function updatePWAStatus() {
-            const pwaStatusElement = document.getElementById('pwa-status');
-            const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
-            
-            if (pwaStatusElement) {
-                if (isStandalone) {
-                    pwaStatusElement.textContent = '✅ Terinstall';
-                    pwaStatusElement.style.color = 'var(--success)';
-                } else if (serviceWorkerRegistration) {
-                    pwaStatusElement.textContent = '⚠️ Belum diinstall';
-                    pwaStatusElement.style.color = 'var(--admin-color)';
-                } else {
-                    pwaStatusElement.textContent = '❌ Tidak didukung';
-                    pwaStatusElement.style.color = 'var(--secondary)';
-                }
-            }
-        }
-
-        function updateNotificationStatus() {
-            const notificationStatusElement = document.getElementById('notification-status');
-            
-            if (notificationStatusElement) {
-                switch(Notification.permission) {
-                    case 'granted':
-                        notificationStatusElement.textContent = '✅ Diizinkan';
-                        notificationStatusElement.style.color = 'var(--success)';
-                        break;
-                    case 'denied':
-                        notificationStatusElement.textContent = '❌ Ditolak';
-                        notificationStatusElement.style.color = 'var(--secondary)';
-                        break;
-                    default:
-                        notificationStatusElement.textContent = '⚠️ Belum diminta';
-                        notificationStatusElement.style.color = 'var(--admin-color)';
-                        break;
-                }
-            }
-        }
-
-        async function sendPushNotification(title, body, data = {}) {
-            if (!serviceWorkerRegistration) {
-                console.log('Service Worker tidak terdaftar');
-                return;
-            }
-            
-            try {
-                await serviceWorkerRegistration.showNotification(title, {
-                    body: body,
-                    icon: 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📸</text></svg>',
-                    badge: 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📸</text></svg>',
-                    tag: 'fotografi-notification',
-                    data: data,
-                    vibrate: [200, 100, 200]
-                });
-                
-                console.log('Push notification terkirim:', title);
-            } catch (error) {
-                console.error('Error mengirim push notification:', error);
-            }
-        }
-
-        function showAnnouncementNotification(judul, isi, waktu) {
-            // Kirim push notification
-            if (serviceWorkerRegistration && Notification.permission === 'granted') {
-                sendPushNotification(`📢 ${judul}`, isi, { type: 'announcement', waktu: waktu });
-            }
-            
-            // Tampilkan notifikasi berdasarkan perangkat
-            if (isMobileDevice) {
-                showMobileNotification(judul, isi, waktu);
-            } else {
-                showDesktopNotification(judul, isi, waktu);
-            }
-            
-            // Tampilkan toast notification
-            showNotification(`📢 ${judul}`, 'info');
-        }
-
-        function showMobileNotification(judul, isi, waktu) {
-            const container = document.getElementById('mobile-notification-container');
-            const notificationId = 'notification-' + Date.now();
-            
-            const notification = document.createElement('div');
-            notification.className = 'mobile-notification';
-            notification.id = notificationId;
-            
-            const waktuFormat = formatTanggalWaktu(waktu);
-            const isiSingkat = isi.length > 80 ? isi.substring(0, 80) + '...' : isi;
-            
-            notification.innerHTML = `
-                <div class="mobile-notification-icon">
-                    <i class="fas fa-bullhorn"></i>
-                </div>
-                <div style="flex: 1;">
-                    <div style="font-weight: 700; color: var(--dark); margin-bottom: 5px; font-size: 0.95rem;">📢 ${judul}</div>
-                    <div style="color: var(--dark); font-size: 0.85rem; line-height: 1.4;">${isiSingkat}</div>
-                    <div style="color: var(--gray); font-size: 0.7rem; margin-top: 5px;">${waktuFormat}</div>
-                </div>
-                <button onclick="document.getElementById('${notificationId}').remove()" style="background: none; border: none; color: var(--gray); cursor: pointer; padding: 5px;">
-                    <i class="fas fa-times"></i>
-                </button>
-            `;
-            
-            container.appendChild(notification);
-            
-            setTimeout(() => {
-                const notif = document.getElementById(notificationId);
-                if (notif) notif.remove();
-            }, 6000);
-            
-            showMobileToast(`📢 ${judul}`);
-        }
-
-        function showDesktopNotification(judul, isi, waktu) {
-            const container = document.getElementById('desktop-notification-container');
-            const notificationId = 'desktop-notification-' + Date.now();
-            
-            const notification = document.createElement('div');
-            notification.className = 'desktop-notification';
-            notification.id = notificationId;
-            
-            const waktuFormat = formatTanggalWaktu(waktu);
-            const isiSingkat = isi.length > 100 ? isi.substring(0, 100) + '...' : isi;
-            
-            notification.innerHTML = `
-                <div style="color: var(--info); font-size: 1.2rem;">
-                    <i class="fas fa-bullhorn"></i>
-                </div>
-                <div style="flex: 1;">
-                    <div style="font-weight: 700; color: var(--dark); margin-bottom: 5px;">📢 Pengumuman Baru</div>
-                    <div style="color: var(--dark); font-size: 0.9rem;"><strong>${judul}</strong>: ${isiSingkat}</div>
-                    <div style="color: var(--gray); font-size: 0.75rem; margin-top: 5px;">${waktuFormat}</div>
-                </div>
-                <button onclick="document.getElementById('${notificationId}').remove()" style="background: none; border: none; color: var(--gray); cursor: pointer; padding: 5px;">
-                    <i class="fas fa-times"></i>
-                </button>
-            `;
-            
-            container.appendChild(notification);
-            
-            setTimeout(() => {
-                const notif = document.getElementById(notificationId);
-                if (notif) notif.remove();
-            }, 8000);
-            
-            // Play notification sound
-            const sound = document.getElementById('notification-sound');
-            if (sound) {
-                sound.currentTime = 0;
-                sound.play().catch(e => console.log("Error playing sound:", e));
-            }
-        }
-
-        function showMobileToast(message) {
-            const toast = document.getElementById('mobile-toast');
-            toast.textContent = message;
-            toast.classList.add('show');
-            
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3000);
-        }
-
-        function showPWAInstallPrompt() {
-            if (deferredPrompt) {
-                const prompt = document.getElementById('pwa-install-prompt');
-                prompt.classList.add('show');
-                
-                document.getElementById('btn-pwa-install').onclick = async () => {
-                    deferredPrompt.prompt();
-                    const { outcome } = await deferredPrompt.userChoice;
-                    console.log(`User response: ${outcome}`);
-                    deferredPrompt = null;
-                    prompt.classList.remove('show');
-                    
-                    if (outcome === 'accepted') {
-                        showNotification('🎉 Aplikasi berhasil diinstall! Sekarang dapat diakses dari beranda HP.', 'success');
-                    }
-                };
-                
-                document.getElementById('btn-pwa-cancel').onclick = () => {
-                    prompt.classList.remove('show');
-                    deferredPrompt = null;
-                };
-            }
+            });
         }
 
         // ==================================================
-        // 🔧 FUNGSI UTAMA APLIKASI 🔧
+        // 🔐 FUNGSI GANTI PASSWORD ANGGOTA 🔐
         // ==================================================
-        function loginUser(userId, userName, password) {
-            if (passwordAnggota[userId] && passwordAnggota[userId] === password) {
-                currentUser = { id: userId, name: userName };
-                localStorage.setItem(USER_SESSION_KEY, JSON.stringify(currentUser));
-                updateUserUI();
-                
-                showNotification(`Login berhasil! Selamat datang ${userName}`, 'success');
-                document.getElementById('login-panel').style.display = 'none';
-                document.getElementById('main-container').style.display = 'block';
-                
-                // Tampilkan prompt install PWA
-                setTimeout(() => showPWAInstallPrompt(), 3000);
-                
-                return true;
-            } else {
-                showNotification('Password salah! Gunakan password: 1234', 'error');
-                return false;
-            }
-        }
 
-        function logoutUser() {
-            currentUser = null;
-            localStorage.removeItem(USER_SESSION_KEY);
-            document.getElementById('login-panel').style.display = 'flex';
-            document.getElementById('main-container').style.display = 'none';
-            document.getElementById('user-select').value = '';
-            document.getElementById('user-password').value = '';
-            showNotification('Logout berhasil!', 'success');
-        }
-
-        function updateUserUI() {
-            if (currentUser) {
-                document.getElementById('current-user-name-main').textContent = currentUser.name;
-                document.getElementById('user-info-main').style.display = 'flex';
-            } else {
-                document.getElementById('user-info-main').style.display = 'none';
-            }
-            tampilkanDaftarAnggota();
-        }
-
-        function loginAdmin(password) {
-            const DEFAULT_ADMIN_PASSWORD = "adminfotografi112";
-            let storedPassword = localStorage.getItem(ADMIN_PASSWORD_KEY) || DEFAULT_ADMIN_PASSWORD;
-            
-            if (password === storedPassword) {
-                isAdminLoggedIn = true;
-                localStorage.setItem(ADMIN_SESSION_KEY, 'active');
-                updateAdminUI();
-                showNotification('Login admin berhasil!', 'success');
-                closeAdminPanel();
-                return true;
-            } else {
-                showNotification('Password admin salah!', 'error');
-                return false;
-            }
-        }
-
-        function logoutAdmin() {
-            isAdminLoggedIn = false;
-            localStorage.removeItem(ADMIN_SESSION_KEY);
-            updateAdminUI();
-            showNotification('Logout admin berhasil!', 'success');
-        }
-
-        function updateAdminUI() {
-            const adminControls = document.getElementById('admin-controls');
-            const addMemberForm = document.getElementById('add-member-form');
-            const btnLoginAdmin = document.getElementById('btn-login-admin');
-            const btnLogoutAdmin = document.getElementById('btn-logout-admin');
-            const adminStatus = document.getElementById('admin-status');
-            const btnTambahPengumuman = document.getElementById('btn-tambah-pengumuman');
-            
-            if (isAdminLoggedIn) {
-                adminControls.style.display = 'block';
-                addMemberForm.style.display = 'block';
-                btnLoginAdmin.style.display = 'none';
-                btnLogoutAdmin.style.display = 'block';
-                btnTambahPengumuman.style.display = 'block';
-                adminStatus.textContent = 'Aktif';
-                adminStatus.style.color = 'var(--success)';
-                document.getElementById('admin-user').textContent = 'Admin';
-            } else {
-                adminControls.style.display = 'none';
-                addMemberForm.style.display = 'none';
-                btnLoginAdmin.style.display = 'block';
-                btnLogoutAdmin.style.display = 'none';
-                btnTambahPengumuman.style.display = 'none';
-                adminStatus.textContent = 'Tidak aktif';
-                adminStatus.style.color = 'var(--secondary)';
-                document.getElementById('admin-user').textContent = '-';
-            }
-            
-            tampilkanAbsensi();
-            tampilkanDaftarAnggota();
-            tampilkanDaftarPengumuman();
-        }
-
-        function openAdminPanel() {
-            document.getElementById('admin-panel').classList.add('active');
-            document.getElementById('overlay').classList.add('active');
-            document.getElementById('admin-toggle').classList.add('hidden');
-            document.getElementById('user-toggle').classList.add('hidden');
-        }
-
-        function closeAdminPanel() {
-            document.getElementById('admin-panel').classList.remove('active');
-            document.getElementById('overlay').classList.remove('active');
-            document.getElementById('admin-toggle').classList.remove('hidden');
-            document.getElementById('user-toggle').classList.remove('hidden');
-        }
-
-        function tambahAbsensi(nama, tanggal) {
-            const sudahAbsen = absensi.some(item => item.nama === nama && item.tanggal === tanggal);
-            if (sudahAbsen) {
-                showNotification('Anda sudah absen hari ini!', 'error');
-                return;
-            }
-            
-            const id = Date.now().toString();
-            const dataBaru = { id: id, nama: nama, tanggal: tanggal, status: 'hadir' };
-            
-            absensiRef.child(id).set(dataBaru)
-                .then(() => {
-                    if (isMobileDevice) {
-                        showMobileToast(`✓ ${nama} berhasil absen!`);
-                    } else {
-                        showNotification(`${nama} berhasil dicatat hadir!`, 'success');
-                    }
-                })
-                .catch((error) => {
-                    console.error('Error menyimpan data absensi:', error);
-                    showNotification('Terjadi kesalahan saat menyimpan data absensi', 'error');
-                });
-        }
-
-        function tambahAnggota(nama) {
-            const namaSudahAda = daftarAnggota.some(anggota => anggota.nama.toLowerCase() === nama.toLowerCase());
-            if (namaSudahAda) {
-                showNotification('Nama anggota sudah ada!', 'error');
-                return;
-            }
-            
-            const id = Date.now().toString();
-            const dataBaru = { id: id, nama: nama, tanggal_daftar: new Date().toISOString().split('T')[0] };
-            
-            anggotaRef.child(id).set(dataBaru)
-                .then(() => {
-                    document.getElementById('nama-baru').value = '';
-                    showNotification(`Anggota ${nama} berhasil ditambahkan!`, 'success');
-                    setPasswordAnggota(id, '1234');
-                })
-                .catch((error) => {
-                    console.error('Error menyimpan data anggota:', error);
-                    showNotification('Terjadi kesalahan saat menambah anggota', 'error');
-                });
-        }
-
-        function setPasswordAnggota(userId, password) {
-            passwordRef.child(userId).set(password)
-                .then(() => console.log('Password anggota berhasil disimpan'))
-                .catch(error => console.error('Error menyimpan password anggota:', error));
-        }
-
-        function tambahPengumuman(judul, isi, prioritas) {
-            const id = Date.now().toString();
-            const waktu = new Date().toISOString();
-            const dataBaru = {
-                id: id,
-                judul: judul,
-                isi: isi,
-                prioritas: prioritas,
-                tanggal: new Date().toISOString().split('T')[0],
-                waktu: waktu
-            };
-            
-            pengumumanRef.child(id).set(dataBaru)
-                .then(() => {
-                    document.getElementById('pengumuman-judul').value = '';
-                    document.getElementById('pengumuman-isi').value = '';
-                    document.getElementById('pengumuman-prioritas').value = 'low';
-                    showNotification(`Pengumuman berhasil ditambahkan!`, 'success');
-                    
-                    // Kirim notifikasi push
-                    if (isAdminLoggedIn) {
-                        showAnnouncementNotification(judul, isi, waktu);
-                    }
-                })
-                .catch((error) => {
-                    console.error('Error menyimpan data pengumuman:', error);
-                    showNotification('Terjadi kesalahan saat menambah pengumuman', 'error');
-                });
-        }
-
-        function hapusAbsensi(id) {
-            if (confirm('Apakah Anda yakin ingin menghapus data absensi ini?')) {
-                absensiRef.child(id).remove()
-                    .then(() => showNotification('Data absensi berhasil dihapus!', 'success'))
-                    .catch(error => {
-                        console.error('Error menghapus data absensi:', error);
-                        showNotification('Terjadi kesalahan saat menghapus data absensi', 'error');
-                    });
-            }
-        }
-
-        function hapusAnggota(id, nama) {
-            if (confirm(`Apakah Anda yakin ingin menghapus anggota ${nama}?`)) {
-                anggotaRef.child(id).remove()
-                    .then(() => {
-                        passwordRef.child(id).remove();
-                        showNotification(`Anggota ${nama} berhasil dihapus!`, 'success');
-                    })
-                    .catch(error => {
-                        console.error('Error menghapus data anggota:', error);
-                        showNotification('Terjadi kesalahan saat menghapus anggota', 'error');
-                    });
-            }
-        }
-
-        function hapusPengumuman(id, judul) {
-            if (confirm(`Apakah Anda yakin ingin menghapus pengumuman "${judul}"?`)) {
-                pengumumanRef.child(id).remove()
-                    .then(() => showNotification(`Pengumuman berhasil dihapus!`, 'success'))
-                    .catch(error => {
-                        console.error('Error menghapus data pengumuman:', error);
-                        showNotification('Terjadi kesalahan saat menghapus pengumuman', 'error');
-                    });
-            }
-        }
-
-        function resetAbsensi() {
-            if (confirm('Apakah Anda yakin ingin menghapus SEMUA data absensi? Tindakan ini tidak dapat dibatalkan!')) {
-                absensiRef.remove()
-                    .then(() => showNotification('Semua data absensi berhasil dihapus!', 'success'))
-                    .catch(error => {
-                        console.error('Error menghapus data absensi:', error);
-                        showNotification('Terjadi kesalahan saat menghapus data absensi', 'error');
-                    });
-            }
-        }
-
-        function resetAnggota() {
-            if (confirm('Apakah Anda yakin ingin menghapus SEMUA data anggota? Tindakan ini tidak dapat dibatalkan!')) {
-                anggotaRef.remove()
-                    .then(() => {
-                        passwordRef.remove();
-                        showNotification('Semua data anggota berhasil dihapus!', 'success');
-                    })
-                    .catch(error => {
-                        console.error('Error menghapus data anggota:', error);
-                        showNotification('Terjadi kesalahan saat menghapus data anggota', 'error');
-                    });
-            }
-        }
-
-        function resetPengumuman() {
-            if (confirm('Apakah Anda yakin ingin menghapus SEMUA data pengumuman? Tindakan ini tidak dapat dibatalkan!')) {
-                pengumumanRef.remove()
-                    .then(() => showNotification('Semua data pengumuman berhasil dihapus!', 'success'))
-                    .catch(error => {
-                        console.error('Error menghapus data pengumuman:', error);
-                        showNotification('Terjadi kesalahan saat menghapus data pengumuman', 'error');
-                    });
-            }
-        }
-
-        function changeAdminPassword(newPassword) {
-            if (newPassword.length < 4) {
-                showNotification('Password minimal 4 karakter!', 'error');
-                return;
-            }
-            
-            localStorage.setItem(ADMIN_PASSWORD_KEY, newPassword);
-            showNotification('Password admin berhasil diubah!', 'success');
-            document.getElementById('admin-new-password').value = '';
-        }
-
+        // Fungsi untuk mengubah password anggota
         function changeUserPassword(currentPassword, newPassword, confirmPassword) {
             if (!currentUser) {
                 showNotification('Silakan login terlebih dahulu!', 'error');
                 return false;
             }
             
-            if (!currentPassword || !newPassword || !confirmPassword) {
-                showNotification('Semua field harus diisi!', 'error');
+            // Validasi input
+            if (!currentPassword) {
+                showNotification('Masukkan password saat ini!', 'error');
+                return false;
+            }
+            
+            if (!newPassword) {
+                showNotification('Masukkan password baru!', 'error');
                 return false;
             }
             
@@ -2021,18 +1550,23 @@
                 return false;
             }
             
+            // Verifikasi password saat ini
             const currentStoredPassword = passwordAnggota[currentUser.id];
             if (currentStoredPassword !== currentPassword) {
                 showNotification('Password saat ini salah!', 'error');
                 return false;
             }
             
+            // Update password di Firebase
             passwordRef.child(currentUser.id).set(newPassword)
                 .then(() => {
                     showNotification('Password berhasil diubah!', 'success');
+                    // Reset form
                     document.getElementById('current-password').value = '';
                     document.getElementById('new-password').value = '';
                     document.getElementById('confirm-password').value = '';
+                    // Update strength bar
+                    updatePasswordStrength('');
                     return true;
                 })
                 .catch((error) => {
@@ -2044,21 +1578,245 @@
             return false;
         }
 
-        function tandaiHadir(nama) {
-            if (!isAdminLoggedIn && currentUser && currentUser.name !== nama) {
-                showNotification('Anda hanya dapat mencatat kehadiran untuk diri sendiri!', 'error');
-                return;
-            }
+        // Fungsi untuk mengecek kekuatan password
+        function checkPasswordStrength(password) {
+            let strength = 0;
             
-            const tanggal = document.getElementById('tanggal-absensi').value;
-            if (!tanggal) {
-                showNotification('Pilih tanggal terlebih dahulu!', 'error');
-                return;
-            }
+            if (password.length >= 4) strength += 1;
+            if (password.length >= 6) strength += 1;
+            if (password.match(/[a-z]/) && password.match(/[A-Z]/)) strength += 1;
+            if (password.match(/\d/)) strength += 1;
+            if (password.match(/[^a-zA-Z\d]/)) strength += 1;
             
-            tambahAbsensi(nama, tanggal);
+            return strength;
         }
 
+        // Fungsi untuk update tampilan kekuatan password
+        function updatePasswordStrength(password) {
+            const strengthBar = document.getElementById('password-strength-bar');
+            const reqLength = document.getElementById('req-length');
+            
+            if (password.length === 0) {
+                strengthBar.className = 'password-strength-bar';
+                strengthBar.style.width = '0%';
+                reqLength.className = 'password-requirement';
+                reqLength.innerHTML = '<i class="fas fa-circle requirement-not-met"></i><span>Minimal 4 karakter</span>';
+                return;
+            }
+            
+            const strength = checkPasswordStrength(password);
+            
+            // Update strength bar
+            if (password.length < 4) {
+                strengthBar.className = 'password-strength-bar password-strength-weak';
+                strengthBar.style.width = '33%';
+            } else if (strength < 3) {
+                strengthBar.className = 'password-strength-bar password-strength-medium';
+                strengthBar.style.width = '66%';
+            } else {
+                strengthBar.className = 'password-strength-bar password-strength-strong';
+                strengthBar.style.width = '100%';
+            }
+            
+            // Update requirement indicator
+            if (password.length >= 4) {
+                reqLength.className = 'password-requirement requirement-met';
+                reqLength.innerHTML = '<i class="fas fa-check-circle requirement-met"></i><span>Minimal 4 karakter ✓</span>';
+            } else {
+                reqLength.className = 'password-requirement requirement-not-met';
+                reqLength.innerHTML = '<i class="fas fa-circle requirement-not-met"></i><span>Minimal 4 karakter</span>';
+            }
+        }
+
+        // Fungsi untuk toggle visibility password
+        function togglePasswordVisibility(inputId) {
+            const input = document.getElementById(inputId);
+            const icon = input.nextElementSibling.querySelector('i');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.className = 'fas fa-eye-slash';
+            } else {
+                input.type = 'password';
+                icon.className = 'fas fa-eye';
+            }
+        }
+
+        // ==================================================
+        // 🔧 FUNGSI UTAMA LAINNYA 🔧
+        // ==================================================
+
+        // Fungsi untuk membuka panel admin
+        function openAdminPanel() {
+            document.getElementById('admin-panel').classList.add('active');
+            document.getElementById('overlay').classList.add('active');
+            document.getElementById('admin-toggle').classList.add('hidden');
+            document.getElementById('user-toggle').classList.add('hidden');
+        }
+
+        // Fungsi untuk menutup panel admin
+        function closeAdminPanel() {
+            document.getElementById('admin-panel').classList.remove('active');
+            document.getElementById('overlay').classList.remove('active');
+            document.getElementById('admin-toggle').classList.remove('hidden');
+            document.getElementById('user-toggle').classList.remove('hidden');
+        }
+
+        // Fungsi untuk login user
+        function loginUser(userId, userName, password) {
+            if (passwordAnggota[userId] && passwordAnggota[userId] === password) {
+                currentUser = {
+                    id: userId,
+                    name: userName
+                };
+                
+                localStorage.setItem(USER_SESSION_KEY, JSON.stringify(currentUser));
+                updateUserUI();
+                showNotification(`Login berhasil! Selamat datang ${userName}`, 'success');
+                
+                document.getElementById('login-panel').style.display = 'none';
+                document.getElementById('main-container').style.display = 'block';
+                
+                return true;
+            } else {
+                showNotification('Password salah! Gunakan password: 1234', 'error');
+                return false;
+            }
+        }
+
+        // Fungsi untuk logout user
+        function logoutUser() {
+            currentUser = null;
+            localStorage.removeItem(USER_SESSION_KEY);
+            
+            document.getElementById('login-panel').style.display = 'flex';
+            document.getElementById('main-container').style.display = 'none';
+            
+            document.getElementById('user-select').value = '';
+            document.getElementById('user-password').value = '';
+            
+            showNotification('Logout berhasil!', 'success');
+        }
+
+        // Fungsi untuk update UI user
+        function updateUserUI() {
+            if (currentUser) {
+                document.getElementById('current-user-name-main').textContent = currentUser.name;
+                document.getElementById('user-info-main').style.display = 'flex';
+            } else {
+                document.getElementById('current-user-name-main').textContent = '-';
+                document.getElementById('user-info-main').style.display = 'none';
+            }
+            
+            tampilkanDaftarAnggota();
+        }
+
+        // Fungsi untuk mengupdate status koneksi
+        function updateConnectionStatus(status) {
+            const connectionStatus = document.getElementById('connection-status');
+            if (status) {
+                connectionStatus.innerHTML = '<i class="fas fa-circle"></i> <span>Tersambung</span>';
+                connectionStatus.classList.remove('disconnected');
+                connectionStatus.classList.add('connected');
+            } else {
+                connectionStatus.innerHTML = '<i class="fas fa-circle"></i> <span>Terputus</span>';
+                connectionStatus.classList.remove('connected');
+                connectionStatus.classList.add('disconnected');
+            }
+        }
+
+        // Fungsi untuk login admin
+        function loginAdmin(password) {
+            console.log("Attempting admin login...");
+            
+            // Password admin default
+            const DEFAULT_ADMIN_PASSWORD = "adminfotografi112";
+            
+            // Cek password admin di localStorage
+            let storedPassword = localStorage.getItem(ADMIN_PASSWORD_KEY);
+            
+            // Jika belum ada password admin, set default password
+            if (!storedPassword) {
+                console.log("No stored password found, setting default...");
+                storedPassword = DEFAULT_ADMIN_PASSWORD;
+                localStorage.setItem(ADMIN_PASSWORD_KEY, storedPassword);
+            }
+            
+            console.log("Stored password:", storedPassword);
+            console.log("Input password:", password);
+            
+            // Verifikasi password
+            if (password === storedPassword) {
+                isAdminLoggedIn = true;
+                localStorage.setItem(ADMIN_SESSION_KEY, 'active');
+                updateAdminUI();
+                showNotification('Login admin berhasil!', 'success');
+                closeAdminPanel();
+                return true;
+            } else {
+                showNotification('Password admin salah!', 'error');
+                return false;
+            }
+        }
+
+        // Fungsi untuk logout admin
+        function logoutAdmin() {
+            isAdminLoggedIn = false;
+            localStorage.removeItem(ADMIN_SESSION_KEY);
+            updateAdminUI();
+            showNotification('Logout admin berhasil!', 'success');
+        }
+
+        // Fungsi untuk mengubah password admin
+        function changeAdminPassword(newPassword) {
+            if (newPassword.length < 4) {
+                showNotification('Password minimal 4 karakter!', 'error');
+                return;
+            }
+            
+            localStorage.setItem(ADMIN_PASSWORD_KEY, newPassword);
+            showNotification('Password admin berhasil diubah!', 'success');
+            document.getElementById('admin-new-password').value = '';
+        }
+
+        // Fungsi untuk update UI admin
+        function updateAdminUI() {
+            const adminControls = document.getElementById('admin-controls');
+            const addMemberForm = document.getElementById('add-member-form');
+            const btnLoginAdmin = document.getElementById('btn-login-admin');
+            const btnLogoutAdmin = document.getElementById('btn-logout-admin');
+            const adminStatus = document.getElementById('admin-status');
+            const adminUser = document.getElementById('admin-user');
+            const btnTambahPengumuman = document.getElementById('btn-tambah-pengumuman');
+            const pengumumanForm = document.getElementById('pengumuman-form');
+            
+            if (isAdminLoggedIn) {
+                adminControls.style.display = 'block';
+                addMemberForm.style.display = 'block';
+                btnLoginAdmin.style.display = 'none';
+                btnLogoutAdmin.style.display = 'block';
+                btnTambahPengumuman.style.display = 'block';
+                adminStatus.textContent = 'Aktif';
+                adminStatus.style.color = 'var(--success)';
+                adminUser.textContent = 'Admin';
+            } else {
+                adminControls.style.display = 'none';
+                addMemberForm.style.display = 'none';
+                btnLoginAdmin.style.display = 'block';
+                btnLogoutAdmin.style.display = 'none';
+                btnTambahPengumuman.style.display = 'none';
+                pengumumanForm.style.display = 'none';
+                adminStatus.textContent = 'Tidak aktif';
+                adminStatus.style.color = 'var(--secondary)';
+                adminUser.textContent = '-';
+            }
+            
+            tampilkanAbsensi();
+            tampilkanDaftarAnggota();
+            tampilkanDaftarPengumuman();
+        }
+
+        // Fungsi untuk menampilkan data absensi
         function tampilkanAbsensi() {
             const tabelBody = document.getElementById('tabel-body');
             const emptyState = document.getElementById('empty-state');
@@ -2066,8 +1824,16 @@
             const namaFilter = document.getElementById('nama-filter').value.toLowerCase();
             
             let dataTampil = absensi;
-            if (tanggalFilter) dataTampil = dataTampil.filter(item => item.tanggal === tanggalFilter);
-            if (namaFilter) dataTampil = dataTampil.filter(item => item.nama.toLowerCase().includes(namaFilter));
+            
+            if (tanggalFilter) {
+                dataTampil = dataTampil.filter(item => item.tanggal === tanggalFilter);
+            }
+            
+            if (namaFilter) {
+                dataTampil = dataTampil.filter(item => 
+                    item.nama.toLowerCase().includes(namaFilter)
+                );
+            }
             
             tabelBody.innerHTML = '';
             
@@ -2080,6 +1846,7 @@
                 
                 dataTampil.forEach((item, index) => {
                     const row = document.createElement('tr');
+                    
                     row.innerHTML = `
                         <td>${index + 1}</td>
                         <td>${item.nama}</td>
@@ -2093,6 +1860,7 @@
                             </div>
                         </td>
                     `;
+                    
                     tabelBody.appendChild(row);
                 });
             }
@@ -2100,6 +1868,183 @@
             updateStatistik();
         }
 
+        // Fungsi untuk menambah data absensi
+        function tambahAbsensi(nama, tanggal) {
+            const sudahAbsen = absensi.some(item => 
+                item.nama === nama && item.tanggal === tanggal
+            );
+            
+            if (sudahAbsen) {
+                showNotification('Anda sudah absen hari ini!', 'error');
+                return;
+            }
+            
+            const id = Date.now().toString();
+            const dataBaru = {
+                id: id,
+                nama: nama,
+                tanggal: tanggal,
+                status: 'hadir'
+            };
+            
+            absensiRef.child(id).set(dataBaru)
+                .then(() => {
+                    showNotification(`${nama} berhasil dicatat hadir!`, 'success');
+                })
+                .catch((error) => {
+                    console.error('Error menyimpan data absensi:', error);
+                    showNotification('Terjadi kesalahan saat menyimpan data absensi', 'error');
+                });
+        }
+
+        // Fungsi untuk menambah anggota baru
+        function tambahAnggota(nama) {
+            const namaSudahAda = daftarAnggota.some(anggota => 
+                anggota.nama.toLowerCase() === nama.toLowerCase()
+            );
+            
+            if (namaSudahAda) {
+                showNotification('Nama anggota sudah ada!', 'error');
+                return;
+            }
+            
+            const id = Date.now().toString();
+            const dataBaru = {
+                id: id,
+                nama: nama,
+                tanggal_daftar: new Date().toISOString().split('T')[0]
+            };
+            
+            anggotaRef.child(id).set(dataBaru)
+                .then(() => {
+                    document.getElementById('nama-baru').value = '';
+                    showNotification(`Anggota ${nama} berhasil ditambahkan!`, 'success');
+                    setPasswordAnggota(id, '1234');
+                })
+                .catch((error) => {
+                    console.error('Error menyimpan data anggota:', error);
+                    showNotification('Terjadi kesalahan saat menambah anggota', 'error');
+                });
+        }
+
+        // Fungsi untuk set password anggota
+        function setPasswordAnggota(userId, password) {
+            passwordRef.child(userId).set(password)
+                .then(() => {
+                    console.log('Password anggota berhasil disimpan');
+                })
+                .catch((error) => {
+                    console.error('Error menyimpan password anggota:', error);
+                });
+        }
+
+        // Fungsi untuk menambah pengumuman baru
+        function tambahPengumuman(judul, isi, prioritas) {
+            const id = Date.now().toString();
+            const dataBaru = {
+                id: id,
+                judul: judul,
+                isi: isi,
+                prioritas: prioritas,
+                tanggal: new Date().toISOString().split('T')[0],
+                waktu: new Date().toISOString()
+            };
+            
+            pengumumanRef.child(id).set(dataBaru)
+                .then(() => {
+                    document.getElementById('pengumuman-judul').value = '';
+                    document.getElementById('pengumuman-isi').value = '';
+                    document.getElementById('pengumuman-prioritas').value = 'low';
+                    showNotification(`Pengumuman berhasil ditambahkan!`, 'success');
+                })
+                .catch((error) => {
+                    console.error('Error menyimpan data pengumuman:', error);
+                    showNotification('Terjadi kesalahan saat menambah pengumuman', 'error');
+                });
+        }
+
+        // Fungsi untuk menghapus data absensi
+        function hapusAbsensi(id) {
+            if (confirm('Apakah Anda yakin ingin menghapus data absensi ini?')) {
+                absensiRef.child(id).remove()
+                    .then(() => {
+                        showNotification('Data absensi berhasil dihapus!', 'success');
+                    })
+                    .catch((error) => {
+                        console.error('Error menghapus data absensi:', error);
+                        showNotification('Terjadi kesalahan saat menghapus data absensi', 'error');
+                    });
+            }
+        }
+
+        // Fungsi untuk menghapus anggota
+        function hapusAnggota(id, nama) {
+            if (confirm(`Apakah Anda yakin ingin menghapus anggota ${nama}?`)) {
+                anggotaRef.child(id).remove()
+                    .then(() => {
+                        passwordRef.child(id).remove();
+                        showNotification(`Anggota ${nama} berhasil dihapus!`, 'success');
+                    })
+                    .catch((error) => {
+                        console.error('Error menghapus data anggota:', error);
+                        showNotification('Terjadi kesalahan saat menghapus anggota', 'error');
+                    });
+            }
+        }
+
+        // Fungsi untuk menghapus pengumuman
+        function hapusPengumuman(id, judul) {
+            if (confirm(`Apakah Anda yakin ingin menghapus pengumuman "${judul}"?`)) {
+                pengumumanRef.child(id).remove()
+                    .then(() => {
+                        showNotification(`Pengumuman berhasil dihapus!`, 'success');
+                    })
+                    .catch((error) => {
+                        console.error('Error menghapus data pengumuman:', error);
+                        showNotification('Terjadi kesalahan saat menghapus pengumuman', 'error');
+                    });
+            }
+        }
+
+        // Fungsi untuk mengupdate statistik
+        function updateStatistik() {
+            const tanggalFilter = document.getElementById('tanggal-filter').value;
+            const today = new Date().toISOString().split('T')[0];
+            
+            let dataHitung = absensi;
+            if (tanggalFilter) {
+                dataHitung = dataHitung.filter(item => item.tanggal === tanggalFilter);
+            } else {
+                dataHitung = dataHitung.filter(item => item.tanggal === today);
+            }
+            
+            const hadirCount = dataHitung.length;
+            const anggotaCount = daftarAnggota.length;
+            const pengumumanCount = daftarPengumuman.length;
+            
+            document.getElementById('hadir-count').textContent = hadirCount;
+            document.getElementById('anggota-count').textContent = anggotaCount;
+            document.getElementById('pengumuman-count').textContent = pengumumanCount;
+        }
+
+        // Fungsi untuk memformat tanggal
+        function formatTanggal(tanggalString) {
+            if (!tanggalString) return '-';
+            
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const tanggal = new Date(tanggalString);
+            return tanggal.toLocaleDateString('id-ID', options);
+        }
+
+        // Fungsi untuk memformat tanggal dan waktu
+        function formatTanggalWaktu(tanggalString) {
+            if (!tanggalString) return '-';
+            
+            const tanggal = new Date(tanggalString);
+            return tanggal.toLocaleDateString('id-ID') + ' ' + tanggal.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+        }
+
+        // Fungsi untuk menampilkan daftar anggota
         function tampilkanDaftarAnggota() {
             const membersList = document.getElementById('members-list');
             membersList.innerHTML = '';
@@ -2114,6 +2059,7 @@
                 memberItem.className = 'member-item';
                 
                 let actionButtons = '';
+                
                 if (isAdminLoggedIn) {
                     actionButtons = `
                         <button class="mark-present-btn" onclick="tandaiHadir('${anggota.nama}')">
@@ -2135,13 +2081,16 @@
                 
                 memberItem.innerHTML = `
                     <span class="member-name">${anggota.nama}</span>
-                    <div>${actionButtons}</div>
+                    <div>
+                        ${actionButtons}
+                    </div>
                 `;
                 
                 membersList.appendChild(memberItem);
             });
         }
 
+        // Fungsi untuk menampilkan daftar pengumuman
         function tampilkanDaftarPengumuman() {
             const pengumumanList = document.getElementById('pengumuman-list');
             const pengumumanEmpty = document.getElementById('pengumuman-empty');
@@ -2159,57 +2108,157 @@
             const sortedPengumuman = [...daftarPengumuman].sort((a, b) => new Date(b.waktu) - new Date(a.waktu));
             
             sortedPengumuman.forEach(pengumuman => {
-                let priorityClass = '', priorityText = '';
-                switch(pengumuman.prioritas) {
-                    case 'high': priorityClass = 'priority-high'; priorityText = 'Tinggi'; break;
-                    case 'medium': priorityClass = 'priority-medium'; priorityText = 'Sedang'; break;
-                    case 'low': priorityClass = 'priority-low'; priorityText = 'Rendah'; break;
-                }
-                
                 const pengumumanCard = document.createElement('div');
                 pengumumanCard.className = 'announcement-card';
+                
+                let priorityClass = '';
+                let priorityText = '';
+                
+                switch(pengumuman.prioritas) {
+                    case 'high':
+                        priorityClass = 'priority-high';
+                        priorityText = 'Tinggi';
+                        break;
+                    case 'medium':
+                        priorityClass = 'priority-medium';
+                        priorityText = 'Sedang';
+                        break;
+                    case 'low':
+                    default:
+                        priorityClass = 'priority-low';
+                        priorityText = 'Rendah';
+                        break;
+                }
+                
                 pengumumanCard.innerHTML = `
-                    <div>
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
-                            <div>
-                                <div class="announcement-title">${pengumuman.judul} <span class="priority-badge ${priorityClass}">${priorityText}</span></div>
-                                <div class="announcement-date">${formatTanggalWaktu(pengumuman.waktu)}</div>
-                            </div>
+                    <div class="announcement-header">
+                        <div>
+                            <div class="announcement-title">${pengumuman.judul} <span class="priority-badge ${priorityClass}">${priorityText}</span></div>
+                            <div class="announcement-date">${formatTanggalWaktu(pengumuman.waktu)}</div>
                         </div>
-                        <div class="announcement-content">${pengumuman.isi}</div>
-                        ${isAdminLoggedIn ? `
-                        <div style="display: flex; justify-content: flex-start; margin-top: 12px; gap: 8px;">
-                            <button class="btn btn-danger btn-sm" onclick="hapusPengumuman('${pengumuman.id}', '${pengumuman.judul}')">
-                                <i class="fas fa-trash"></i> Hapus
-                            </button>
-                        </div>
-                        ` : ''}
                     </div>
+                    <div class="announcement-content">${pengumuman.isi}</div>
+                    ${isAdminLoggedIn ? `
+                    <div class="announcement-actions">
+                        <button class="btn btn-danger btn-sm" onclick="hapusPengumuman('${pengumuman.id}', '${pengumuman.judul}')">
+                            <i class="fas fa-trash"></i> Hapus
+                        </button>
+                    </div>
+                    ` : ''}
                 `;
                 
                 pengumumanList.appendChild(pengumumanCard);
             });
         }
 
-        function updateStatistik() {
-            const tanggalFilter = document.getElementById('tanggal-filter').value;
-            const today = new Date().toISOString().split('T')[0];
-            
-            let dataHitung = absensi;
-            if (tanggalFilter) {
-                dataHitung = dataHitung.filter(item => item.tanggal === tanggalFilter);
-            } else {
-                dataHitung = dataHitung.filter(item => item.tanggal === today);
+        // Fungsi untuk menandai kehadiran
+        function tandaiHadir(nama) {
+            if (!isAdminLoggedIn && currentUser && currentUser.name !== nama) {
+                showNotification('Anda hanya dapat mencatat kehadiran untuk diri sendiri!', 'error');
+                return;
             }
             
-            document.getElementById('hadir-count').textContent = dataHitung.length;
-            document.getElementById('anggota-count').textContent = daftarAnggota.length;
-            document.getElementById('pengumuman-count').textContent = daftarPengumuman.length;
+            const tanggal = document.getElementById('tanggal-absensi').value;
+            
+            if (!tanggal) {
+                showNotification('Pilih tanggal terlebih dahulu!', 'error');
+                return;
+            }
+            
+            tambahAbsensi(nama, tanggal);
         }
 
+        // Fungsi untuk menampilkan notifikasi
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 20px;
+                border-radius: 10px;
+                color: white;
+                font-weight: 600;
+                z-index: 1000;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+                transform: translateX(150%);
+                transition: transform 0.3s ease;
+                max-width: calc(100vw - 40px);
+                word-wrap: break-word;
+            `;
+            
+            if (type === 'success') {
+                notification.style.background = 'linear-gradient(135deg, var(--success), #34C759)';
+            } else {
+                notification.style.background = 'linear-gradient(135deg, var(--secondary), #FF4B6E)';
+            }
+            
+            notification.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check' : 'exclamation'}-circle"></i> ${message}
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+            
+            setTimeout(() => {
+                notification.style.transform = 'translateX(150%)';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
+        // Fungsi untuk reset data absensi
+        function resetAbsensi() {
+            if (confirm('Apakah Anda yakin ingin menghapus SEMUA data absensi? Tindakan ini tidak dapat dibatalkan!')) {
+                absensiRef.remove()
+                    .then(() => {
+                        showNotification('Semua data absensi berhasil dihapus!', 'success');
+                    })
+                    .catch((error) => {
+                        console.error('Error menghapus data absensi:', error);
+                        showNotification('Terjadi kesalahan saat menghapus data absensi', 'error');
+                    });
+            }
+        }
+
+        // Fungsi untuk reset data anggota
+        function resetAnggota() {
+            if (confirm('Apakah Anda yakin ingin menghapus SEMUA data anggota? Tindakan ini tidak dapat dibatalkan!')) {
+                anggotaRef.remove()
+                    .then(() => {
+                        passwordRef.remove();
+                        showNotification('Semua data anggota berhasil dihapus!', 'success');
+                    })
+                    .catch((error) => {
+                        console.error('Error menghapus data anggota:', error);
+                        showNotification('Terjadi kesalahan saat menghapus data anggota', 'error');
+                    });
+            }
+        }
+
+        // Fungsi untuk reset data pengumuman
+        function resetPengumuman() {
+            if (confirm('Apakah Anda yakin ingin menghapus SEMUA data pengumuman? Tindakan ini tidak dapat dibatalkan!')) {
+                pengumumanRef.remove()
+                    .then(() => {
+                        showNotification('Semua data pengumuman berhasil dihapus!', 'success');
+                    })
+                    .catch((error) => {
+                        console.error('Error menghapus data pengumuman:', error);
+                        showNotification('Terjadi kesalahan saat menghapus data pengumuman', 'error');
+                    });
+            }
+        }
+
+        // Fungsi untuk mengisi dropdown user
         function isiDropdownUser() {
             const userSelect = document.getElementById('user-select');
             userSelect.innerHTML = '<option value="">-- Pilih Nama --</option>';
+            
             daftarAnggota.forEach(anggota => {
                 const option = document.createElement('option');
                 option.value = anggota.id;
@@ -2218,161 +2267,39 @@
             });
         }
 
-        function initializeSampleData() {
-            anggotaRef.once('value').then((snapshot) => {
-                if (!snapshot.exists()) {
-                    const sampleMembers = [
-                        { id: '1', nama: 'Ahmad Fauzi', tanggal_daftar: new Date().toISOString().split('T')[0] },
-                        { id: '2', nama: 'Siti Rahayu', tanggal_daftar: new Date().toISOString().split('T')[0] },
-                        { id: '3', nama: 'Budi Santoso', tanggal_daftar: new Date().toISOString().split('T')[0] },
-                        { id: '4', nama: 'Maya Sari', tanggal_daftar: new Date().toISOString().split('T')[0] },
-                        { id: '5', nama: 'Rizki Pratama', tanggal_daftar: new Date().toISOString().split('T')[0] }
-                    ];
-                    
-                    const samplePasswords = { '1': '1234', '2': '1234', '3': '1234', '4': '1234', '5': '1234' };
-                    
-                    const sampleAnnouncements = [
-                        {
-                            id: '1',
-                            judul: 'Selamat Datang di Ekskul Fotografi',
-                            isi: 'Selamat datang para anggota baru! Mari kita belajar fotografi bersama-sama.',
-                            prioritas: 'high',
-                            tanggal: new Date().toISOString().split('T')[0],
-                            waktu: new Date().toISOString()
-                        }
-                    ];
-                    
-                    sampleMembers.forEach(member => anggotaRef.child(member.id).set(member));
-                    Object.keys(samplePasswords).forEach(id => passwordRef.child(id).set(samplePasswords[id]));
-                    sampleAnnouncements.forEach(announcement => pengumumanRef.child(announcement.id).set(announcement));
-                    
-                    console.log("Data contoh berhasil dibuat");
-                }
-            });
-        }
-
-        // ==================================================
-        // 🚀 INISIALISASI SAAT HALAMAN DIMUAT 🚀
-        // ==================================================
+        // Inisialisasi saat halaman dimuat
         document.addEventListener('DOMContentLoaded', function() {
-            // Deteksi perangkat
-            detectMobileDevice();
-            
-            // Set tanggal default
+            // Set tanggal default ke hari ini
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('tanggal-absensi').value = today;
             document.getElementById('tanggal-filter').value = today;
+            
+            // Update tanggal hari ini di highlight
             document.getElementById('today-date').textContent = formatTanggal(today);
             
-            // Buat manifest.json secara dinamis
-            const manifest = {
-                name: "Absensi Ekskul Fotografi",
-                short_name: "Absensi Fotografi",
-                description: "Aplikasi absensi dan pengumuman ekskul fotografi",
-                start_url: "/",
-                display: "standalone",
-                background_color: "#667eea",
-                theme_color: "#6C63FF",
-                icons: [
-                    {
-                        src: "data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📸</text></svg>",
-                        sizes: "192x192",
-                        type: "image/svg+xml"
-                    }
-                ]
-            };
+            // Inisialisasi data contoh
+            initializeSampleData();
             
-            const manifestBlob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
-            const manifestURL = URL.createObjectURL(manifestBlob);
-            document.getElementById('manifest-placeholder').href = manifestURL;
-            
-            // Register Service Worker
-            registerServiceWorker();
-            
-            // Event Listeners
-            document.getElementById('toggle-login-password').addEventListener('click', function() {
-                const input = document.getElementById('user-password');
-                const icon = this.querySelector('i');
-                if (input.type === 'password') {
-                    input.type = 'text';
-                    icon.className = 'fas fa-eye-slash';
-                } else {
-                    input.type = 'password';
-                    icon.className = 'fas fa-eye';
-                }
+            // Event listener untuk toggle password visibility
+            document.getElementById('toggle-password').addEventListener('click', function() {
+                togglePasswordVisibility('user-password');
             });
             
-            document.getElementById('toggle-current-password').addEventListener('click', function() {
-                const input = document.getElementById('current-password');
-                const icon = this.querySelector('i');
-                if (input.type === 'password') {
-                    input.type = 'text';
-                    icon.className = 'fas fa-eye-slash';
-                } else {
-                    input.type = 'password';
-                    icon.className = 'fas fa-eye';
-                }
-            });
-            
-            document.getElementById('toggle-new-password').addEventListener('click', function() {
-                const input = document.getElementById('new-password');
-                const icon = this.querySelector('i');
-                if (input.type === 'password') {
-                    input.type = 'text';
-                    icon.className = 'fas fa-eye-slash';
-                } else {
-                    input.type = 'password';
-                    icon.className = 'fas fa-eye';
-                }
-            });
-            
-            document.getElementById('toggle-confirm-password').addEventListener('click', function() {
-                const input = document.getElementById('confirm-password');
-                const icon = this.querySelector('i');
-                if (input.type === 'password') {
-                    input.type = 'text';
-                    icon.className = 'fas fa-eye-slash';
-                } else {
-                    input.type = 'password';
-                    icon.className = 'fas fa-eye';
-                }
-            });
-            
-            document.getElementById('btn-login-user').addEventListener('click', function() {
-                const userSelect = document.getElementById('user-select');
-                const selectedUserId = userSelect.value;
-                const selectedUserName = userSelect.options[userSelect.selectedIndex].text;
-                const password = document.getElementById('user-password').value;
+            // Event listener untuk tombol ganti password user
+            document.getElementById('btn-change-user-password').addEventListener('click', function() {
+                const currentPassword = document.getElementById('current-password').value;
+                const newPassword = document.getElementById('new-password').value;
+                const confirmPassword = document.getElementById('confirm-password').value;
                 
-                if (!selectedUserId) {
-                    showNotification('Pilih nama Anda terlebih dahulu!', 'error');
-                    return;
-                }
-                
-                if (!password) {
-                    showNotification('Masukkan password!', 'error');
-                    return;
-                }
-                
-                loginUser(selectedUserId, selectedUserName, password);
+                changeUserPassword(currentPassword, newPassword, confirmPassword);
             });
             
-            document.getElementById('user-password').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') document.getElementById('btn-login-user').click();
+            // Event listener untuk real-time password strength check
+            document.getElementById('new-password').addEventListener('input', function() {
+                updatePasswordStrength(this.value);
             });
             
-            document.getElementById('btn-logout-user').addEventListener('click', function() {
-                if (confirm('Apakah Anda yakin ingin logout?')) logoutUser();
-            });
-            
-            document.getElementById('btn-hadir-sendiri').addEventListener('click', function() {
-                if (!currentUser) {
-                    showNotification('Silakan login terlebih dahulu!', 'error');
-                    return;
-                }
-                tandaiHadir(currentUser.name);
-            });
-            
+            // Event listener untuk tombol tambah anggota
             document.getElementById('btn-tambah-anggota').addEventListener('click', function() {
                 if (!isAdminLoggedIn) {
                     showNotification('Hanya admin yang dapat menambah anggota baru!', 'error');
@@ -2380,6 +2307,7 @@
                 }
                 
                 const namaBaru = document.getElementById('nama-baru').value.trim();
+                
                 if (namaBaru) {
                     tambahAnggota(namaBaru);
                 } else {
@@ -2387,56 +2315,77 @@
                 }
             });
             
+            // Event listener untuk Enter pada input nama baru
             document.getElementById('nama-baru').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') document.getElementById('btn-tambah-anggota').click();
+                if (e.key === 'Enter') {
+                    document.getElementById('btn-tambah-anggota').click();
+                }
             });
             
-            document.getElementById('btn-change-user-password').addEventListener('click', function() {
-                const currentPassword = document.getElementById('current-password').value;
-                const newPassword = document.getElementById('new-password').value;
-                const confirmPassword = document.getElementById('confirm-password').value;
-                changeUserPassword(currentPassword, newPassword, confirmPassword);
-            });
-            
+            // Event listener untuk filter
             document.getElementById('tanggal-filter').addEventListener('change', tampilkanAbsensi);
             document.getElementById('nama-filter').addEventListener('input', tampilkanAbsensi);
+            
+            // Event listener untuk reset filter
             document.getElementById('reset-filter').addEventListener('click', function() {
                 document.getElementById('tanggal-filter').value = '';
                 document.getElementById('nama-filter').value = '';
                 tampilkanAbsensi();
             });
             
+            // Event listener untuk export data
             document.getElementById('btn-export').addEventListener('click', function() {
                 showNotification('Fitur export akan segera tersedia!', 'success');
             });
             
+            // Event listener untuk admin panel
             document.getElementById('admin-toggle').addEventListener('click', openAdminPanel);
             document.getElementById('close-admin').addEventListener('click', closeAdminPanel);
             document.getElementById('overlay').addEventListener('click', closeAdminPanel);
+            
+            // Event listener untuk user toggle
             document.getElementById('user-toggle').addEventListener('click', function() {
-                if (confirm('Apakah Anda ingin logout dan ganti akun?')) logoutUser();
+                if (confirm('Apakah Anda ingin logout dan ganti akun?')) {
+                    logoutUser();
+                }
             });
             
+            // Event listener untuk login admin
             document.getElementById('btn-login-admin').addEventListener('click', function() {
                 const password = document.getElementById('admin-password').value;
-                if (password) loginAdmin(password);
-                else showNotification('Masukkan password admin!', 'error');
+                if (password) {
+                    loginAdmin(password);
+                } else {
+                    showNotification('Masukkan password admin!', 'error');
+                }
             });
             
+            // Event listener untuk logout admin
             document.getElementById('btn-logout-admin').addEventListener('click', logoutAdmin);
+            
+            // Event listener untuk ganti password admin
             document.getElementById('btn-change-password').addEventListener('click', function() {
                 const newPassword = document.getElementById('admin-new-password').value;
-                if (newPassword) changeAdminPassword(newPassword);
-                else showNotification('Masukkan password baru!', 'error');
+                if (newPassword) {
+                    changeAdminPassword(newPassword);
+                } else {
+                    showNotification('Masukkan password baru!', 'error');
+                }
             });
             
+            // Event listener untuk reset data
             document.getElementById('btn-reset-absensi').addEventListener('click', resetAbsensi);
             document.getElementById('btn-reset-anggota').addEventListener('click', resetAnggota);
             document.getElementById('btn-reset-pengumuman').addEventListener('click', resetPengumuman);
             
+            // Event listener untuk pengumuman
             document.getElementById('btn-tambah-pengumuman').addEventListener('click', function() {
                 const pengumumanForm = document.getElementById('pengumuman-form');
-                pengumumanForm.style.display = pengumumanForm.style.display === 'none' ? 'block' : 'none';
+                if (pengumumanForm.style.display === 'none') {
+                    pengumumanForm.style.display = 'block';
+                } else {
+                    pengumumanForm.style.display = 'none';
+                }
             });
             
             document.getElementById('btn-simpan-pengumuman').addEventListener('click', function() {
@@ -2465,86 +2414,145 @@
                 document.getElementById('pengumuman-prioritas').value = 'low';
             });
             
-            document.getElementById('btn-request-notification-permission').addEventListener('click', requestNotificationPermission);
-            document.getElementById('btn-install-pwa').addEventListener('click', showPWAInstallPrompt);
-            
-            // PWA beforeinstallprompt event
-            window.addEventListener('beforeinstallprompt', (e) => {
-                e.preventDefault();
-                deferredPrompt = e;
-                console.log('PWA install prompt available');
+            // Event listener untuk login user
+            document.getElementById('btn-login-user').addEventListener('click', function() {
+                const userSelect = document.getElementById('user-select');
+                const selectedUserId = userSelect.value;
+                const selectedUserName = userSelect.options[userSelect.selectedIndex].text;
+                const password = document.getElementById('user-password').value;
+                
+                if (!selectedUserId) {
+                    showNotification('Pilih nama Anda terlebih dahulu!', 'error');
+                    return;
+                }
+                
+                if (!password) {
+                    showNotification('Masukkan password!', 'error');
+                    return;
+                }
+                
+                loginUser(selectedUserId, selectedUserName, password);
             });
             
-            window.addEventListener('appinstalled', () => {
-                console.log('PWA installed successfully');
-                updatePWAStatus();
-                showNotification('🎉 Aplikasi berhasil diinstall! Sekarang dapat diakses dari beranda HP.', 'success');
+            // Event listener untuk Enter pada input password
+            document.getElementById('user-password').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    document.getElementById('btn-login-user').click();
+                }
             });
             
-            // Cek session
+            // Event listener untuk logout user
+            document.getElementById('btn-logout-user').addEventListener('click', function() {
+                if (confirm('Apakah Anda yakin ingin logout?')) {
+                    logoutUser();
+                }
+            });
+            
+            // Event listener untuk tombol hadir sendiri
+            document.getElementById('btn-hadir-sendiri').addEventListener('click', function() {
+                if (!currentUser) {
+                    showNotification('Silakan login terlebih dahulu!', 'error');
+                    return;
+                }
+                
+                tandaiHadir(currentUser.name);
+            });
+            
+            // Cek session admin
             if (localStorage.getItem(ADMIN_SESSION_KEY) === 'active') {
                 isAdminLoggedIn = true;
                 updateAdminUI();
             }
             
+            // Cek session user
             const savedUser = localStorage.getItem(USER_SESSION_KEY);
             if (savedUser) {
                 try {
                     currentUser = JSON.parse(savedUser);
                     updateUserUI();
+                    
                     document.getElementById('login-panel').style.display = 'none';
                     document.getElementById('main-container').style.display = 'block';
                 } catch (e) {
+                    console.error('Error parsing user session:', e);
                     localStorage.removeItem(USER_SESSION_KEY);
                 }
             }
             
-            // Update PWA dan Notification status
-            updatePWAStatus();
-            updateNotificationStatus();
-            
-            // Inisialisasi data contoh
-            initializeSampleData();
-            
-            // Listen Firebase changes
+            // Mendengarkan perubahan data di Firebase
             absensiRef.on('value', (snapshot) => {
                 const data = snapshot.val();
                 absensi = [];
+                
                 if (data) {
-                    Object.keys(data).forEach(key => absensi.push(data[key]));
+                    Object.keys(data).forEach(key => {
+                        absensi.push(data[key]);
+                    });
+                    
                     absensi.sort((a, b) => b.id - a.id);
                 }
+                
+                console.log("Data absensi diterima dari Firebase:", absensi);
                 tampilkanAbsensi();
+            }, (error) => {
+                console.error("Error membaca data absensi dari Firebase:", error);
+                showNotification("Error membaca data absensi dari Firebase", 'error');
             });
             
             anggotaRef.on('value', (snapshot) => {
                 const data = snapshot.val();
                 daftarAnggota = [];
+                
                 if (data) {
-                    Object.keys(data).forEach(key => daftarAnggota.push(data[key]));
+                    Object.keys(data).forEach(key => {
+                        daftarAnggota.push(data[key]);
+                    });
+                    
                     daftarAnggota.sort((a, b) => a.nama.localeCompare(b.nama));
                 }
+                
+                console.log("Data anggota diterima dari Firebase:", daftarAnggota);
                 isiDropdownUser();
                 tampilkanDaftarAnggota();
                 updateStatistik();
+            }, (error) => {
+                console.error("Error membaca data anggota dari Firebase:", error);
+                showNotification("Error membaca data anggota dari Firebase", 'error');
             });
             
             pengumumanRef.on('value', (snapshot) => {
                 const data = snapshot.val();
                 daftarPengumuman = [];
+                
                 if (data) {
-                    Object.keys(data).forEach(key => daftarPengumuman.push(data[key]));
+                    Object.keys(data).forEach(key => {
+                        daftarPengumuman.push(data[key]);
+                    });
                 }
+                
+                console.log("Data pengumuman diterima dari Firebase:", daftarPengumuman);
                 tampilkanDaftarPengumuman();
                 updateStatistik();
+            }, (error) => {
+                console.error("Error membaca data pengumuman dari Firebase:", error);
+                showNotification("Error membaca data pengumuman dari Firebase", 'error');
             });
             
             passwordRef.on('value', (snapshot) => {
-                passwordAnggota = snapshot.val() || {};
+                const data = snapshot.val();
+                passwordAnggota = data || {};
+                
+                console.log("Data password diterima dari Firebase:", passwordAnggota);
+            }, (error) => {
+                console.error("Error membaca data password dari Firebase:", error);
+                showNotification("Error membaca data password dari Firebase", 'error');
             });
             
+            // Monitor status koneksi Firebase
             database.ref('.info/connected').on('value', (snapshot) => {
-                updateConnectionStatus(snapshot.val());
+                const isConnected = snapshot.val();
+                console.log("Status koneksi Firebase:", isConnected);
+                updateConnectionStatus(isConnected);
             });
             
             console.log("Aplikasi absensi siap digunakan!");
@@ -2552,3 +2560,9 @@
     </script>
 </body>
 </html>
+
+
+
+
+
+
