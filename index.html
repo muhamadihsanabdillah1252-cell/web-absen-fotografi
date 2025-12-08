@@ -950,52 +950,53 @@
             margin-right: 8px;
         }
         
-        /* Notifikasi Styles */
-        .notification-container {
+        /* Notifikasi Styles untuk HP */
+        .mobile-notification-container {
             position: fixed;
-            top: 20px;
-            right: 20px;
+            top: 10px;
+            left: 10px;
+            right: 10px;
             z-index: 2000;
             display: flex;
             flex-direction: column;
             gap: 10px;
-            max-width: 350px;
         }
         
-        .notification {
+        .mobile-notification {
             background: white;
-            border-radius: 10px;
+            border-radius: 12px;
             padding: 15px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+            box-shadow: 0 5px 25px rgba(0,0,0,0.2);
             display: flex;
             align-items: flex-start;
             gap: 12px;
-            transform: translateX(400px);
-            transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-            border-left: 4px solid var(--info);
-            animation: slideIn 0.5s forwards;
+            transform: translateY(-100px);
+            transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            border-left: 5px solid var(--info);
+            animation: slideDownMobile 0.5s forwards;
+            max-width: 100%;
         }
         
-        @keyframes slideIn {
+        @keyframes slideDownMobile {
             to {
-                transform: translateX(0);
+                transform: translateY(0);
             }
         }
         
-        @keyframes slideOut {
+        @keyframes slideUpMobile {
             to {
-                transform: translateX(400px);
+                transform: translateY(-100px);
                 opacity: 0;
             }
         }
         
-        .notification.slide-out {
-            animation: slideOut 0.5s forwards;
+        .mobile-notification.slide-up {
+            animation: slideUpMobile 0.5s forwards;
         }
         
-        .notification-icon {
-            width: 24px;
-            height: 24px;
+        .mobile-notification-icon {
+            width: 28px;
+            height: 28px;
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -1003,36 +1004,35 @@
             flex-shrink: 0;
         }
         
-        .notification-icon.info {
+        .mobile-notification-icon.info {
             background: var(--info);
             color: white;
         }
         
-        .notification-content {
+        .mobile-notification-content {
             flex: 1;
         }
         
-        .notification-title {
-            font-weight: 600;
+        .mobile-notification-title {
+            font-weight: 700;
             color: var(--dark);
             margin-bottom: 5px;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
         }
         
-        .notification-message {
-            color: var(--gray);
+        .mobile-notification-message {
+            color: var(--dark);
             font-size: 0.85rem;
             line-height: 1.4;
         }
         
-        .notification-time {
+        .mobile-notification-time {
             color: var(--gray);
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             margin-top: 5px;
-            opacity: 0.7;
         }
         
-        .notification-close {
+        .mobile-notification-close {
             background: none;
             border: none;
             color: var(--gray);
@@ -1048,62 +1048,58 @@
             transition: all 0.2s;
         }
         
-        .notification-close:hover {
+        .mobile-notification-close:hover {
             background: rgba(0,0,0,0.05);
             color: var(--dark);
         }
         
-        /* Sound indicator */
-        .sound-indicator {
+        /* Toast Notification untuk HP */
+        .mobile-toast {
+            position: fixed;
+            bottom: 20px;
+            left: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.85);
+            color: white;
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: 600;
+            z-index: 1999;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.3);
+            transform: translateY(100px);
+            transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            backdrop-filter: blur(10px);
+        }
+        
+        .mobile-toast.show {
+            transform: translateY(0);
+        }
+        
+        /* Vibration indicator untuk HP */
+        .vibration-indicator {
             position: fixed;
             bottom: 20px;
             right: 20px;
             background: var(--card-bg);
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
+            width: 45px;
+            height: 45px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            z-index: 1999;
+            z-index: 1998;
             transition: all 0.3s;
         }
         
-        .sound-indicator.muted {
+        .vibration-indicator.muted {
             opacity: 0.5;
             background: var(--gray);
         }
         
-        .sound-indicator:hover {
-            transform: scale(1.1);
-        }
-        
-        /* Browser Notification Toggle */
-        .browser-notification-toggle {
-            position: fixed;
-            bottom: 70px;
-            right: 20px;
-            background: var(--card-bg);
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            z-index: 1999;
-            transition: all 0.3s;
-        }
-        
-        .browser-notification-toggle.muted {
-            opacity: 0.5;
-            background: var(--gray);
-        }
-        
-        .browser-notification-toggle:hover {
+        .vibration-indicator:hover {
             transform: scale(1.1);
         }
         
@@ -1197,6 +1193,76 @@
             .announcement-actions {
                 justify-content: flex-end;
             }
+            
+            /* Desktop Notifications */
+            .desktop-notification-container {
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                z-index: 2000;
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+                max-width: 350px;
+            }
+            
+            .desktop-notification {
+                background: white;
+                border-radius: 10px;
+                padding: 15px;
+                box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+                display: flex;
+                align-items: flex-start;
+                gap: 12px;
+                transform: translateX(400px);
+                transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+                border-left: 4px solid var(--info);
+                animation: slideIn 0.5s forwards;
+            }
+            
+            @keyframes slideIn {
+                to {
+                    transform: translateX(0);
+                }
+            }
+            
+            @keyframes slideOut {
+                to {
+                    transform: translateX(400px);
+                    opacity: 0;
+                }
+            }
+            
+            .desktop-notification.slide-out {
+                animation: slideOut 0.5s forwards;
+            }
+            
+            /* Desktop Sound Indicator */
+            .sound-indicator {
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                background: var(--card-bg);
+                border-radius: 50%;
+                width: 40px;
+                height: 40px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+                z-index: 1999;
+                transition: all 0.3s;
+            }
+            
+            .sound-indicator.muted {
+                opacity: 0.5;
+                background: var(--gray);
+            }
+            
+            .sound-indicator:hover {
+                transform: scale(1.1);
+            }
         }
         
         /* Media Queries untuk Desktop */
@@ -1212,6 +1278,29 @@
             
             .stat-card h3 {
                 font-size: 2.5rem;
+            }
+        }
+        
+        /* Hide mobile notifications on desktop */
+        @media (min-width: 768px) {
+            .mobile-notification-container,
+            .mobile-toast,
+            .vibration-indicator {
+                display: none !important;
+            }
+        }
+        
+        /* Hide desktop notifications on mobile */
+        @media (max-width: 767px) {
+            .desktop-notification-container,
+            .sound-indicator {
+                display: none !important;
+            }
+            
+            .mobile-notification-container,
+            .mobile-toast,
+            .vibration-indicator {
+                display: flex;
             }
         }
     </style>
@@ -1254,15 +1343,6 @@
                 <div style="font-size: 0.8rem;">
                     <p><strong>Masukkan Password Yg Diberikan</strong></p>
                 </div>
-            </div>
-            
-            <!-- Permintaan Notifikasi Browser -->
-            <div id="browser-notification-request" style="background: rgba(91, 134, 229, 0.1); padding: 15px; border-radius: 10px; margin-top: 20px; display: none;">
-                <h4 style="margin-bottom: 10px; color: var(--info);"><i class="fas fa-desktop"></i> Notifikasi Browser</h4>
-                <p style="font-size: 0.8rem; margin-bottom: 10px;">Aktifkan notifikasi browser untuk mendapatkan pemberitahuan pengumuman langsung di desktop Anda!</p>
-                <button id="btn-enable-browser-notifications" class="btn btn-info" style="width: 100%;">
-                    <i class="fas fa-bell"></i> Aktifkan Notifikasi Browser
-                </button>
             </div>
         </div>
     </div>
@@ -1566,24 +1646,30 @@
         
         <div class="admin-section">
             <h3><i class="fas fa-info-circle"></i> Informasi Sistem</h3>
-            <p><strong>Versi:</strong> 3.0 (Notifikasi Browser)</p>
+            <p><strong>Versi:</strong> 3.1 (Notifikasi Mobile)</p>
             <p><strong>Status:</strong> <span id="admin-status">Tidak aktif</span></p>
             <p><strong>Pengguna:</strong> <span id="admin-user">-</span></p>
-            <p><strong>Notifikasi Browser:</strong> <span id="browser-notification-status">Memeriksa...</span></p>
+            <p><strong>Perangkat:</strong> <span id="device-type">Memeriksa...</span></p>
         </div>
     </div>
 
-    <!-- Notifikasi Container -->
-    <div class="notification-container" id="notification-container"></div>
+    <!-- Mobile Notifications (untuk HP) -->
+    <div class="mobile-notification-container" id="mobile-notification-container"></div>
     
-    <!-- Sound Indicator -->
-    <div class="sound-indicator" id="sound-indicator" title="Toggle notification sound">
-        <i class="fas fa-bell"></i>
+    <!-- Mobile Toast Notification -->
+    <div class="mobile-toast" id="mobile-toast"></div>
+    
+    <!-- Vibration Indicator untuk HP -->
+    <div class="vibration-indicator" id="vibration-indicator" title="Toggle vibration">
+        <i class="fas fa-vibrate"></i>
     </div>
     
-    <!-- Browser Notification Toggle -->
-    <div class="browser-notification-toggle" id="browser-notification-toggle" title="Toggle browser notifications">
-        <i class="fas fa-desktop"></i>
+    <!-- Desktop Notifications (untuk PC) -->
+    <div class="desktop-notification-container" id="desktop-notification-container"></div>
+    
+    <!-- Sound Indicator untuk PC -->
+    <div class="sound-indicator" id="sound-indicator" title="Toggle notification sound">
+        <i class="fas fa-bell"></i>
     </div>
     
     <!-- Audio untuk notifikasi suara (tersembunyi) -->
@@ -1636,14 +1722,15 @@
         let isAdminLoggedIn = false;
         let currentUser = null;
         let isNotificationSoundEnabled = true;
-        let isBrowserNotificationEnabled = false;
+        let isVibrationEnabled = true;
         let announcedPengumumanIds = new Set();
+        let isMobileDevice = false;
         
         // Key untuk localStorage
         const ADMIN_PASSWORD_KEY = 'admin_password_fotografi';
         const ADMIN_SESSION_KEY = 'admin_session_fotografi';
         const USER_SESSION_KEY = 'user_session_fotografi';
-        const BROWSER_NOTIFICATION_KEY = 'browser_notification_fotografi';
+        const VIBRATION_ENABLED_KEY = 'vibration_enabled_fotografi';
 
         // Fungsi untuk inisialisasi data contoh
         function initializeSampleData() {
@@ -1708,184 +1795,161 @@
         }
 
         // ==================================================
-        // 🖥️ FUNGSI NOTIFIKASI BROWSER (DESKTOP) 🖥️
+        // 📱 FUNGSI UTILITY UNTUK DETEKSI HP 📱
         // ==================================================
 
-        // Fungsi untuk memeriksa dan meminta izin notifikasi browser
-        function checkBrowserNotificationPermission() {
-            // Periksa apakah browser mendukung notifikasi
-            if (!("Notification" in window)) {
-                console.log("Browser ini tidak mendukung notifikasi desktop");
-                updateBrowserNotificationStatus("Tidak didukung");
-                return false;
-            }
+        // Fungsi untuk mendeteksi perangkat mobile
+        function detectMobileDevice() {
+            const userAgent = navigator.userAgent || navigator.vendor || window.opera;
             
-            // Cek status izin
-            if (Notification.permission === "granted") {
-                console.log("Izin notifikasi browser sudah diberikan");
-                isBrowserNotificationEnabled = true;
-                updateBrowserNotificationStatus("Aktif");
-                updateBrowserNotificationToggle();
-                return true;
-            } else if (Notification.permission === "denied") {
-                console.log("Izin notifikasi browser ditolak");
-                isBrowserNotificationEnabled = false;
-                updateBrowserNotificationStatus("Ditolak");
-                updateBrowserNotificationToggle();
-                return false;
-            } else {
-                console.log("Izin notifikasi browser belum diminta");
-                isBrowserNotificationEnabled = false;
-                updateBrowserNotificationStatus("Belum diizinkan");
-                
-                // Tampilkan permintaan di login panel jika user belum login
-                if (!currentUser) {
-                    document.getElementById('browser-notification-request').style.display = 'block';
-                }
-                return false;
-            }
-        }
-
-        // Fungsi untuk meminta izin notifikasi browser
-        function requestBrowserNotificationPermission() {
-            if (!("Notification" in window)) {
-                showNotification("Browser Anda tidak mendukung notifikasi desktop", "error");
-                return;
-            }
+            // Deteksi berbagai jenis HP
+            const isMobile = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent.toLowerCase());
             
-            Notification.requestPermission().then(function(permission) {
-                if (permission === "granted") {
-                    isBrowserNotificationEnabled = true;
-                    localStorage.setItem(BROWSER_NOTIFICATION_KEY, 'enabled');
-                    showNotification("🎉 Notifikasi browser diaktifkan! Anda akan menerima notifikasi di desktop.", "success");
-                    updateBrowserNotificationStatus("Aktif");
-                    updateBrowserNotificationToggle();
-                    document.getElementById('browser-notification-request').style.display = 'none';
-                    
-                    // Tampilkan notifikasi contoh
-                    showBrowserNotification("Notifikasi Diaktifkan", "Selamat! Anda akan menerima notifikasi pengumuman baru di desktop.");
-                } else {
-                    isBrowserNotificationEnabled = false;
-                    localStorage.setItem(BROWSER_NOTIFICATION_KEY, 'disabled');
-                    showNotification("Notifikasi browser ditolak. Anda dapat mengaktifkannya nanti di pengaturan browser.", "info");
-                    updateBrowserNotificationStatus("Ditolak");
-                    updateBrowserNotificationToggle();
-                }
+            // Deteksi berdasarkan lebar layar
+            const isSmallScreen = window.innerWidth <= 768;
+            
+            // Deteksi touch screen
+            const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+            
+            isMobileDevice = isMobile || isSmallScreen || isTouchDevice;
+            
+            console.log("Deteksi perangkat:", {
+                userAgent: userAgent.substring(0, 50) + "...",
+                isMobile: isMobile,
+                isSmallScreen: isSmallScreen,
+                isTouchDevice: isTouchDevice,
+                isMobileDevice: isMobileDevice
             });
-        }
-
-        // Fungsi untuk menampilkan notifikasi browser (desktop)
-        function showBrowserNotification(title, message) {
-            if (!isBrowserNotificationEnabled || !("Notification" in window) || Notification.permission !== "granted") {
-                return;
-            }
             
-            try {
-                // Buat notifikasi
-                const notification = new Notification(title, {
-                    body: message,
-                    icon: 'https://cdn-icons-png.flaticon.com/512/1041/1041916.png', // Ganti dengan logo klub
-                    badge: 'https://cdn-icons-png.flaticon.com/512/1041/1041916.png',
-                    tag: 'fotografi-announcement',
-                    requireInteraction: false,
-                    silent: false
-                });
-                
-                // Tutup notifikasi setelah 8 detik
-                setTimeout(() => {
-                    notification.close();
-                }, 8000);
-                
-                // Event listener untuk klik notifikasi
-                notification.onclick = function() {
-                    window.focus();
-                    this.close();
-                    
-                    // Arahkan ke halaman pengumuman jika browser terbuka
-                    if (document.getElementById('main-container').style.display !== 'none') {
-                        document.getElementById('btn-tambah-pengumuman').scrollIntoView({ behavior: 'smooth' });
-                    }
-                };
-                
-                console.log("Notifikasi browser ditampilkan:", title);
-            } catch (error) {
-                console.error("Error menampilkan notifikasi browser:", error);
-            }
-        }
-
-        // Fungsi untuk update status notifikasi browser di UI
-        function updateBrowserNotificationStatus(status) {
-            const statusElement = document.getElementById('browser-notification-status');
-            if (statusElement) {
-                statusElement.textContent = status;
-                
-                switch(status) {
-                    case "Aktif":
-                        statusElement.style.color = "var(--success)";
-                        break;
-                    case "Ditolak":
-                    case "Tidak didukung":
-                        statusElement.style.color = "var(--secondary)";
-                        break;
-                    default:
-                        statusElement.style.color = "var(--admin-color)";
-                        break;
-                }
-            }
-        }
-
-        // Fungsi untuk update toggle notifikasi browser
-        function updateBrowserNotificationToggle() {
-            const toggle = document.getElementById('browser-notification-toggle');
-            if (toggle) {
-                if (isBrowserNotificationEnabled && Notification.permission === "granted") {
-                    toggle.classList.remove('muted');
-                    toggle.innerHTML = '<i class="fas fa-desktop"></i>';
-                    toggle.title = "Notifikasi browser aktif (klik untuk nonaktifkan)";
-                } else {
-                    toggle.classList.add('muted');
-                    toggle.innerHTML = '<i class="fas fa-desktop-slash"></i>';
-                    toggle.title = "Notifikasi browser nonaktif (klik untuk mengaktifkan)";
-                }
-            }
-        }
-
-        // Fungsi untuk toggle notifikasi browser
-        function toggleBrowserNotifications() {
-            if (!("Notification" in window)) {
-                showNotification("Browser Anda tidak mendukung notifikasi desktop", "error");
-                return;
-            }
+            // Update UI berdasarkan perangkat
+            updateDeviceUI();
             
-            if (Notification.permission === "granted") {
-                // Jika sudah diizinkan, matikan
-                isBrowserNotificationEnabled = !isBrowserNotificationEnabled;
-                localStorage.setItem(BROWSER_NOTIFICATION_KEY, isBrowserNotificationEnabled ? 'enabled' : 'disabled');
-                
-                if (isBrowserNotificationEnabled) {
-                    showNotification("🔔 Notifikasi browser diaktifkan!", "success");
+            return isMobileDevice;
+        }
+
+        // Fungsi untuk update UI berdasarkan perangkat
+        function updateDeviceUI() {
+            const deviceTypeElement = document.getElementById('device-type');
+            
+            if (deviceTypeElement) {
+                if (isMobileDevice) {
+                    deviceTypeElement.textContent = "📱 Mobile";
+                    deviceTypeElement.style.color = "var(--primary)";
                 } else {
-                    showNotification("🔕 Notifikasi browser dinonaktifkan!", "info");
+                    deviceTypeElement.textContent = "💻 Desktop";
+                    deviceTypeElement.style.color = "var(--info)";
                 }
-                
-                updateBrowserNotificationToggle();
-                updateBrowserNotificationStatus(isBrowserNotificationEnabled ? "Aktif" : "Dinonaktifkan");
-            } else if (Notification.permission === "denied") {
-                // Jika ditolak, beri instruksi
-                showNotification("Izin notifikasi ditolak. Silakan aktifkan di pengaturan browser Anda.", "error");
-            } else {
-                // Jika belum diminta, minta izin
-                requestBrowserNotificationPermission();
+            }
+        }
+
+        // Fungsi untuk vibrate HP (jika didukung)
+        function vibratePhone() {
+            if (!isVibrationEnabled || !isMobileDevice) return;
+            
+            // Cek apakah browser mendukung vibration API
+            if ("vibrate" in navigator) {
+                try {
+                    // Vibrasi pendek (200ms)
+                    navigator.vibrate(200);
+                } catch (error) {
+                    console.log("Vibrasi tidak didukung atau error:", error);
+                }
             }
         }
 
         // ==================================================
-        // 🔔 FUNGSI NOTIFIKASI PENGUMUMAN 🔔
+        // 📱 FUNGSI NOTIFIKASI UNTUK HP (MOBILE) 📱
+        // ==================================================
+
+        // Fungsi untuk menampilkan notifikasi mobile
+        function showMobileNotification(judul, isi, waktu) {
+            // Vibrasi HP
+            vibratePhone();
+            
+            const container = document.getElementById('mobile-notification-container');
+            const notificationId = 'mobile-notification-' + Date.now();
+            
+            const notification = document.createElement('div');
+            notification.className = 'mobile-notification';
+            notification.id = notificationId;
+            
+            const waktuFormat = formatTanggalWaktu(waktu);
+            const isiSingkat = isi.length > 80 ? isi.substring(0, 80) + '...' : isi;
+            
+            notification.innerHTML = `
+                <div class="mobile-notification-icon info">
+                    <i class="fas fa-bullhorn"></i>
+                </div>
+                <div class="mobile-notification-content">
+                    <div class="mobile-notification-title">📢 ${judul}</div>
+                    <div class="mobile-notification-message">${isiSingkat}</div>
+                    <div class="mobile-notification-time">${waktuFormat}</div>
+                </div>
+                <button class="mobile-notification-close" onclick="removeMobileNotification('${notificationId}')">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            
+            container.appendChild(notification);
+            
+            // Auto remove setelah 6 detik
+            setTimeout(() => {
+                removeMobileNotification(notificationId);
+            }, 6000);
+            
+            // Tampilkan juga toast notification
+            showMobileToast(`📢 ${judul}`);
+        }
+
+        // Fungsi untuk menghapus notifikasi mobile
+        function removeMobileNotification(notificationId) {
+            const notification = document.getElementById(notificationId);
+            if (notification) {
+                notification.classList.add('slide-up');
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 500);
+            }
+        }
+
+        // Fungsi untuk menampilkan toast notification mobile
+        function showMobileToast(message) {
+            const toast = document.getElementById('mobile-toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Fungsi untuk toggle vibration
+        function toggleVibration() {
+            isVibrationEnabled = !isVibrationEnabled;
+            const vibrationIndicator = document.getElementById('vibration-indicator');
+            
+            if (isVibrationEnabled) {
+                vibrationIndicator.classList.remove('muted');
+                vibrationIndicator.innerHTML = '<i class="fas fa-vibrate"></i>';
+                showMobileToast('📳 Vibrasi diaktifkan');
+            } else {
+                vibrationIndicator.classList.add('muted');
+                vibrationIndicator.innerHTML = '<i class="fas fa-vibration"></i>';
+                showMobileToast('🔇 Vibrasi dimatikan');
+            }
+            
+            localStorage.setItem(VIBRATION_ENABLED_KEY, isVibrationEnabled);
+        }
+
+        // ==================================================
+        // 💻 FUNGSI NOTIFIKASI UNTUK DESKTOP 💻
         // ==================================================
 
         // Fungsi untuk memainkan suara notifikasi
         function playNotificationSound() {
-            if (!isNotificationSoundEnabled) return;
+            if (!isNotificationSoundEnabled || isMobileDevice) return;
             
             const sound = document.getElementById('notification-sound');
             if (sound) {
@@ -1912,16 +1976,15 @@
             localStorage.setItem('notification_sound_enabled', isNotificationSoundEnabled);
         }
 
-        // Fungsi untuk menampilkan notifikasi pengumuman baru
-        function showAnnouncementNotification(judul, isi, waktu) {
+        // Fungsi untuk menampilkan notifikasi desktop
+        function showDesktopNotification(judul, isi, waktu) {
             playNotificationSound();
             
-            // Tampilkan notifikasi dalam aplikasi (popup)
-            const container = document.getElementById('notification-container');
-            const notificationId = 'notification-' + Date.now();
+            const container = document.getElementById('desktop-notification-container');
+            const notificationId = 'desktop-notification-' + Date.now();
             
             const notification = document.createElement('div');
-            notification.className = 'notification';
+            notification.className = 'desktop-notification';
             notification.id = notificationId;
             
             const waktuFormat = formatTanggalWaktu(waktu);
@@ -1936,7 +1999,7 @@
                     <div class="notification-message"><strong>${judul}</strong>: ${isiSingkat}</div>
                     <div class="notification-time">${waktuFormat}</div>
                 </div>
-                <button class="notification-close" onclick="removeNotification('${notificationId}')">
+                <button class="notification-close" onclick="removeDesktopNotification('${notificationId}')">
                     <i class="fas fa-times"></i>
                 </button>
             `;
@@ -1945,18 +2008,12 @@
             
             // Auto remove setelah 8 detik
             setTimeout(() => {
-                removeNotification(notificationId);
+                removeDesktopNotification(notificationId);
             }, 8000);
-            
-            // Tampilkan juga toast notification kecil
-            showNotification(`📢 Pengumuman baru: ${judul}`, 'info');
-            
-            // Tampilkan notifikasi browser (desktop notification)
-            showBrowserNotification("📢 Pengumuman Baru: " + judul, isiSingkat);
         }
 
-        // Fungsi untuk menghapus notifikasi
-        function removeNotification(notificationId) {
+        // Fungsi untuk menghapus notifikasi desktop
+        function removeDesktopNotification(notificationId) {
             const notification = document.getElementById(notificationId);
             if (notification) {
                 notification.classList.add('slide-out');
@@ -1966,6 +2023,24 @@
                     }
                 }, 500);
             }
+        }
+
+        // ==================================================
+        // 🔔 FUNGSI NOTIFIKASI UTAMA (UNTUK SEMUA PERANGKAT) 🔔
+        // ==================================================
+
+        // Fungsi untuk menampilkan notifikasi pengumuman baru
+        function showAnnouncementNotification(judul, isi, waktu) {
+            if (isMobileDevice) {
+                // Gunakan notifikasi mobile untuk HP
+                showMobileNotification(judul, isi, waktu);
+            } else {
+                // Gunakan notifikasi desktop untuk PC
+                showDesktopNotification(judul, isi, waktu);
+            }
+            
+            // Tampilkan juga toast notification
+            showNotification(`📢 ${judul}`, 'info');
         }
 
         // Fungsi untuk menampilkan notifikasi sistem (toast)
@@ -2029,12 +2104,6 @@
             if (pengumumanBaru.length > 0) {
                 setTimeout(() => {
                     showNotification(`📢 Ada ${pengumumanBaru.length} pengumuman baru hari ini`, 'info');
-                    
-                    // Tampilkan notifikasi browser untuk pengumuman terbaru
-                    if (pengumumanBaru.length > 0 && isBrowserNotificationEnabled) {
-                        const pengumumanTerbaru = pengumumanBaru.sort((a, b) => new Date(b.waktu) - new Date(a.waktu))[0];
-                        showBrowserNotification("📢 Pengumuman Terbaru", pengumumanTerbaru.judul);
-                    }
                 }, 1000);
             }
         }
@@ -2193,16 +2262,18 @@
                 
                 localStorage.setItem(USER_SESSION_KEY, JSON.stringify(currentUser));
                 updateUserUI();
-                showNotification(`Login berhasil! Selamat datang ${userName}`, 'success');
+                
+                if (isMobileDevice) {
+                    showMobileToast(`👋 Selamat datang ${userName}`);
+                } else {
+                    showNotification(`Login berhasil! Selamat datang ${userName}`, 'success');
+                }
                 
                 document.getElementById('login-panel').style.display = 'none';
                 document.getElementById('main-container').style.display = 'block';
                 
                 // Tampilkan notifikasi pengumuman baru
                 showUnreadAnnouncements();
-                
-                // Sembunyikan permintaan notifikasi browser jika masih ditampilkan
-                document.getElementById('browser-notification-request').style.display = 'none';
                 
                 return true;
             } else {
@@ -2416,7 +2487,11 @@
             
             absensiRef.child(id).set(dataBaru)
                 .then(() => {
-                    showNotification(`${nama} berhasil dicatat hadir!`, 'success');
+                    if (isMobileDevice) {
+                        showMobileToast(`✓ ${nama} berhasil absen!`);
+                    } else {
+                        showNotification(`${nama} berhasil dicatat hadir!`, 'success');
+                    }
                 })
                 .catch((error) => {
                     console.error('Error menyimpan data absensi:', error);
@@ -2759,6 +2834,9 @@
 
         // Inisialisasi saat halaman dimuat
         document.addEventListener('DOMContentLoaded', function() {
+            // Deteksi perangkat (HP atau PC)
+            detectMobileDevice();
+            
             // Set tanggal default ke hari ini
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('tanggal-absensi').value = today;
@@ -2781,23 +2859,26 @@
                 }
             }
             
-            // Load browser notification preference
-            const savedBrowserPref = localStorage.getItem(BROWSER_NOTIFICATION_KEY);
-            if (savedBrowserPref === 'enabled') {
-                isBrowserNotificationEnabled = true;
+            // Load vibration preference
+            const savedVibrationPref = localStorage.getItem(VIBRATION_ENABLED_KEY);
+            if (savedVibrationPref !== null) {
+                isVibrationEnabled = savedVibrationPref === 'true';
+                const vibrationIndicator = document.getElementById('vibration-indicator');
+                if (!isVibrationEnabled) {
+                    vibrationIndicator.classList.add('muted');
+                    vibrationIndicator.innerHTML = '<i class="fas fa-vibration"></i>';
+                }
             }
             
-            // Periksa izin notifikasi browser
-            checkBrowserNotificationPermission();
+            // Event listener untuk vibration indicator (HP)
+            if (isMobileDevice) {
+                document.getElementById('vibration-indicator').addEventListener('click', toggleVibration);
+            }
             
-            // Event listener untuk sound indicator
-            document.getElementById('sound-indicator').addEventListener('click', toggleNotificationSound);
-            
-            // Event listener untuk browser notification toggle
-            document.getElementById('browser-notification-toggle').addEventListener('click', toggleBrowserNotifications);
-            
-            // Event listener untuk tombol aktifkan notifikasi browser di login panel
-            document.getElementById('btn-enable-browser-notifications').addEventListener('click', requestBrowserNotificationPermission);
+            // Event listener untuk sound indicator (PC)
+            if (!isMobileDevice) {
+                document.getElementById('sound-indicator').addEventListener('click', toggleNotificationSound);
+            }
             
             // Event listener untuk toggle password visibility
             document.getElementById('toggle-password').addEventListener('click', function() {
@@ -2995,9 +3076,6 @@
                     
                     // Tampilkan notifikasi pengumuman baru
                     showUnreadAnnouncements();
-                    
-                    // Sembunyikan permintaan notifikasi browser
-                    document.getElementById('browser-notification-request').style.display = 'none';
                 } catch (e) {
                     console.error('Error parsing user session:', e);
                     localStorage.removeItem(USER_SESSION_KEY);
@@ -3096,6 +3174,7 @@
             });
             
             console.log("Aplikasi absensi siap digunakan!");
+            console.log("Perangkat:", isMobileDevice ? "📱 Mobile" : "💻 Desktop");
         });
     </script>
 </body>
