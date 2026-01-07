@@ -1348,9 +1348,9 @@
     
     <div class="admin-panel" id="admin-panel">
         <div class="admin-header">
-            <h2><i class="fas fa-user-shield"></i> Panel Admin</h2>
+            <h2><i class="fas fa-user-shield"></i> Consle Admin</h2>
             <button id="close-admin" class="btn btn-danger btn-sm">
-                <i class="fas fa-times"></i> Tutup
+                <i class="fas fa-times"></i> Close
             </button>
         </div>
         
@@ -1679,7 +1679,7 @@
                 
                 return true;
             } else {
-                showNotification('Password salah! Gunakan password: 1234', 'error');
+                showNotification('Password salah!', 'error');
                 return false;
             }
         }
@@ -2154,14 +2154,14 @@
         // Fungsi untuk menandai kehadiran
         function tandaiHadir(nama) {
             if (!isAdminLoggedIn && currentUser && currentUser.name !== nama) {
-                showNotification('Anda hanya dapat mencatat kehadiran untuk diri sendiri!', 'error');
+                showNotification('Eaaa Mau Ngapain!', 'error');
                 return;
             }
             
             const tanggal = document.getElementById('tanggal-absensi').value;
             
             if (!tanggal) {
-                showNotification('Pilih tanggal terlebih dahulu!', 'error');
+                showNotification('Pilih tanggal dulu!', 'error');
                 return;
             }
             
@@ -2560,6 +2560,7 @@
     </script>
 </body>
 </html>
+
 
 
 
